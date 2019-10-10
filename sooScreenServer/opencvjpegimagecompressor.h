@@ -6,7 +6,7 @@
 
 namespace comp
 {
-    #define quality "JPEG_QUALITY"
+    #define QUALITY "JPEG_QUALITY"
 }
 
 class opencvJpegImageCompressor : public IImageCompressor
@@ -28,7 +28,7 @@ public:
         //generate openCv parameters
         m_compressionParams.clear();
         m_compressionParams.push_back(cv::IMWRITE_JPEG_QUALITY);
-        m_compressionParams.push_back(std::stoi(m_parameters[quality].value()));
+        m_compressionParams.push_back(std::stoi(m_parameters[QUALITY].value()));
     }
 
     virtual std::vector<uint8_t> compress(cv::Mat& img, bool& ok)
