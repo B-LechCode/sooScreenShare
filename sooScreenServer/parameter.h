@@ -11,8 +11,9 @@ private:
     std::string m_description;
     std::string m_type;
     std::string m_value;
-    parameter();
+
 public:
+     parameter(){}
      parameter(std::string description,std::string type,std::string value)
      {
          m_description = description;
@@ -49,7 +50,7 @@ public:
      }
 };
 
-class parameterMap : std::map<std::string,parameter>
+class parameterMap : public std::map<std::string,parameter>
 {
 
 };

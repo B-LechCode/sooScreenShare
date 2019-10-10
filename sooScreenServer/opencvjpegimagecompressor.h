@@ -4,13 +4,32 @@
 
 #include <utility>
 
-
+namespace comp
+{
+    #define quality "JPEG_QUALITY"
+}
 
 class opencvJpegImageCompressor : public IImageCompressor
 {
 public:
     opencvJpegImageCompressor();
     virtual ~opencvJpegImageCompressor();
+
+    virtual void setParameters(parameterMap& para)
+    {
+        //insert into local para map
+        auto itPara =  para.begin();
+        while(itPara != para.end())
+        {
+            m_parameters[itPara->first] = itPara->second;
+            itPara++;
+        }
+
+        //generate openCv parameters
+        m_compressionParams.clear();
+        m_compressionParams.push_back(cv::IMWRITE_JPEG_QUALITY);
+        m_compressionParams.push_back(std::stoi(m_parameters[quality].value()));
+    }
 
     virtual std::vector<uint8_t> compress(cv::Mat& img, bool& ok)
     {
