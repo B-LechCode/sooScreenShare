@@ -26,5 +26,5 @@ parameterMap IImageCompressor::getParameters()
 
 void IImageCompressor::setParameters(parameterMap &para)
 {
-    m_parameters = para;
+    parameterMap::insertParameters(m_parameters,para);
 }

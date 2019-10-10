@@ -12,7 +12,7 @@ transportServerTCP::~transportServerTCP()
 
 void transportServerTCP::setParameters(parameterMap &para)
 {
-
+    ItransportServer::setParameters(para);
 }
 
 void transportServerTCP::init()

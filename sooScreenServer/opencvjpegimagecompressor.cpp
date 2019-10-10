@@ -17,7 +17,7 @@ opencvJpegImageCompressor::~opencvJpegImageCompressor()
 
 void opencvJpegImageCompressor::setParameters(parameterMap &para)
 {
-    parameterMap::insertParameters(m_parameters,para);
+    IImageCompressor::setParameters(para);
 
     //generate openCv parameters
     m_compressionParams.clear();

@@ -20,7 +20,7 @@ parameterMap ItransportServer::getDefaultParameters()
 
 void ItransportServer::setParameters(parameterMap &para)
 {
-    m_parameters = para;
+    parameterMap::insertParameters(m_parameters,para);
 }
 
 parameterMap ItransportServer::getParameters()
