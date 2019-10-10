@@ -50,6 +50,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
+
+
 void MainWindow::createHeader()
 {
     char header[] = "ScreenImage";

@@ -36,9 +36,7 @@ private:
     uint16_t port = 12345;
     QHostAddress m_clientAddr;
     QTcpSocket* m_ptrSock = nullptr;
-    QTimer m_tmr;
-    void writeBigCock(QByteArray &dat);
-    void writeBigCock(char* data,int len);
+    QTimer m_tmr;    
 };
 
 #endif // MAINWINDOW_H

@@ -1,5 +1,16 @@
 #include "itransportserver.h"
 
+
+ItransportServerObserver::ItransportServerObserver()
+{
+
+}
+
+ItransportServerObserver::~ItransportServerObserver()
+{
+
+}
+
 ItransportServer::ItransportServer():
     m_observers(),
     m_defaultParameters(),

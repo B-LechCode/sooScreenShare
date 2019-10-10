@@ -20,7 +20,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow :  public QMainWindow
 {
     Q_OBJECT
 
@@ -59,6 +59,7 @@ private:
     uint64_t m_couterTime = 0;
     uint64_t m_minTime = 999999999999;
     uint64_t m_maxTime = 0;
+
 };
 
 #endif // MAINWINDOW_H

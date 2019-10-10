@@ -1,6 +1,7 @@
 #ifndef SCREENSHOTX11SHM_H
 #define SCREENSHOTX11SHM_H
 
+#include <opencv2/stitching.hpp>
 #include "iscreenshot.h"
 
 #include <X11/Xlib.h>
