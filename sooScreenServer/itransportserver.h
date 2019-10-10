@@ -23,6 +23,7 @@ public:
     virtual void addObserverSubscriber(ItransportServerObserver& o);
     virtual void removeObserverSubscriber(ItransportServerObserver& o);
     virtual void init() = 0;
+    virtual void send(const char* dat, int32_t len) = 0;
 protected:
     std::list<ItransportServerObserver*> m_observers;
     parameterMap m_defaultParameters;
