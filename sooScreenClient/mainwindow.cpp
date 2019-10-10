@@ -30,23 +30,25 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     m_clientAddr = QHostAddress(client);
-    connect(&srvr,SIGNAL(newConnection()),this,SLOT(on_newConnection()));
-    srvr.listen(QHostAddress::Any,port);
+
+    m_ptrSock = new QTcpSocket(this);
+    m_ptrSock->connectToHost(m_clientAddr,port);
+
+
+    connect(m_ptrSock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
+    connect(m_ptrSock,SIGNAL(connected()),this,SLOT(on_socketConnected()));
     connect(&m_tmr,SIGNAL(timeout()),this,SLOT(on_timerTimeout()));
-    ui->lbl->setText("Listening!");
+    ui->lbl->setText("Init!");
 
 }
 
-void MainWindow::on_newConnection()
+/*void MainWindow::on_newConnection()
 {
     std::cout<< "new connection!" << std::endl;
     ui->lbl->setText("Connected!");
-    QTcpSocket* ptrSock = srvr.nextPendingConnection();
-    m_ptrSock = ptrSock;
-    connect(m_ptrSock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
-    srvr.close();
+
     m_tmr.start(20);
-}
+}*/
 
 void MainWindow::on_timerTimeout()
 {
@@ -124,11 +126,13 @@ void MainWindow::on_socketDisconnected()
 {
     std::cout<< "bye connection!" << std::endl;
     ui->lbl->setText("Disconnected!");
-    disconnect(m_ptrSock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
+    //disconnect(m_ptrSock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
+
+
     /*if(m_ptrSock)
         delete m_ptrSock;*/
 
-    srvr.listen(QHostAddress::Any,port);
+
 }
 
 MainWindow::~MainWindow()
@@ -140,4 +144,10 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_clicked()
 {
 
+}
+
+void MainWindow::on_socketConnected()
+{
+    ui->lbl->setText("Connected!");
+    m_tmr.start(20);
 }

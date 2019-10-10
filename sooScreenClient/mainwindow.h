@@ -26,12 +26,12 @@ public:
 
 private slots:
     void on_pushButton_clicked();
-    void on_newConnection();
+    void on_socketConnected();
     void on_timerTimeout();
     void on_socketDisconnected();
 private:
     Ui::MainWindow *ui;
-    SO srvr;
+
     QString client = "127.0.0.1";
     uint16_t port = 12345;
     QHostAddress m_clientAddr;
