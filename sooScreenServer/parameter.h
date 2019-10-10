@@ -48,11 +48,23 @@ public:
      {
          m_value = val;
      }
+
+
 };
 
 class parameterMap : public std::map<std::string,parameter>
 {
-
+public:
+    static void insertParameters(parameterMap& member, parameterMap toInsert)
+    {
+        //insert into local para map
+        auto itPara =  toInsert.begin();
+        while(itPara != toInsert.end())
+        {
+            member[itPara->first] = itPara->second;
+            itPara++;
+        }
+    }
 };
 
 #endif // PARAMETER_H
