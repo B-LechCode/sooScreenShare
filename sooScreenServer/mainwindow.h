@@ -11,14 +11,16 @@
 #include <QtNetwork/QHostAddress>
 #include <QString>
 #include <QTimer>
-
+#include "mainworker.h"
 #include "iscreenshot.h"
+#include "iimagecompressor.h"
+#include "itransportserver.h"
 
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow :  public QMainWindow
 {
     Q_OBJECT
 
@@ -36,6 +38,8 @@ private:
     Ui::MainWindow *ui;
 
     IscreenShot* m_screen = nullptr;
+    IImageCompressor* m_comp = nullptr;
+    ItransportServer* m_trans = nullptr;
     //std::vector<uint8_t> m_sendbuffer;
     uint8_t*    m_sendbuffer = nullptr;
     uint64_t         m_bufferSize;
@@ -55,6 +59,7 @@ private:
     uint64_t m_couterTime = 0;
     uint64_t m_minTime = 999999999999;
     uint64_t m_maxTime = 0;
+    mainWorker m_work;
 };
 
 #endif // MAINWINDOW_H

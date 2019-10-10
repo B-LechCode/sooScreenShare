@@ -26,19 +26,17 @@ public:
 
 private slots:
     void on_pushButton_clicked();
-    void on_newConnection();
+    void on_socketConnected();
     void on_timerTimeout();
     void on_socketDisconnected();
 private:
     Ui::MainWindow *ui;
-    SO srvr;
+
     QString client = "127.0.0.1";
     uint16_t port = 12345;
     QHostAddress m_clientAddr;
     QTcpSocket* m_ptrSock = nullptr;
-    QTimer m_tmr;
-    void writeBigCock(QByteArray &dat);
-    void writeBigCock(char* data,int len);
+    QTimer m_tmr;    
 };
 
 #endif // MAINWINDOW_H

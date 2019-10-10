@@ -1,6 +1,7 @@
 #ifndef SCREENSHOTX11SHM_H
 #define SCREENSHOTX11SHM_H
 
+#include <opencv2/stitching.hpp>
 #include "iscreenshot.h"
 
 #include <X11/Xlib.h>
@@ -59,7 +60,7 @@ struct screenShotX11Shm : public IscreenShot
         shmdt(shminfo.shmaddr);
         XCloseDisplay(display);
     }
-
+private:
     Display* display;
     Window root;
     XWindowAttributes window_attributes;
