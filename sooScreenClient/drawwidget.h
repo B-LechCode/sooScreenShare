@@ -13,7 +13,7 @@
 #include <QPixmap>
 #include <QElapsedTimer>
 #include <iostream>
-#include <opencv/cv.hpp>
+#include <opencv2/opencv.hpp>
 #define USEGL 1
 
 
