@@ -19,6 +19,7 @@
 #include <iostream>
 
 #include "screenshotfactory.h"
+#include "imagecompressorfactory.h"
 
 
 #define HEADER_SIZE 64
@@ -34,8 +35,10 @@ MainWindow::MainWindow(QWidget *parent) :
     m_clientAddr = QHostAddress(client);
 
     m_screen = screenShotFactory::getBackend(x11,0, 0, 1920, 1080);
+    m_comp   = imageCompressorFactory::getBackend(cvJpeg);
+
     m_sendbuffer = new uint8_t[m_bufferSize];
-    if(m_screen)
+    if(m_screen && m_comp)
         sock.connectToHost(m_clientAddr, port,QAbstractSocket::WriteOnly);
 
     connect(&sock,SIGNAL(connected()),this,SLOT(on_socketConnected()));
@@ -108,30 +111,20 @@ void MainWindow::pbc()
 
     QElapsedTimer t2;
     int64_t rval;
-    //t.start();
     t2.start();
 
     IscreenShot& screen = *m_screen;
 
 
-    cv::Mat imgCrop = screen();
-    //std::cout<< "Get Image Cropped & Create Mat " << t.elapsed() << std::endl;
-    //t.restart();
+    cv::Mat imgCrop = screen();   
 
-    std::vector<int> compression_params;
+    std::vector<uint8_t> buf = m_comp->compress(imgCrop);
 
-
-    compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
-    compression_params.push_back(95);
-    std::vector<uint8_t> buf;
-
-    auto encRet = cv::imencode(".jpg",imgCrop,buf,compression_params);
-
-    if(!encRet)
+    /*if(!encRet)
     {
         qDebug() << "ERROR ENCODE!!";
     }
-    else
+    else*/
     {
         if((buf.size()+HEADER_SIZE)>m_bufferSize)
         {
@@ -180,9 +173,4 @@ void MainWindow::pbc()
         m_tmr.start(static_cast<int>(diff));
     else
         m_tmr.start(0);
-
-
-    //std::cout << rval << std::endl;
-
-
 }

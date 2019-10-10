@@ -2,10 +2,10 @@
 #define ITRANSPORTSERVER_H
 
 
-class itransportServer
+class ItransportServer
 {
 public:
-    itransportServer();
+    ItransportServer();
 };
 
 #endif // ITRANSPORTSERVER_H

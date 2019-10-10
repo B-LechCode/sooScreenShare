@@ -1,9 +1,8 @@
 #ifndef IMAGECOMPRESSORFACTORY_H
 #define IMAGECOMPRESSORFACTORY_H
 
-
-#include "iimagecompressor.h"
 #include "opencvjpegimagecompressor.h"
+#include "iimagecompressor.h"
 
 #define cvJpeg "jpeg"
 
@@ -20,7 +19,7 @@ public:
         return  m_backends;
     }
 
-    static iImageCompressor* getBackend(std::string backendName)
+    static IImageCompressor* getBackend(std::string backendName)
     {
         if(backendName == cvJpeg)
             return new opencvJpegImageCompressor();

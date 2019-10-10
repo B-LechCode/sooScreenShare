@@ -1,11 +1,13 @@
 #include "iimagecompressor.h"
 
-iImageCompressor::iImageCompressor()
+
+
+IImageCompressor::IImageCompressor()
 {
 
 }
 
-iImageCompressor::~iImageCompressor()
+IImageCompressor::~IImageCompressor()
 {
 
 }

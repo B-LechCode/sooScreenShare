@@ -4,11 +4,12 @@
 #include <opencv/cv.hpp>
 #include <vector>
 
-class iImageCompressor
+class IImageCompressor
 {
 public:
-    iImageCompressor();
-    virtual ~iImageCompressor();
+    IImageCompressor();
+    virtual ~IImageCompressor();
+    virtual std::vector<uint8_t> compress(cv::Mat& img, bool& ok) = 0;
     virtual std::vector<uint8_t> compress(cv::Mat& img) = 0;
 };
 

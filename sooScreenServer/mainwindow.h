@@ -13,6 +13,8 @@
 #include <QTimer>
 
 #include "iscreenshot.h"
+#include "iimagecompressor.h"
+#include "itransportserver.h"
 
 namespace Ui {
 class MainWindow;
@@ -36,6 +38,8 @@ private:
     Ui::MainWindow *ui;
 
     IscreenShot* m_screen = nullptr;
+    IImageCompressor* m_comp = nullptr;
+    ItransportServer* m_trans = nullptr;
     //std::vector<uint8_t> m_sendbuffer;
     uint8_t*    m_sendbuffer = nullptr;
     uint64_t         m_bufferSize;

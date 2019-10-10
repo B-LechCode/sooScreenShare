@@ -1,6 +1,6 @@
 #include "itransportserver.h"
 
-itransportServer::itransportServer()
+ItransportServer::ItransportServer()
 {
 
 }
