@@ -11,7 +11,7 @@
 #include <QtNetwork/QHostAddress>
 #include <QString>
 #include <QTimer>
-
+#include "mainworker.h"
 #include "iscreenshot.h"
 #include "iimagecompressor.h"
 #include "itransportserver.h"
@@ -59,7 +59,7 @@ private:
     uint64_t m_couterTime = 0;
     uint64_t m_minTime = 999999999999;
     uint64_t m_maxTime = 0;
-
+    mainWorker m_work;
 };
 
 #endif // MAINWINDOW_H

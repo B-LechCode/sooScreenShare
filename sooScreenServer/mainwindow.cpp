@@ -22,6 +22,8 @@
 #include "imagecompressorfactory.h"
 
 
+
+
 #define HEADER_SIZE 64
 #define HEADERSTRING_OFFSET 32
 
@@ -39,14 +41,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_sendbuffer = new uint8_t[m_bufferSize];
     if(m_screen && m_comp)
-        sock.connectToHost(m_clientAddr, port,QAbstractSocket::WriteOnly);
+    //    sock.connectToHost(m_clientAddr, port,QAbstractSocket::WriteOnly);
 
     connect(&sock,SIGNAL(connected()),this,SLOT(on_socketConnected()));
     connect(&sock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
     connect(&m_tmr,SIGNAL(timeout()),this,SLOT(on_timerTimeout()));
-    m_tmr.setSingleShot(true);
+    //m_tmr.setSingleShot(true);
 
     createHeader();
+
+    m_work.init();
 
 }
 
@@ -79,7 +83,8 @@ void MainWindow::on_socketDisconnected()
 
 void MainWindow::on_timerTimeout()
 {
-    pbc();
+    m_work.run();
+    //pbc();
 }
 
 MainWindow::~MainWindow()
@@ -93,7 +98,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    pbc();
+    m_tmr.start(40);
 }
 void MainWindow::pbc()
 {

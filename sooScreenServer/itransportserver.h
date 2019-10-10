@@ -12,7 +12,7 @@ class ItransportServerObserver
 public:
     ItransportServerObserver();
     virtual ~ItransportServerObserver();
-    virtual void newMessage(std::string str)=0;
+    virtual void transportNewMessage(std::string str)=0;
 };
 
 class ItransportServer
