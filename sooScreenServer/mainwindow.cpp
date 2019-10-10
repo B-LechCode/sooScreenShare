@@ -29,23 +29,23 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    m_bufferSize(1920*1080*4+HEADER_SIZE)
+    m_bufferSize(1600 * 900 * 4 + HEADER_SIZE)
 {
     ui->setupUi(this);
 
     m_clientAddr = QHostAddress(client);
 
-    //m_screen = screenShotFactory::getBackend(nullptr,0, 0, 1920, 1080);
+    m_screen = screenShotFactory::getBackend(backend_win, 0, 0, 1600, 900);
     m_comp   = imageCompressorFactory::getBackend(cvJpeg);
 
     m_sendbuffer = new uint8_t[m_bufferSize];
     if(m_screen && m_comp)
-    //    sock.connectToHost(m_clientAddr, port,QAbstractSocket::WriteOnly);
+        sock.connectToHost(m_clientAddr, port,QAbstractSocket::WriteOnly);
 
     connect(&sock,SIGNAL(connected()),this,SLOT(on_socketConnected()));
     connect(&sock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
     connect(&m_tmr,SIGNAL(timeout()),this,SLOT(on_timerTimeout()));
-    //m_tmr.setSingleShot(true);
+    m_tmr.setSingleShot(true);
 
     createHeader();
 

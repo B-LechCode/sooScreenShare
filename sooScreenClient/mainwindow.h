@@ -33,7 +33,7 @@ private:
     Ui::MainWindow *ui;
 
     QString client = "127.0.0.1";
-    uint16_t port = 12345;
+    uint16_t port = 58000;
     QHostAddress m_clientAddr;
     QTcpSocket* m_ptrSock = nullptr;
     QTimer m_tmr;    

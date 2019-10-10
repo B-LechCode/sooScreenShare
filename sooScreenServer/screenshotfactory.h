@@ -7,8 +7,10 @@
 #include "iscreenshot.h"
 
 //#include "screenshotx11shm.h"
+#include "screenshotwin.h"
 
 #define x11 "X11_Shm_Grab"
+#define backend_win "Windows_Grab"
 
 class screenShotFactory
 {
@@ -27,6 +29,9 @@ public:
     {
         //if(backendName == x11)
         //    return new screenShotX11Shm(x,y,w,h);
+
+		if (backendName == backend_win)
+			return new screenShotWin(x, y, w, h);
 
         return nullptr;
     }

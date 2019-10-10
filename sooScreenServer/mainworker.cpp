@@ -46,7 +46,7 @@ mainWorker::~mainWorker()
 void mainWorker::init()
 {
     //TODO parameter change
-    m_screen = screenShotFactory::getBackend(x11,x, y, w, h); //TODO set screen size!
+    m_screen = screenShotFactory::getBackend(backend_win,x, y, w, h); //TODO set screen size!
     m_comp   = imageCompressorFactory::getBackend(cvJpeg);
     m_trans  = transportServerFactory::getBackend(qtTcpServer);
     m_trans->addObserverSubscriber(*(ItransportServerObserver*)this);

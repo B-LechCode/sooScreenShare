@@ -8,7 +8,7 @@
 class mainWorker:private ItransportServerObserver
 {
     const int32_t x=0,y=0;
-    const uint32_t w=1920,h=1080;
+    const uint32_t w=1600,h=900;
 public:
     mainWorker();
     virtual ~mainWorker();

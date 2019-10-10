@@ -2,7 +2,7 @@
 
 transportServerTCP::transportServerTCP()
 {
-    m_defaultParameters[PORT] = parameter("The TCP port to listen on","int16","12345");
+    m_defaultParameters[PORT] = parameter("The TCP port to listen on","int16","58000");
     m_defaultParameters[HOST_ADDRESS] = parameter("The address/network interface to listen on","string","any");
     setParameters(m_defaultParameters);
     connect(&m_srvr,SIGNAL(newConnection()),this,SLOT(on_newConnection()));
@@ -48,7 +48,7 @@ int64_t transportServerTCP::send(const char *dat, int64_t len)
     {
         retVal =  m_ptrSock->write(dat,len);
         while(m_ptrSock->bytesToWrite())
-            ;//m_ptrSock->flush();
+            m_ptrSock->flush();
     }
 
     return retVal;

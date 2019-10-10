@@ -47,7 +47,7 @@ private:
     SO sock;
     //QString client = "192.168.0.2";
     QString client = "127.0.0.1";
-    uint16_t port = 12345;
+    uint16_t port = 50000;
     QHostAddress m_clientAddr;
     QTimer m_tmr;
 
