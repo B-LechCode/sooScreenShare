@@ -59,7 +59,7 @@ struct screenShotX11Shm : public IscreenShot
         shmdt(shminfo.shmaddr);
         XCloseDisplay(display);
     }
-
+private:
     Display* display;
     Window root;
     XWindowAttributes window_attributes;
