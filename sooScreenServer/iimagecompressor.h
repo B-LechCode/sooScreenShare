@@ -1,7 +1,7 @@
 #ifndef IIMAGECOMPRESSOR_H
 #define IIMAGECOMPRESSOR_H
 
-#include <opencv/cv.hpp>
+#include <opencv2/opencv.hpp>
 #include <vector>
 
 class iImageCompressor

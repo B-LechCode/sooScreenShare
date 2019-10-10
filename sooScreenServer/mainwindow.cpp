@@ -5,7 +5,6 @@
 #include <QLabel>
 #include <QByteArray>
 
-#include <opencv/cv.hpp>
 #include <opencv2/opencv.hpp>
 
 #include <QElapsedTimer>
@@ -33,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_clientAddr = QHostAddress(client);
 
-    m_screen = screenShotFactory::getBackend(x11,0, 0, 1920, 1080);
+    //m_screen = screenShotFactory::getBackend(nullptr,0, 0, 1920, 1080);
     m_sendbuffer = new uint8_t[m_bufferSize];
     if(m_screen)
         sock.connectToHost(m_clientAddr, port,QAbstractSocket::WriteOnly);

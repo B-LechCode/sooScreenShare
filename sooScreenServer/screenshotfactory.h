@@ -6,7 +6,7 @@
 
 #include "iscreenshot.h"
 
-#include "screenshotx11shm.h"
+//#include "screenshotx11shm.h"
 
 #define x11 "X11_Shm_Grab"
 
@@ -25,8 +25,8 @@ public:
 
     static IscreenShot* getBackend(std::string backendName,int x,int y, uint w, uint h)
     {
-        if(backendName == x11)
-            return new screenShotX11Shm(x,y,w,h);
+        //if(backendName == x11)
+        //    return new screenShotX11Shm(x,y,w,h);
 
         return nullptr;
     }
