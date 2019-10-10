@@ -23,7 +23,10 @@ private:
     uint64_t         m_bufferSize;
     void createHeader();
     void insertHeaderNumBytes(int byteCount);
-
+    virtual void transportNewMessage(std::string str)
+    {
+        std::cout << str << std::endl;
+    }
 
 };
 

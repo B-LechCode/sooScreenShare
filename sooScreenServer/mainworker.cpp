@@ -49,6 +49,8 @@ void mainWorker::init()
     m_screen = screenShotFactory::getBackend(x11,x, y, w, h); //TODO set screen size!
     m_comp   = imageCompressorFactory::getBackend(cvJpeg);
     m_trans  = transportServerFactory::getBackend(qtTcpServer);
+    m_trans->addObserverSubscriber(*(ItransportServerObserver*)this);
+    m_trans->init();
     createHeader();
 }
 

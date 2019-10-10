@@ -28,7 +28,7 @@ private slots:
     void on_socketDisconnected();
 private:
     QTcpServer m_srvr;
-    QTcpSocket* m_ptrSock;
+    QTcpSocket* m_ptrSock = nullptr;
     uint16_t   m_port;
     QHostAddress m_interface;
 
