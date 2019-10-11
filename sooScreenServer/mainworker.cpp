@@ -56,6 +56,7 @@ void mainWorker::init()
 
 void mainWorker::run()
 {
+
     bool compressOk;
 
     //Get Screenshot
@@ -83,7 +84,7 @@ void mainWorker::run()
 
 
     //send
-    m_trans->send(reinterpret_cast<char*>(m_sendbuffer),static_cast<int64_t>(m_bufferSize));
+    m_trans->send(reinterpret_cast<char*>(m_sendbuffer),static_cast<int64_t>(compressedImageData.size()+HEADER_SIZE));
 
     img.release();
 }
