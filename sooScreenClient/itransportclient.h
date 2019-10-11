@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 #include <list>
-
+#include <vector>
 #include "parameter.h"
 
 class ItransportClientObserver
@@ -13,6 +13,7 @@ public:
     ItransportClientObserver();
     virtual ~ItransportClientObserver();
     virtual void transportNewMessage(std::string str)=0;
+    virtual void transportDataAvailable(std::vector<uint8_t> data)=0;
 };
 
 class ItransportClient

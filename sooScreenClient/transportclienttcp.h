@@ -8,6 +8,13 @@
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QHostAddress>
 
+#include <thread>
+#include <chrono>
+#include <QString>
+#include <QThread>
+#include <QMutex>
+#include <QElapsedTimer>
+#include <iostream>
 namespace trans {
     #define PORT "port"
     #define HOST_ADDRESS "hostAddr"
@@ -22,15 +29,18 @@ public:
     virtual void setParameters(parameterMap& para);
     virtual void init();
     virtual int64_t send(const char* dat, int64_t len);
-private slots:
 
-    //void on_timerTimeout();
+private slots:
+    void on_dataReady();
+    void on_message(const QString msg);
     void on_socketDisconnected();
     void on_socketConnected();
+    void on_readyRead();
 private:    
     QTcpSocket m_sock;
     uint16_t   m_port;
     QHostAddress m_address;
+    std::vector<uint8_t> m_recData;
 
     void notifyMessage(const char* str);
     void notifyMessage(const std::string& str);

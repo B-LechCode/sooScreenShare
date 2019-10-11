@@ -1,18 +1,29 @@
 #include "transportclienttcp.h"
 
-transportClientTCP::transportClientTCP()
+
+
+
+transportClientTCP::transportClientTCP()/*:m_pollInterface(&m_sock)*/
 {
     m_defaultParameters[PORT] = parameter("The TCP port to connect on","int16","12345");
     m_defaultParameters[HOST_ADDRESS] = parameter("The address interface to connect on","string","127.0.0.1");
     setParameters(m_defaultParameters);
+
     connect(&m_sock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
     connect(&m_sock,SIGNAL(connected()),this,SLOT(on_socketConnected()));
+    connect(&m_sock,SIGNAL(readyRead()),this,SLOT(on_readyRead()));
+
+
 
 }
 
 transportClientTCP::~transportClientTCP()
 {
-
+    /*if(m_tcpWorker.isRunning())
+    {
+        m_tcpWorker.setRun(false);
+        m_tcpWorker.wait();
+    }*/
 }
 
 void transportClientTCP::setParameters(parameterMap &para)
@@ -31,33 +42,44 @@ void transportClientTCP::setParameters(parameterMap &para)
 void transportClientTCP::init()
 {
     notifyMessage("start connecting on "+m_parameters[HOST_ADDRESS].value()+":"+m_parameters[PORT].value());
+
     m_sock.connectToHost(m_address,m_port);
+    m_sock.waitForConnected();
+
 }
 
 int64_t transportClientTCP::send(const char *dat, int64_t len)
 {
-    int64_t retVal = -1;
+    /*int64_t retVal = -1;
     if(m_sock.isWritable())
     {
         retVal =  m_sock.write(dat,len);
         while(m_sock.bytesToWrite())
             m_sock.flush();
-    }
+    }*/
 
-    return retVal;
+    return 0;
 }
 
 
-void transportClientTCP::on_socketDisconnected()
+void transportClientTCP::on_dataReady()
 {
-    notifyMessage("connection closed!");
-
-    init();
+    (*m_observers.begin())->transportDataAvailable(std::move(m_recData));
 }
 
-void transportClientTCP::on_socketConnected()
+void transportClientTCP::on_message(const QString msg)
 {
-    notifyMessage("connection opened!");
+    notifyMessage(msg.toStdString());
+}
+
+void transportClientTCP::on_readyRead()
+{
+    auto l = m_sock.readAll();
+    if(!m_recData.size())
+        m_recData = std::vector<uint8_t>(l.begin(),l.end());
+    else
+        m_recData.insert(m_recData.end(),l.begin(),l.end());
+    on_dataReady();
 }
 
 void transportClientTCP::notifyMessage(const char* str)
@@ -67,14 +89,15 @@ void transportClientTCP::notifyMessage(const char* str)
 
 void transportClientTCP::notifyMessage(const std::string &str)
 {
-    auto itObs = m_observers.begin();
+    (*m_observers.begin())->transportNewMessage(str);
+}
 
-    while(itObs != m_observers.end())
-    {
-        if(*itObs)
-        {
-            (*itObs)->transportNewMessage(str);
-        }
-        itObs++;
-    }
+void transportClientTCP::on_socketDisconnected()
+{
+    notifyMessage("connection closed!");
+}
+
+void transportClientTCP::on_socketConnected()
+{
+    notifyMessage("connection opened!");
 }

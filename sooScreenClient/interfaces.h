@@ -3,6 +3,6 @@
 
 #include "iimagedecompressor.h"
 #include "itransportclient.h"
-
+#include "idraw.h"
 
 #endif // INTERFACES_H

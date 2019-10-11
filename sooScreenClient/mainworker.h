@@ -12,7 +12,7 @@ class mainWorker:private ItransportClientObserver
 public:
     mainWorker();
     virtual ~mainWorker();
-    void init();
+    void init(Idraw* ptrDraw);
     void run();
     void end();
 private:
@@ -21,13 +21,18 @@ private:
     ItransportClient* m_trans = nullptr;
     uint8_t*    m_sendbuffer = nullptr;
     uint64_t         m_bufferSize;
-    void createHeader();
-    void insertHeaderNumBytes(int byteCount);
+    Idraw*      m_ptrDraw = nullptr;
+
+    std::vector<uint8_t> myBuf;
+    bool m_initOk;
 
     virtual void transportNewMessage(std::string str)
     {
         std::cout << str << std::endl;
     }
+
+    virtual void transportDataAvailable(std::vector<uint8_t> data);
+
 
 };
 
