@@ -15,8 +15,8 @@ public:
     virtual parameterMap getParameters();
     virtual void setParameters(parameterMap& para);
 
-    virtual cv::Mat decompress(std::vector<uint8_t>& dat, bool& ok) = 0;
-    virtual cv::Mat decompress(std::vector<uint8_t>& dat) = 0;
+    virtual cv::Mat decompress(cv::Mat& dat, bool& ok) = 0;
+    virtual cv::Mat decompress(cv::Mat& dat) = 0;
 protected:
     parameterMap m_defaultParameters;
     parameterMap m_parameters;

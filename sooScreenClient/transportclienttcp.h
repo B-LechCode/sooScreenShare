@@ -31,7 +31,7 @@ public:
     virtual int64_t send(const char* dat, int64_t len);
 
 private slots:
-    void on_dataReady();
+
     void on_message(const QString msg);
     void on_socketDisconnected();
     void on_socketConnected();

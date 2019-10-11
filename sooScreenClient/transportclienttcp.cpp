@@ -50,21 +50,15 @@ void transportClientTCP::init()
 
 int64_t transportClientTCP::send(const char *dat, int64_t len)
 {
-    /*int64_t retVal = -1;
+    int64_t retVal = -1;
     if(m_sock.isWritable())
     {
         retVal =  m_sock.write(dat,len);
         while(m_sock.bytesToWrite())
             m_sock.flush();
-    }*/
+    }
 
-    return 0;
-}
-
-
-void transportClientTCP::on_dataReady()
-{
-    (*m_observers.begin())->transportDataAvailable(std::move(m_recData));
+    return retVal;
 }
 
 void transportClientTCP::on_message(const QString msg)
@@ -75,11 +69,12 @@ void transportClientTCP::on_message(const QString msg)
 void transportClientTCP::on_readyRead()
 {
     auto l = m_sock.readAll();
-    if(!m_recData.size())
-        m_recData = std::vector<uint8_t>(l.begin(),l.end());
-    else
-        m_recData.insert(m_recData.end(),l.begin(),l.end());
-    on_dataReady();
+
+    //We can do this, because we are sure that we won't sacrifice existing data in the Buffer!
+    m_recData = std::vector<uint8_t>(l.size());
+    memcpy(m_recData.data(),l.data(),l.size());
+
+    (*m_observers.begin())->transportDataAvailable(std::move(m_recData));
 }
 
 void transportClientTCP::notifyMessage(const char* str)

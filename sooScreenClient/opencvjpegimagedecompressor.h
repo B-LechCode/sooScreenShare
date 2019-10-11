@@ -17,7 +17,7 @@ public:
 
     virtual void setParameters(parameterMap& para);
 
-    inline virtual cv::Mat decompress(std::vector<uint8_t>& dat, bool& ok)
+    inline virtual cv::Mat decompress(cv::Mat& dat, bool& ok)
     {
         cv::Mat img;
         decompressHelper(img,dat);
@@ -25,13 +25,13 @@ public:
         return img;
     }
 
-    inline virtual cv::Mat decompress(std::vector<uint8_t>& dat)
+    inline virtual cv::Mat decompress(cv::Mat& dat)
     {
         cv::Mat img;
         decompressHelper(img,dat);
         return img;
     }
-    inline void decompressHelper(cv::Mat& img,std::vector<uint8_t>& dat)
+    inline void decompressHelper(cv::Mat& img,cv::Mat& dat)
     {
         img = cv::imdecode(cv::Mat(dat),-1);
     }

@@ -2,7 +2,7 @@
 #include "factories.h"
 #include <opencv2/opencv.hpp>
 
-#define DEBUG 0
+#define DEBUG 1
 
 #define HEADER_SIZE 64
 #define HEADERSTRING_OFFSET 32
@@ -48,14 +48,53 @@ void mainWorker::end()
 
 }
 
-void mainWorker::transportDataAvailable(std::vector<uint8_t> data)
+int checkFrameAvail(std::vector<uint8_t>& data,size_t pos)
 {
-    static size_t hdrStart = std::string::npos;
-    static size_t dataLen = std::string::npos;
+    int retVal = -1;
+    if(data.size()>pos+HEADER_SIZE)
+    {
+        char* ptrZahl = reinterpret_cast<char*>(data.data())+pos+HEADERSTRING_OFFSET;
+        int zahl;
+        memcpy(&zahl,ptrZahl,sizeof(int));
+
+        if(data.size() >= (pos+HEADER_SIZE+zahl))
+            retVal = zahl;
+    }
+    return retVal;
+
+}
+
+int getLastFullAvailableFrame(std::vector<uint8_t>& data,size_t& pos, int& length)
+{
+    std::string in = std::string(reinterpret_cast<char*>(data.data()),data.size());
+    int num = 0;
+    size_t posNow = 0;
+    int lengthNow = -1;
+    do
+    {
+        length = lengthNow;
+        pos = posNow-1;
+        posNow = in.find("ScreenImage",posNow);
+        lengthNow = checkFrameAvail(data,posNow);
+
+        posNow++;
+        num += static_cast<int>(posNow != std::string::npos && lengthNow>0);
+    }while(lengthNow != -1);
+
+    /*std::cout << " numHdr " <<num << std::endl;
+    std::cout << " pos " <<pos << std::endl;
+    std::cout << " length " <<length << std::endl;*/
+    return num;
+}
+
+void mainWorker::transportDataAvailable(std::vector<uint8_t> data)
+{ 
+    static uint32_t droppedFrames = 0;
 
     std::vector<uint8_t>* ptrRef = &data;
     bool workingWithMemberBuffer = false;
-    if(myBuf.size()>0) //only "reasemble" if necesary!
+
+    if(myBuf.size()>0) //only use member buffer if necesary, better process in place!
     {
         myBuf.insert(myBuf.end(),data.begin(),data.end());
         ptrRef = &myBuf;
@@ -64,69 +103,34 @@ void mainWorker::transportDataAvailable(std::vector<uint8_t> data)
 
     std::vector<uint8_t>& refBuff = *ptrRef;
 
+    size_t myPos;
+    int    myLength, myCount;
 
-    if(hdrStart == std::string::npos)
+    if((myCount = getLastFullAvailableFrame(refBuff,myPos,myLength)))
     {
-        QElapsedTimer tmr;
-        tmr.start();
-        //Find the Header-String!
-        std::string sdf = std::string(reinterpret_cast<char*>(refBuff.data()),refBuff.size());
-        size_t headerStart = sdf.find("ScreenImage");
+        droppedFrames += myCount-1;
 
-        if(headerStart != std::string::npos)
+#if DEBUG
+        if(myCount>1)
+            std::cout << " droppedFrames " <<droppedFrames << std::endl;
+#endif
+        auto t = cv::Mat (1, myLength, CV_8UC1,refBuff.data()+myPos+HEADER_SIZE);
+        cv::Mat img = cv::imdecode(t,-1);
+        m_ptrDraw->display(img);
+
+
+        if(workingWithMemberBuffer)
         {
-            hdrStart = headerStart;
+            if(refBuff.size() == (myPos+HEADER_SIZE+myLength))
+                myBuf.clear();//We're done: erase everything
+            else
+                myBuf.erase(myBuf.begin(),myBuf.begin()+myPos+HEADER_SIZE+myLength); //We're only partially done, trim the member buffer
         }
+        else if(refBuff.size() > (myPos+HEADER_SIZE+myLength))
+                myBuf.insert(myBuf.end(),data.begin()+myPos+HEADER_SIZE+myLength,data.end()); //We have more than one frame in our input buffer, save the unprocessed to the member buffer!
     }
-
-    if(hdrStart != std::string::npos && dataLen == std::string::npos && refBuff.size() >=hdrStart+HEADER_SIZE)
+    else if(!workingWithMemberBuffer)
     {
-        QElapsedTimer tmr;
-        tmr.start();
-        char* ptrZahl = reinterpret_cast<char*>(refBuff.data())+hdrStart+HEADERSTRING_OFFSET;
-        int zahl;
-        memcpy(&zahl,ptrZahl,sizeof(int));
-        dataLen = zahl;
-#if DEBUG
-        std::cout <<" find size " << tmr.elapsed() << std::endl;
-#endif
+        myBuf.insert(myBuf.end(),data.begin(),data.end()); //We need to save the incomplete data!
     }
-
-    //Check if our length is long enough to have the whole img!
-        if(hdrStart != std::string::npos && dataLen != std::string::npos && (hdrStart+dataLen) <= refBuff.size())
-        {
-            QElapsedTimer tmr;
-            tmr.start();
-
-#if DEBUG
-            std::cout <<" copy " << tmr.elapsed() << std::endl;
-#endif
-            auto t = cv::Mat (1, dataLen, CV_8UC1,refBuff.data()+hdrStart+HEADER_SIZE);
-            cv::Mat img = cv::imdecode(t,-1);
-#if DEBUG
-            std::cout <<" decode " << tmr.elapsed() << std::endl;
-#endif
-            if(refBuff.size() == (hdrStart+HEADER_SIZE+dataLen) && workingWithMemberBuffer)
-                myBuf.clear();
-            else if (workingWithMemberBuffer)
-                myBuf.erase(myBuf.begin(),myBuf.begin()+hdrStart+HEADER_SIZE+dataLen);
-#if DEBUG
-            std::cout <<" kill " << tmr.elapsed() << std::endl;
-#endif
-            hdrStart = std::string::npos;
-            dataLen = std::string::npos;
-
-
-            m_ptrDraw->display(img);
-
-#if DEBUG
-            std::cout <<" timer draw " << tmr.elapsed() << std::endl;
-#endif
-        }
-        else
-        {
-            myBuf.insert(myBuf.end(),data.begin(),data.end());
-        }
-
-
 }
