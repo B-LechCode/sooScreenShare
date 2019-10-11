@@ -8,8 +8,9 @@ drawWidget::drawWidget(QWidget *parent ,Qt::WindowFlags f):
 }
 
 
+bool init = false;
 
-
+GLuint oldid=0;
 void drawWidget::paintGL()
 {
     glClearColor(1.0,1.0,1.0,00);
@@ -20,7 +21,12 @@ void drawWidget::paintGL()
 
     glEnable(GL_TEXTURE_2D);
     GLuint texture_id;
+
+    if(!init)
+        glDeleteTextures(1,&oldid);
+
     glGenTextures(1, &texture_id);
+    oldid = texture_id;
     glBindTexture(GL_TEXTURE_2D, texture_id);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -42,9 +48,11 @@ void drawWidget::paintGL()
         glTexCoord2f(1,1); glVertex3f(1, -1, -1);
         glTexCoord2f(1,0); glVertex3f(1, 1, -1);
         glTexCoord2f(0,0); glVertex3f(-1, 1, -1);
+
     glEnd();
     glDisable(GL_TEXTURE_2D);
     glFlush();
+    m_drawImage.release();
 }
 
 
