@@ -2,9 +2,11 @@
 #define IMAGECOMPRESSORFACTORY_H
 
 #include "opencvjpegimagecompressor.h"
+#include "lz4imagecompressor.h"
 #include "iimagecompressor.h"
 
 #define cvJpeg "jpeg"
+#define lz4 "lz4"
 
 class imageCompressorFactory
 {
@@ -15,6 +17,7 @@ public:
         if(!m_backends.size())
         {
             m_backends.push_back(cvJpeg);
+            m_backends.push_back(lz4);
         }
         return  m_backends;
     }
@@ -23,6 +26,8 @@ public:
     {
         if(backendName == cvJpeg)
             return new opencvJpegImageCompressor();
+        if(backendName == lz4)
+            return new lz4ImageCompressor();
 
         return nullptr;
     }
