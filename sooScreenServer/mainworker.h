@@ -22,7 +22,7 @@ private:
     uint8_t*    m_sendbuffer = nullptr;
     uint64_t         m_bufferSize;
     void createHeader();
-    void insertHeaderNumBytes(int byteCount);
+    void insertHeaderNumBytes(int byteCount,int width,int height);
     virtual void transportNewMessage(std::string str)
     {
         std::cout << str << std::endl;
