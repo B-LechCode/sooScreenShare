@@ -23,17 +23,23 @@ set(CMAKE_BUILD_TYPE Debug CACHE TYPE STRING FORCE )
 FIND_PACKAGE(OpenCV REQUIRED )
 
 #QT suchen
-#FIND_PACKAGE( Qt5 5.11 CONFIG REQUIRED  Core Network Widgets Gui )
 find_package(Qt5 COMPONENTS  Core Network Widgets Gui REQUIRED)
 
 #X11 suchen
 FIND_PACKAGE(X11 REQUIRED)
+
+find_library (lz4_lib lz4)
+find_path (lz4_path /lz4.h)
+message(${lz4_lib})
+set(lz4_include_path /usr/local/include)
+message(${lz4_include_path})
 
 # Pfade für Include-Dateien
 include_directories (
         ${QT_INCLUDES}
         ${OpenCV_INCLUDES}
         ${OpenCV_INCLUDE_DIRS}
+        ${lz4_include_path}
 )
 
 # Fuege alle .cpp und alle .h Dateien aus dem aktuellen Ordner
@@ -78,6 +84,7 @@ TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
                 ${Qt5Network_LIBRARIES}
                 ${Qt5Core_LIBRARIES}
                 ${Qt5Gui_LIBRARIES}
+                ${lz4_lib}
 
 )
 
