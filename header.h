@@ -4,6 +4,7 @@
 #define HEADER_SIZE 64
 #define HEADERSTRING_OFFSET 32
 
+#define compressback cvJpeg
 
 class dataHeaderHandling
 {
@@ -14,7 +15,8 @@ public:
        int  length;           //36
        int  width;            //40
        int  height;           //44
-       char reserved2[20];    //64
+       int  cvType;           //48 //TODO: channels?
+       char reserved2[16];    //64
     } dHdr;
 };
 

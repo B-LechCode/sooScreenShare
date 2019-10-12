@@ -25,10 +25,9 @@ void mainWorker::init(Idraw* ptrDraw)
     if(!ptrDraw)
         return;
     m_ptrDraw = ptrDraw;
-    //TODO parameter change
-    //m_screen = screenShotFactory::getBackend(x11,x, y, w, h); //TODO set screen size!
-    m_decomp   = imageDecompressorFactory::getBackend(cvJpeg);
-    m_trans  = transportClientFactory::getBackend(qtTcpServer);
+    //TODO parameter change    
+    m_decomp   = imageDecompressorFactory::getBackend(compressback);
+    m_trans    = transportClientFactory::getBackend(qtTcpServer);
     m_trans->addObserverSubscriber(*(ItransportClientObserver*)this);
     m_trans->init();
 

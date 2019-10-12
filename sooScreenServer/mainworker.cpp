@@ -23,7 +23,8 @@ void mainWorker::init()
 {
     //TODO parameter change
     m_screen = screenShotFactory::getBackend(x11,x, y, w, h); //TODO set screen size!
-    m_comp   = imageCompressorFactory::getBackend(cvJpeg);
+    m_comp   = imageCompressorFactory::getBackend(compressback);
+    //m_comp   = imageCompressorFactory::getBackend(lz4);
     m_trans  = transportServerFactory::getBackend(qtTcpServer);
     m_trans->addObserverSubscriber(*(ItransportServerObserver*)this);
     m_trans->init();
@@ -43,7 +44,7 @@ void mainWorker::run()
 
     if(!compressOk)
         return; //TODO user notification
-
+    std::cout << compressedImageData.size() << std::endl;
     //check size
     if((compressedImageData.size()+HEADER_SIZE)>m_bufferSize)
     {
@@ -54,7 +55,7 @@ void mainWorker::run()
     }
 
     //Add Header
-    insertHeaderNumBytes(static_cast<int32_t>(compressedImageData.size()),static_cast<int32_t>(w),static_cast<int32_t>(h));
+    insertHeaderNumBytes(static_cast<int32_t>(compressedImageData.size()),static_cast<int32_t>(w),static_cast<int32_t>(h),img.type());
 
     memcpy(m_sendbuffer+HEADER_SIZE,compressedImageData.data(),compressedImageData.size());
 
@@ -78,10 +79,11 @@ void mainWorker::createHeader()
 
 }
 
-void mainWorker::insertHeaderNumBytes(int byteCount,int width,int height)
+void mainWorker::insertHeaderNumBytes(int byteCount, int width, int height, int cvType)
 {
     dataHeaderHandling::dHdr* hdr = reinterpret_cast<dataHeaderHandling::dHdr*>(m_sendbuffer);
     hdr->length = byteCount;
     hdr->width = width;
     hdr->height = height;
+    hdr->cvType = cvType;
 }
