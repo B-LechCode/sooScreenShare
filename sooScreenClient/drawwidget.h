@@ -25,6 +25,8 @@ class drawWidget:public QOpenGLWidget,public Idraw
 {
     Q_OBJECT
     cv::Mat m_drawImage;
+    bool m_init = false;
+    GLuint m_oldid=0;
 
 public:
 

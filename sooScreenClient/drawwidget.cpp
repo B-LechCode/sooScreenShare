@@ -8,25 +8,40 @@ drawWidget::drawWidget(QWidget *parent ,Qt::WindowFlags f):
 }
 
 
-bool init = false;
 
-GLuint oldid=0;
 void drawWidget::paintGL()
 {
     glClearColor(1.0,1.0,1.0,00);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
     if(m_drawImage.empty())
        return;
+
+    float aspWid = static_cast<float>(width())/static_cast<float>(height());
+    float aspImg = static_cast<float>(m_drawImage.cols)/static_cast<float>(m_drawImage.rows);
+
+    float xFac = 1;
+    float yFac = 1;
+
+    if(aspWid>aspImg) //"compress" x
+    {
+         xFac = aspImg/aspWid;
+    }
+    else if(aspWid<aspImg)//"compress" y
+    {
+         yFac = aspWid/aspImg;
+    }
+
 
     glEnable(GL_TEXTURE_2D);
     GLuint texture_id;
 
-    if(!init)
-        glDeleteTextures(1,&oldid);
+    if(!m_init)
+        glDeleteTextures(1,&m_oldid);
 
     glGenTextures(1, &texture_id);
-    oldid = texture_id;
+    m_oldid = texture_id;
     glBindTexture(GL_TEXTURE_2D, texture_id);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -47,11 +62,10 @@ void drawWidget::paintGL()
 
     glBindTexture(GL_TEXTURE_2D, texture_id);
     glBegin(GL_QUADS);
-        glTexCoord2f(0,1); glVertex3f(-1, -1, -1);
-        glTexCoord2f(1,1); glVertex3f(1, -1, -1);
-        glTexCoord2f(1,0); glVertex3f(1, 1, -1);
-        glTexCoord2f(0,0); glVertex3f(-1, 1, -1);
-
+        glTexCoord2f(0,1); glVertex3f(-1*xFac, -1*yFac, -1);
+        glTexCoord2f(1,1); glVertex3f(1*xFac, -1*yFac, -1);
+        glTexCoord2f(1,0); glVertex3f(1*xFac, 1*yFac, -1);
+        glTexCoord2f(0,0); glVertex3f(-1*xFac, 1*yFac, -1);
     glEnd();
     glDisable(GL_TEXTURE_2D);
     glFlush();    
