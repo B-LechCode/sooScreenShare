@@ -14,12 +14,14 @@
 #include <QElapsedTimer>
 #include <iostream>
 #include <opencv2/opencv.hpp>
+
+#include "idraw.h"
 #define USEGL 1
 
 
 
 #if USEGL
-class drawWidget:public QOpenGLWidget
+class drawWidget:public QOpenGLWidget,public Idraw
 {
     Q_OBJECT
     cv::Mat m_drawImage;
@@ -29,10 +31,10 @@ public:
     drawWidget(QWidget *parent = nullptr,Qt::WindowFlags f=Qt::WindowFlags());
     //virtual ~drawWidget();
 
-    inline void display(const cv::Mat& img)
+    inline virtual void display(const cv::Mat& img)
     {
         m_drawImage = img;
-        update();
+       update();
     }
 
 protected:

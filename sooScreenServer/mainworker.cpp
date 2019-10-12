@@ -1,9 +1,8 @@
 #include "mainworker.h"
 #include "factories.h"
 #include <opencv2/opencv.hpp>
+#include "./../header.h"
 
-#define HEADER_SIZE 64
-#define HEADERSTRING_OFFSET 32
 
 /*MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -56,6 +55,7 @@ void mainWorker::init()
 
 void mainWorker::run()
 {
+
     bool compressOk;
 
     //Get Screenshot
@@ -83,7 +83,7 @@ void mainWorker::run()
 
 
     //send
-    m_trans->send(reinterpret_cast<char*>(m_sendbuffer),static_cast<int64_t>(m_bufferSize));
+    m_trans->send(reinterpret_cast<char*>(m_sendbuffer),static_cast<int64_t>(compressedImageData.size()+HEADER_SIZE));
 
     img.release();
 }

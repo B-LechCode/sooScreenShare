@@ -11,6 +11,8 @@
 #include <QString>
 #include <QTimer>
 
+#include "mainworker.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -23,20 +25,9 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-
-private slots:
-    void on_pushButton_clicked();
-    void on_socketConnected();
-    void on_timerTimeout();
-    void on_socketDisconnected();
 private:
-    Ui::MainWindow *ui;
-
-    QString client = "127.0.0.1";
-    uint16_t port = 58000;
-    QHostAddress m_clientAddr;
-    QTcpSocket* m_ptrSock = nullptr;
-    QTimer m_tmr;    
+    Ui::MainWindow *ui; 
+    mainWorker m_work;
 };
 
 #endif // MAINWINDOW_H

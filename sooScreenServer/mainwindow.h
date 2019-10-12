@@ -30,30 +30,13 @@ public:
 
 private slots:
     void on_pushButton_clicked();
-    void on_socketConnected();
-    void on_socketDisconnected();
+
     void on_timerTimeout();
 
 private:
     Ui::MainWindow *ui;
-
-    IscreenShot* m_screen = nullptr;
-    IImageCompressor* m_comp = nullptr;
-    ItransportServer* m_trans = nullptr;
-    //std::vector<uint8_t> m_sendbuffer;
-    uint8_t*    m_sendbuffer = nullptr;
-    uint64_t         m_bufferSize;
-
-    SO sock;
-    //QString client = "192.168.0.2";
-    QString client = "127.0.0.1";
-    uint16_t port = 50000;
-    QHostAddress m_clientAddr;
     QTimer m_tmr;
 
-    void createHeader();
-    void insertHeaderNumBytes(int byteCount);
-    void pbc();
     const int64_t m_timePreference = 30;
     uint64_t m_sumTime = 0;
     uint64_t m_couterTime = 0;
