@@ -32,7 +32,10 @@ void drawWidget::paintGL()
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_drawImage.cols , m_drawImage.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, m_drawImage.data);
+    if(m_drawImage.type() == CV_8UC3)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_drawImage.cols , m_drawImage.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, m_drawImage.data);
+    else if (m_drawImage.type() == CV_8UC4)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_drawImage.cols , m_drawImage.rows, 0, GL_BGRA, GL_UNSIGNED_BYTE, m_drawImage.data);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

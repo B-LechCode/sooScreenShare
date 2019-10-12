@@ -114,8 +114,9 @@ void mainWorker::transportDataAvailable(std::vector<uint8_t> data)
         if(myCount>1)
             std::cout << " droppedFrames " <<droppedFrames << std::endl;
 #endif
-        auto t = cv::Mat (1, myHeader.length, CV_8UC1,refBuff.data()+myPos+HEADER_SIZE);
-        cv::Mat img = cv::imdecode(t,-1);
+        bool ok;
+        cv::Mat img = m_decomp->decompress(refBuff.data()+myPos+HEADER_SIZE,myHeader,ok);
+
         m_ptrDraw->display(img);
 
 
