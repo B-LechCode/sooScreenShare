@@ -37,5 +37,5 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    m_tmr.start(25);
+    m_tmr.start(33);
 }

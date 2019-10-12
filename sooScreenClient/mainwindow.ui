@@ -16,16 +16,6 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="drawWidget" name="openGLWidget">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>100</horstretch>
-        <verstretch>100</verstretch>
-       </sizepolicy>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="QLabel" name="lbl">
       <property name="text">
        <string>TextLabel</string>
@@ -53,13 +43,6 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>drawWidget</class>
-   <extends>QOpenGLWidget</extends>
-   <header>drawwidget.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

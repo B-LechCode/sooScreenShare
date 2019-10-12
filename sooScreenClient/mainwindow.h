@@ -10,7 +10,7 @@
 #include <QtNetwork/QHostAddress>
 #include <QString>
 #include <QTimer>
-
+#include "drawwidget.h"
 #include "mainworker.h"
 
 namespace Ui {
@@ -27,6 +27,7 @@ public:
 
 private:
     Ui::MainWindow *ui; 
+    drawWidget* m_draw;
     mainWorker m_work;
 };
 

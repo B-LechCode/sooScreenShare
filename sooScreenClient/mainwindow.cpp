@@ -30,8 +30,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    m_work.init(ui->openGLWidget);    
+    m_draw = new drawWidget();
+    m_draw->show();
+    m_work.init(m_draw);
 }
 
 MainWindow::~MainWindow()

@@ -1,17 +1,37 @@
 #include "drawwidget.h"
-#if USEGL
-/**/
+
+
+
 drawWidget::drawWidget(QWidget *parent ,Qt::WindowFlags f):
    QOpenGLWidget(parent,f)
 {
+    setMinimumSize(640,480);
+}
 
+void drawWidget::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key::Key_Space)
+    {
+        if(m_max)
+        {
+            this->showNormal();
+            m_max = false;
+        }
+        else
+        {
+            this->showFullScreen();
+            m_max = true;
+        }
+    }
+    else
+        QWidget::keyPressEvent(event);
 }
 
 
 
 void drawWidget::paintGL()
 {
-    glClearColor(1.0,1.0,1.0,00);
+    glClearColor(0,0,0,00);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -70,17 +90,3 @@ void drawWidget::paintGL()
     glDisable(GL_TEXTURE_2D);
     glFlush();    
 }
-
-
-#else
-drawWidget::drawWidget(QWidget *parent ,Qt::WindowFlags f):
-    QWidget(parent,f)
-{
-
-}
-
-drawWidget::~drawWidget()
-{
-
-}
-#endif
