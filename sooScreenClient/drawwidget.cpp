@@ -51,8 +51,7 @@ void drawWidget::paintGL()
 
     glEnd();
     glDisable(GL_TEXTURE_2D);
-    glFlush();
-    m_drawImage.release();
+    glFlush();    
 }
 
 
