@@ -1,9 +1,8 @@
 #include "mainworker.h"
 #include "factories.h"
 #include <opencv2/opencv.hpp>
+#include "./../header.h"
 
-#define HEADER_SIZE 64
-#define HEADERSTRING_OFFSET 32
 
 /*MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),

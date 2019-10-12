@@ -4,8 +4,7 @@
 
 #define DEBUG 1
 
-#define HEADER_SIZE 64
-#define HEADERSTRING_OFFSET 32
+#include "./../header.h"
 
 mainWorker::mainWorker():
     m_bufferSize(w*h*4+HEADER_SIZE),

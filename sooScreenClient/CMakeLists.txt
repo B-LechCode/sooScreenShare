@@ -36,6 +36,8 @@ include_directories (
 # in das Projekt ein.
 FILE ( GLOB SRC_FILES "*.cpp")
 FILE ( GLOB HEADER_FILES "*.h")
+LIST(APPEND HEADER_FILES "./../header.h")
+
 FILE ( GLOB UI_FILES "*.ui")
 
 
