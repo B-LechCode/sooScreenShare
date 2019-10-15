@@ -27,12 +27,14 @@ find_package(Qt5 COMPONENTS  Core Network Widgets Gui REQUIRED)
 
 #X11 suchen
 FIND_PACKAGE(X11 REQUIRED)
+find_library(X11_Xrandr_LIB Xrandr)
+message(${X11_Xrandr_LIB})
 
 find_library (lz4_lib lz4)
 find_path (lz4_path /lz4.h)
 message(${lz4_lib})
 set(lz4_include_path /usr/local/include)
-message(${lz4_include_path})
+#message(${lz4_include_path})
 
 # Pfade für Include-Dateien
 include_directories (
@@ -85,6 +87,7 @@ TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
                 ${Qt5Core_LIBRARIES}
                 ${Qt5Gui_LIBRARIES}
                 ${lz4_lib}
+                ${X11_Xrandr_LIB}
 
 )
 

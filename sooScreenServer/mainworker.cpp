@@ -6,7 +6,7 @@
 
 
 mainWorker::mainWorker():
-    m_bufferSize(w*h*4+HEADER_SIZE)
+    m_bufferSize(defaultBufferSize)
 {
      m_sendbuffer = new uint8_t[m_bufferSize];
      std::cout <<  sizeof( dataHeaderHandling::dataHeader) << std::endl;
@@ -22,7 +22,11 @@ mainWorker::~mainWorker()
 void mainWorker::init()
 {
     //TODO parameter change
-    m_screen = screenShotFactory::getBackend(x11,x, y, w, h); //TODO set screen size!
+    m_screen = screenShotFactory::getBackend(x11); //TODO set screen size!
+    auto screens = m_screen->getScreens();
+    int i = 1;
+    m_screen->initialize(screens[i].x,screens[i].y,screens[i].w,screens[i].h);
+
     m_comp   = imageCompressorFactory::getBackend(compressback);
     m_trans  = transportServerFactory::getBackend(qtTcpServer);
     m_trans->addObserverSubscriber(*(ItransportServerObserver*)this);
@@ -54,7 +58,7 @@ void mainWorker::run()
     }
 
     //Add Header
-    insertHeaderNumBytes(static_cast<int32_t>(compressedImageData.size()),static_cast<int32_t>(w),static_cast<int32_t>(h),img.type());
+    insertHeaderNumBytes(static_cast<int32_t>(compressedImageData.size()),static_cast<int32_t>(img.cols),static_cast<int32_t>(img.rows),img.type());
 
     memcpy(m_sendbuffer+HEADER_SIZE,compressedImageData.data(),compressedImageData.size());
 

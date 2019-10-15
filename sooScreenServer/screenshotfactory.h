@@ -25,10 +25,10 @@ public:
         return  m_backends;
     }
 
-    static IscreenShot* getBackend(std::string backendName,int x,int y, uint w, uint h)
+    static IscreenShot* getBackend(std::string backendName)
     {
         if(backendName == x11)
-            return new screenShotX11Shm(x,y,w,h);
+            return new screenShotX11Shm();
 
         return nullptr;
     }

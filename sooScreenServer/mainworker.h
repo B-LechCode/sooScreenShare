@@ -2,13 +2,11 @@
 #define MAINWORKER_H
 
 #include "interfaces.h"
-
+#define defaultBufferSize  1920*1200*4
 #include <iostream>
 
 class mainWorker:private ItransportServerObserver
-{
-    const int32_t x=0,y=0;
-    const uint32_t w=1920,h=1080;
+{    
 public:
     mainWorker();
     virtual ~mainWorker();
@@ -21,6 +19,7 @@ private:
     ItransportServer* m_trans = nullptr;
     uint8_t*    m_sendbuffer = nullptr;
     uint64_t         m_bufferSize;
+
     void createHeader();
     void insertHeaderNumBytes(int byteCount,int width,int height,int cvType);
     virtual void transportNewMessage(std::string str)
