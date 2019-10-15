@@ -1,15 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#define SO QTcpServer
-#define S02 <QtNetwork/SO>
-
 #include <QMainWindow>
-#include <QTcpSocket>
-#include S02
-#include <QtNetwork/QHostAddress>
-#include <QString>
-#include <QTimer>
+#include <QTreeView>
 #include "drawwidget.h"
 #include "mainworker.h"
 
