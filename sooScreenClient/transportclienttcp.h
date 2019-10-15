@@ -14,6 +14,7 @@
 #include <QThread>
 #include <QMutex>
 #include <QElapsedTimer>
+#include <QTimer>
 #include <iostream>
 namespace trans {
     #define PORT "port"
@@ -36,11 +37,13 @@ private slots:
     void on_socketDisconnected();
     void on_socketConnected();
     void on_readyRead();
+    void on_timerTimeout();
 private:    
     QTcpSocket m_sock;
     uint16_t   m_port;
     QHostAddress m_address;
     std::vector<uint8_t> m_recData;
+    QTimer               m_tmr;
 
     void notifyMessage(const char* str);
     void notifyMessage(const std::string& str);
