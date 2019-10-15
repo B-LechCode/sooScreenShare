@@ -23,7 +23,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::on_timerTimeout()
 {
+    QElapsedTimer tmr;
+    tmr.start();
     m_work.run();
+    std::cout << tmr.elapsed() << std::endl;
 }
 
 MainWindow::~MainWindow()
@@ -34,5 +37,5 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    m_tmr.start(30);
+    m_tmr.start(33);
 }

@@ -24,12 +24,22 @@ FIND_PACKAGE(X11 REQUIRED)
 find_package(OpenGL REQUIRED)
 
 
+find_library (lz4_lib lz4)
+find_path (lz4_path /lz4.h)
+message(${lz4_lib})
+set(lz4_include_path /usr/local/include)
+message(${lz4_include_path})
+
+#Don't know how to deal with it...
+
+
 # Pfade für Include-Dateien
 include_directories (
         ${QT_INCLUDES}
         ${OpenCV_INCLUDES}
         ${OpenCV_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIRS}
+        ${lz4_include_path}
 )
 
 # Fuege alle .cpp und alle .h Dateien aus dem aktuellen Ordner
@@ -74,7 +84,9 @@ TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
                 ${Qt5Core_LIBRARIES}
                 ${Qt5Gui_LIBRARIES}
                 ${OPENGL_LIBRARIES}
-
+                ${lz4_lib}
 )
+
+
 
 

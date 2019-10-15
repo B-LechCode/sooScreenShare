@@ -25,10 +25,9 @@ void mainWorker::init(Idraw* ptrDraw)
     if(!ptrDraw)
         return;
     m_ptrDraw = ptrDraw;
-    //TODO parameter change
-    //m_screen = screenShotFactory::getBackend(x11,x, y, w, h); //TODO set screen size!
-    m_decomp   = imageDecompressorFactory::getBackend(cvJpeg);
-    m_trans  = transportClientFactory::getBackend(qtTcpServer);
+    //TODO parameter change    
+    m_decomp   = imageDecompressorFactory::getBackend(compressback);
+    m_trans    = transportClientFactory::getBackend(qtTcpServer);
     m_trans->addObserverSubscriber(*(ItransportClientObserver*)this);
     m_trans->init();
 
@@ -47,42 +46,43 @@ void mainWorker::end()
 
 }
 
-int checkFrameAvail(std::vector<uint8_t>& data,size_t pos)
+dataHeaderHandling::dataHeader checkFrameAvail(std::vector<uint8_t>& data,size_t pos)
 {
-    int retVal = -1;
+    dataHeaderHandling::dataHeader retVal;
     if(data.size()>pos+HEADER_SIZE)
     {
-        char* ptrZahl = reinterpret_cast<char*>(data.data())+pos+HEADERSTRING_OFFSET;
-        int zahl;
-        memcpy(&zahl,ptrZahl,sizeof(int));
+        dataHeaderHandling::dataHeader* ptrHeader = reinterpret_cast<dataHeaderHandling::dataHeader*>(data.data()+pos);
+        retVal = *ptrHeader;
 
-        if(data.size() >= (pos+HEADER_SIZE+zahl))
-            retVal = zahl;
+        if(!(data.size() >= (pos+HEADER_SIZE+retVal.length)))
+            retVal.length = -1;
     }
     return retVal;
 
 }
 
-int getLastFullAvailableFrame(std::vector<uint8_t>& data,size_t& pos, int& length)
+int getLastFullAvailableFrame(std::vector<uint8_t>& data,size_t& pos, dataHeaderHandling::dataHeader& header)
 {
     std::string in = std::string(reinterpret_cast<char*>(data.data()),data.size());
     int num = 0;
     size_t posNow = 0;
-    int lengthNow = -1;
+
+    dataHeaderHandling::dataHeader headerNow;
     do
     {
-        length = lengthNow;
         pos = posNow-1;
         posNow = in.find("ScreenImage",posNow);
-        lengthNow = checkFrameAvail(data,posNow);
+        header = headerNow;
+        headerNow = checkFrameAvail(data,posNow);
 
         posNow++;
-        num += static_cast<int>(posNow != std::string::npos && lengthNow>0);
-    }while(lengthNow != -1);
+        num += static_cast<int>(posNow != std::string::npos && headerNow.length>0);
+    }while(headerNow.length != -1);
 
     /*std::cout << " numHdr " <<num << std::endl;
     std::cout << " pos " <<pos << std::endl;
     std::cout << " length " <<length << std::endl;*/
+
     return num;
 }
 
@@ -103,9 +103,10 @@ void mainWorker::transportDataAvailable(std::vector<uint8_t> data)
     std::vector<uint8_t>& refBuff = *ptrRef;
 
     size_t myPos;
-    int    myLength, myCount;
+    dataHeaderHandling::dataHeader    myHeader;
+    int    myCount;
 
-    if((myCount = getLastFullAvailableFrame(refBuff,myPos,myLength)))
+    if((myCount = getLastFullAvailableFrame(refBuff,myPos,myHeader)))
     {
         droppedFrames += myCount-1;
 
@@ -113,20 +114,21 @@ void mainWorker::transportDataAvailable(std::vector<uint8_t> data)
         if(myCount>1)
             std::cout << " droppedFrames " <<droppedFrames << std::endl;
 #endif
-        auto t = cv::Mat (1, myLength, CV_8UC1,refBuff.data()+myPos+HEADER_SIZE);
-        cv::Mat img = cv::imdecode(t,-1);
+        bool ok;
+        cv::Mat img = m_decomp->decompress(refBuff.data()+myPos+HEADER_SIZE,myHeader,ok);
+
         m_ptrDraw->display(img);
 
 
         if(workingWithMemberBuffer)
         {
-            if(refBuff.size() == (myPos+HEADER_SIZE+myLength))
+            if(refBuff.size() == (myPos+HEADER_SIZE+myHeader.length))
                 myBuf.clear();//We're done: erase everything
             else
-                myBuf.erase(myBuf.begin(),myBuf.begin()+myPos+HEADER_SIZE+myLength); //We're only partially done, trim the member buffer
+                myBuf.erase(myBuf.begin(),myBuf.begin()+myPos+HEADER_SIZE+myHeader.length); //We're only partially done, trim the member buffer
         }
-        else if(refBuff.size() > (myPos+HEADER_SIZE+myLength))
-                myBuf.insert(myBuf.end(),data.begin()+myPos+HEADER_SIZE+myLength,data.end()); //We have more than one frame in our input buffer, save the unprocessed to the member buffer!
+        else if(refBuff.size() > (myPos+HEADER_SIZE+myHeader.length))
+                myBuf.insert(myBuf.end(),data.begin()+myPos+HEADER_SIZE+myHeader.length,data.end()); //We have more than one frame in our input buffer, save the unprocessed to the member buffer!
     }
     else if(!workingWithMemberBuffer)
     {
