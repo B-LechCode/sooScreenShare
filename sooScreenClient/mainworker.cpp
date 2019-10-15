@@ -88,6 +88,9 @@ int getLastFullAvailableFrame(std::vector<uint8_t>& data,size_t& pos, dataHeader
                 header = headerNow2;
                 num2++;
                 posNow2 += header.length; //Increment the whole frame!
+
+                if(posNow2>data.size())
+                    break;
             }
         }
         else    //In case of nothing found
