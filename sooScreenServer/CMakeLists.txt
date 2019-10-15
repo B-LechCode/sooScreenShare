@@ -33,6 +33,7 @@ find_path (lz4_path /lz4.h)
 message(${lz4_lib})
 set(lz4_include_path /usr/local/include)
 message(${lz4_include_path})
+message(${lz4_path})
 
 # Pfade für Include-Dateien
 include_directories (
@@ -40,6 +41,7 @@ include_directories (
         ${OpenCV_INCLUDES}
         ${OpenCV_INCLUDE_DIRS}
         ${lz4_include_path}
+        ${lz4_path}
 )
 
 # Fuege alle .cpp und alle .h Dateien aus dem aktuellen Ordner
