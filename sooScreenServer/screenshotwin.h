@@ -19,6 +19,8 @@ struct screenShotWin : public IscreenShot
 		m_w = w;
 		m_h = h;
 
+		lpPixels = new unsigned char[w * h * 4];
+		
 		init = true;
 	}
 
@@ -33,8 +35,6 @@ struct screenShotWin : public IscreenShot
 		BITMAPINFO bmInfo = { 0 };
 		bmInfo.bmiHeader.biSize = sizeof(bmInfo.bmiHeader);
 		GetDIBits(memoryDC, hBitmap, 0, 0, NULL, &bmInfo, DIB_RGB_COLORS);
-
-		unsigned char* lpPixels = new unsigned char[bmInfo.bmiHeader.biSizeImage];
 
 		bmInfo.bmiHeader.biBitCount = 32;
 		bmInfo.bmiHeader.biCompression = BI_RGB;
