@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QComboBox* cboxTrans = new QComboBox();
 
-    for(uint32_t i = 0;i<decBackends.size();++i)
+    for(uint32_t i = 0;i<transBackends.size();++i)
         cboxTrans->addItem(QString(transBackends[i].c_str()));
 
 
