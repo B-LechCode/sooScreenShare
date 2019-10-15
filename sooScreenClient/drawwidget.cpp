@@ -15,14 +15,14 @@ void drawWidget::keyPressEvent(QKeyEvent *event)
         if(m_max)
         {
             this->showNormal();
-            m_cursor = this->cursor();
-            this->setCursor(Qt::BlankCursor);
+            this->setCursor(m_cursor);
             m_max = false;
         }
         else
         {
-            this->showFullScreen();
-            this->setCursor(m_cursor);
+            this->showFullScreen();            
+            m_cursor = this->cursor();
+            this->setCursor(Qt::BlankCursor);
             m_max = true;
         }
     }
