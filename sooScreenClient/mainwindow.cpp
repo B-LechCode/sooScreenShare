@@ -13,6 +13,15 @@ QTreeWidgetItem* addToplevelWidgetItem(QTreeWidget* wid,QString text)
     return itm;
 }
 
+QTreeWidgetItem* addWidgetItem(QTreeWidgetItem* itm,QString text,QString text2,QString textDescr)
+{
+    QTreeWidgetItem* itm2 = new QTreeWidgetItem(itm);
+    itm2->setText(0,text);
+    itm2->setText(1,text2);
+    itm2->setText(2,textDescr);
+    return itm2;
+}
+
 QTreeWidgetItem* addWidgetItem(QTreeWidget* wid,QTreeWidgetItem* itm,QString text,QWidget* cwid,QString textDescr)
 {
     QTreeWidgetItem* itm2 = new QTreeWidgetItem(itm);
@@ -35,17 +44,33 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-    QTreeWidgetItem* itmBackendSection = addToplevelWidgetItem(ui->twSettings,"Backends");
+    QTreeWidgetItem* itmCompressionSection = addToplevelWidgetItem(ui->twSettings,"Image compression");
 
     std::vector<std::string> decBackends = imageDecompressorFactory::getAvailableBackends();
 
-    QComboBox* cbox = new QComboBox();
+    QComboBox* cboxComp = new QComboBox();
 
-    for(int i = 0;i<decBackends.size();++i)
-        cbox->addItem(QString(decBackends[i].c_str()));
+    for(uint32_t i = 0;i<decBackends.size();++i)
+        cboxComp->addItem(QString(decBackends[i].c_str()));
 
 
-    addWidgetItem(ui->twSettings,itmBackendSection,"Image decompressor",cbox,"QString textDescr");
+    addWidgetItem(ui->twSettings,itmCompressionSection,"Image decompressor",cboxComp,"QString textDescr");
+
+
+
+    QTreeWidgetItem* itmBackendSection = addToplevelWidgetItem(ui->twSettings,"Transportlayer");
+
+    std::vector<std::string> transBackends = transportClientFactory::getAvailableBackends();
+
+    QComboBox* cboxTrans = new QComboBox();
+
+    for(uint32_t i = 0;i<decBackends.size();++i)
+        cboxTrans->addItem(QString(transBackends[i].c_str()));
+
+
+    QTreeWidgetItem* transItem = addWidgetItem(ui->twSettings,itmBackendSection,"Transportlayer",cboxTrans,"QString textDescr");
+
+    addWidgetItem(transItem,"Transportlayer","cboxTrans""","QString textDescr");
 }
 
 
