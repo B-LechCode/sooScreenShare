@@ -26,6 +26,7 @@ class drawWidget:public QOpenGLWidget,public Idraw
     bool m_init = false;
     GLuint m_oldid=0;
     bool m_max = false;
+    QCursor m_cursor;
 
 public:
 
