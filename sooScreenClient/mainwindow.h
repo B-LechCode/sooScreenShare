@@ -17,15 +17,17 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow,private IdrawObserver
 {
     Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
+protected:
+    virtual void drawWidgetClosing();
 private:
+
     Ui::MainWindow *ui; 
     drawWidget* m_draw;
     mainWorker m_work;

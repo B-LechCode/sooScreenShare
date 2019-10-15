@@ -1,11 +1,14 @@
 #include "drawwidget.h"
 
-
-
 drawWidget::drawWidget(QWidget *parent ,Qt::WindowFlags f):
-   QOpenGLWidget(parent,f)
+    QOpenGLWidget(parent,f)
 {
     setMinimumSize(640,480);
+}
+
+drawWidget::~drawWidget()
+{
+
 }
 
 void drawWidget::keyPressEvent(QKeyEvent *event)
@@ -92,4 +95,11 @@ void drawWidget::paintGL()
     glEnd();
     glDisable(GL_TEXTURE_2D);
     glFlush();    
+}
+
+void drawWidget::closeEvent(QCloseEvent *event)
+{
+    if(m_observer)
+        m_observer->drawWidgetClosing();
+    event->accept();
 }

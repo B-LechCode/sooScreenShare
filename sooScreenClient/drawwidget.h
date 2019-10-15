@@ -22,6 +22,7 @@
 class drawWidget:public QOpenGLWidget,public Idraw
 {
     Q_OBJECT
+    IdrawObserver* m_observer = nullptr;
     cv::Mat m_drawImage;
     bool m_init = false;
     GLuint m_oldid=0;
@@ -31,18 +32,27 @@ class drawWidget:public QOpenGLWidget,public Idraw
 public:
 
     drawWidget(QWidget *parent = nullptr,Qt::WindowFlags f=Qt::WindowFlags());
-    //virtual ~drawWidget();
+    virtual ~drawWidget();
 
     inline virtual void display(const cv::Mat& img)
     {
-        m_drawImage = img;
+       m_drawImage = img;
        update();
     }
 
     void keyPressEvent(QKeyEvent* event);
 
-protected:
+    virtual IdrawObserver *observer() const
+    {
+        return m_observer;
+    }
+    virtual void setObserver(IdrawObserver *observer)
+    {
+        m_observer = observer;
+    }
 
+protected:
+    virtual void closeEvent(QCloseEvent *event);
     virtual void paintGL();
 };
 
