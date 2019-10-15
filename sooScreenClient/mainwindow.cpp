@@ -15,10 +15,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    delete ui;    
 }
 
 void MainWindow::drawWidgetClosing()
 {
     QApplication::exit(0);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QApplication::exit(0);
+    event->accept();
 }

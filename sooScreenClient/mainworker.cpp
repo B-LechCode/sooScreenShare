@@ -1,7 +1,7 @@
 #include "mainworker.h"
 #include "factories.h"
 #include <opencv2/opencv.hpp>
-
+#include <algorithm>
 #define DEBUG 1
 
 #include "./../header.h"
@@ -28,7 +28,7 @@ void mainWorker::init(Idraw* ptrDraw)
     //TODO parameter change    
     m_decomp   = imageDecompressorFactory::getBackend(compressback);
     m_trans    = transportClientFactory::getBackend(qtTcpServer);
-    m_trans->addObserverSubscriber(*(ItransportClientObserver*)this);
+    m_trans->addObserverSubscriber(*reinterpret_cast<ItransportClientObserver*>(this));
     m_trans->init();
 
     m_initOk = true;
@@ -54,36 +54,53 @@ dataHeaderHandling::dataHeader checkFrameAvail(std::vector<uint8_t>& data,size_t
         dataHeaderHandling::dataHeader* ptrHeader = reinterpret_cast<dataHeaderHandling::dataHeader*>(data.data()+pos);
         retVal = *ptrHeader;
 
-        if(!(data.size() >= (pos+HEADER_SIZE+retVal.length)))
+        if(!(data.size() >= (pos+HEADER_SIZE+static_cast<uint32_t>(retVal.length))))
             retVal.length = -1;
+    }
+    else
+    {
+        retVal.length = -1;
     }
     return retVal;
 
 }
 
 int getLastFullAvailableFrame(std::vector<uint8_t>& data,size_t& pos, dataHeaderHandling::dataHeader& header)
-{
-    std::string in = std::string(reinterpret_cast<char*>(data.data()),data.size());
-    int num = 0;
-    size_t posNow = 0;
+{   
+    int num2=0;
+    size_t posNow2 = 0,pos2=0;
 
-    dataHeaderHandling::dataHeader headerNow;
+    dataHeaderHandling::dataHeader headerNow2;
+    headerNow2.length = -1;
+
     do
     {
-        pos = posNow-1;
-        posNow = in.find("ScreenImage",posNow);
-        header = headerNow;
-        headerNow = checkFrameAvail(data,posNow);
+        auto test = std::search(data.data()+posNow2, data.data()+data.size(), std::begin(HEADER_STRING), std::end(HEADER_STRING));
+        if(test < data.data()+data.size()) //When something is found
+        {
+            posNow2 = test-data.data();
 
-        posNow++;
-        num += static_cast<int>(posNow != std::string::npos && headerNow.length>0);
-    }while(headerNow.length != -1);
+            headerNow2 = checkFrameAvail(data,posNow2);
 
-    /*std::cout << " numHdr " <<num << std::endl;
-    std::cout << " pos " <<pos << std::endl;
-    std::cout << " length " <<length << std::endl;*/
+            if(headerNow2.length != -1) //Frame is available!
+            {
+                pos2 = posNow2;
+                header = headerNow2;
+                num2++;
+                posNow2 += header.length; //Increment the whole frame!
+            }
+        }
+        else    //In case of nothing found
+            break;
 
-    return num;
+
+    }while(headerNow2.length != -1);
+
+
+
+    pos = pos2;
+
+    return num2;
 }
 
 void mainWorker::transportDataAvailable(std::vector<uint8_t> data)
@@ -108,7 +125,7 @@ void mainWorker::transportDataAvailable(std::vector<uint8_t> data)
 
     if((myCount = getLastFullAvailableFrame(refBuff,myPos,myHeader)))
     {
-        droppedFrames += myCount-1;
+        droppedFrames += static_cast<uint32_t>(myCount)-1;
 
 #if DEBUG
         if(myCount>1)

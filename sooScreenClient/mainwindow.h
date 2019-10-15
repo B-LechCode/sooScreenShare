@@ -26,6 +26,7 @@ public:
     ~MainWindow();
 protected:
     virtual void drawWidgetClosing();
+    virtual void closeEvent(QCloseEvent *event);
 private:
 
     Ui::MainWindow *ui; 
