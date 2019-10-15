@@ -73,9 +73,11 @@ int getLastFullAvailableFrame(std::vector<uint8_t>& data,size_t& pos, dataHeader
     dataHeaderHandling::dataHeader headerNow2;
     headerNow2.length = -1;
 
+	const std::string headerStr = std::string(HEADER_STRING);
+
     do
     {
-        auto test = std::search(data.data()+posNow2, data.data()+data.size(), std::begin(HEADER_STRING), std::end(HEADER_STRING));
+        auto test = std::search(data.data()+posNow2, data.data()+data.size(), std::begin(headerStr), std::end(headerStr));
         if(test < data.data()+data.size()) //When something is found
         {
             posNow2 = test-data.data();
