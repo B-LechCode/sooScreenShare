@@ -20,13 +20,11 @@ struct screenShotX11Shm : public IscreenShot
         display = XOpenDisplay(nullptr);
         root = DefaultRootWindow(display);
 
+        auto lol =  getScreens();
+
         XGetWindowAttributes(display, root, &window_attributes);
         screen = window_attributes.screen;
         auto visual = DefaultVisualOfScreen(screen);
-        /*auto saveRedMask = visual->red_mask;
-        visual->red_mask = 0;// visual->blue_mask;
-        visual->blue_mask = 0;// saveRedMask;       */
-
 
         ximg = XShmCreateImage(display, visual, DefaultDepthOfScreen(screen),  ZPixmap, nullptr, &shminfo, m_w, m_h);
 
@@ -59,6 +57,36 @@ struct screenShotX11Shm : public IscreenShot
         XShmDetach(display, &shminfo);
         shmdt(shminfo.shmaddr);
         XCloseDisplay(display);
+    }
+    virtual std::vector<screenDef> getScreens()
+    {
+        std::vector<screenDef> ret;
+        auto display = XOpenDisplay(nullptr);
+
+        //From:https://stackoverflow.com/questions/11367354/obtaining-list-of-all-xorg-displays
+        //https://stackoverflow.com/a/11368019
+        int32_t count = XScreenCount(display);
+                                printf("Display %s has %d screens\n",
+                                    "display_name", count);
+
+        int32_t i;
+        for (i=0; i<count; i++)
+        {
+            printf(" %d: %dx%d\n",
+                i, XDisplayWidth(display, i), XDisplayHeight(display, i));
+
+
+            auto window = XRootWindow(display, i);
+
+            int32_t x,y;
+            uint32_t w,h,bw,dpt;
+            XGetGeometry(display,(Window)window,(Window*)&window,&x,&y,&w,&h,&bw,&dpt);
+            screenDef scr(x,y,w,h);
+            ret.push_back(scr);
+        }
+        XCloseDisplay(display);
+        //
+        return ret;
     }
 private:
     Display* display;

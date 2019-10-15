@@ -12,6 +12,8 @@
 #define x11 "X11_Shm_Grab"
 #define backend_win "Windows_Grab"
 
+
+
 class screenShotFactory
 {
     static std::vector<std::string> m_backends;

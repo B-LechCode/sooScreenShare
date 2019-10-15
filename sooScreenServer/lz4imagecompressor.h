@@ -33,8 +33,7 @@ public:
     {
         int src_size = img.rows*img.cols*img.channels();
         m_buffer = std::vector<uint8_t>(src_size);
-        //int compSize = LZ4_compress_default(reinterpret_cast<char*>(img.ptr()),reinterpret_cast<char*>(m_buffer.data()),src_size,m_buffer.size());
-        int compSize = LZ4_compress_fast(reinterpret_cast<char*>(img.ptr()),reinterpret_cast<char*>(m_buffer.data()),src_size,m_buffer.size(),10);
+        int compSize = LZ4_compress_default(reinterpret_cast<char*>(img.ptr()),reinterpret_cast<char*>(m_buffer.data()),src_size,m_buffer.size());
         m_buffer.resize(compSize);
         return  compSize>0;
     }
