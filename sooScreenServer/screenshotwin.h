@@ -54,12 +54,46 @@ struct screenShotWin : public IscreenShot
 			delete[] lpPixels;
 	}
 
+	static BOOL CALLBACK ScreenInfoEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
+	{
+		std::vector<screenDef>* screens = reinterpret_cast<std::vector<screenDef>*>(dwData);
+
+		MONITORINFOEX iMonitor;
+		iMonitor.cbSize = sizeof(MONITORINFOEX);
+		GetMonitorInfo(hMonitor, &iMonitor);
+
+		if (iMonitor.dwFlags == DISPLAY_DEVICE_MIRRORING_DRIVER)
+		{
+			return true;
+		}
+		else
+		{
+			auto m = iMonitor.rcMonitor;
+			auto x = m.left;
+			auto y = m.top;
+			auto w = m.right - m.left;
+			auto h = m.bottom - m.top;
+			screenDef screen(x, y, w, h);
+			screens->push_back(screen);
+
+			return true;
+		};
+	}
+
+	virtual std::vector<screenDef> getScreens()
+	{
+		EnumDisplayMonitors(NULL, NULL, ScreenInfoEnumProc, (LPARAM)(&screens));
+
+		return screens;
+	}
+
 private:
 	HDC screenDC = nullptr;
 	HDC memoryDC = nullptr;
 	HBITMAP hBitmap = nullptr;
 	HGDIOBJ oldBmp = nullptr;
 	unsigned char* lpPixels = nullptr;
+	std::vector<screenDef> screens;
 
 	bool init = false;
 };
