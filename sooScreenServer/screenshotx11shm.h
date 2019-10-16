@@ -10,6 +10,8 @@
 #include <X11/extensions/XShm.h>
 #include <X11/Xutil.h>
 #include <X11/extensions/Xrandr.h>
+#include <X11/extensions/Xfixes.h>
+
 //screenShotX11Shm
 
 //From: https://stackoverflow.com/questions/24988164/c-fast-screenshots-in-linux-for-use-with-opencv
@@ -30,6 +32,17 @@ class screenShotX11Shm : public IscreenShot
         uint8_t a;
     };
 
+    Display* m_display;
+    Window m_root;
+    XWindowAttributes m_windowAttributes;
+    Screen* m_screen;
+    XImage* m_ximg;
+    XShmSegmentInfo m_shminfo;
+
+
+
+    bool m_imageGrabbed,m_init;
+
     bool checkCoordinates(int32_t xR,int32_t yR)
     {
         bool xO = xR>=m_x && xR<=(m_x+m_w);
@@ -38,13 +51,15 @@ class screenShotX11Shm : public IscreenShot
     }
 
     pointerStr calculateCoordinates(int32_t xR,int32_t yR,int32_t wImg,int32_t hImg)
-    {
-        int rect = 5;
+    {        
+        int wX = m_cursImage.cols;
+        int wY = m_cursImage.rows;
+        std::cout << m_hotX << " " << m_hotY << std::endl;
         pointerStr pointer;
-        pointer.xStart = xR-m_x-rect;
-        pointer.xEnd = xR-m_x+rect;
-        pointer.yStart = yR-m_y-rect;
-        pointer.yEnd = yR-m_y+rect;
+        pointer.xStart = xR-m_x-m_hotX;
+        pointer.xEnd = pointer.xStart+wX;
+        pointer.yStart = yR-m_y-m_hotY;
+        pointer.yEnd = pointer.yStart+wY;
 
         pointer.xStart = pointer.xStart < 0 ? 0 : pointer.xStart;
         pointer.xEnd = pointer.xEnd > wImg ? wImg : pointer.xEnd;
@@ -53,41 +68,121 @@ class screenShotX11Shm : public IscreenShot
 
         return  pointer;
     }
+    uint8_t* m_cursBuff = nullptr;
+    size_t   m_cursBuffSize = 0;
+    cv::Mat  m_cursImage;
+    int m_hotX;
+    int m_hotY;
+    std::string m_cursorName;
+
+    void grabMousePtr()
+    {
+        XFixesCursorImage * asd = XFixesGetCursorImage (m_display);
+
+        if(!asd->pixels)
+            return;
+
+
+        auto a = sizeof(*asd->pixels);
+        size_t mySize = asd->width*asd->height*a;
+        std::string myName(asd->name);
+        bool compare = false;
+
+
+
+        //compare buffer
+        if(mySize==m_cursBuffSize && m_cursBuff && !myName.compare(m_cursorName))
+        {
+            compare = !memcmp(asd->pixels,m_cursBuff,mySize);
+        }
+
+        if(!compare)
+        {
+            if(m_cursBuff)
+                delete[] m_cursBuff;
+
+            m_cursBuff = new uint8_t[mySize];
+
+            if(!m_cursBuff)
+                return;
+
+            m_hotX = asd->xhot;
+            m_hotY = asd->yhot;
+
+            memcpy(m_cursBuff,asd->pixels,mySize);
+            m_cursBuffSize = mySize;
+            m_cursorName = myName;
+
+            m_cursImage = cv::Mat(asd->width,asd->height,CV_8UC4);
+
+            RGBA* ptrRgba = reinterpret_cast<RGBA*>(m_cursImage.ptr());
+            auto ptrSrc = reinterpret_cast<uint8_t*>(asd->pixels);
+
+            for(int y = 0 ; y < asd->height;++y )
+            {
+                for(int x = 0 ; x < asd->width;++x )
+                {
+                    (*ptrRgba) = (*reinterpret_cast<RGBA*>(ptrSrc));
+                    ptrSrc+=a;
+                    ptrRgba++;
+
+                }
+            }
+        }
+    }
+
+    void destruct()
+    {
+        if(m_imageGrabbed)
+            XDestroyImage(m_ximg);
+        m_init = false;
+        XShmDetach(m_display, &m_shminfo);
+        shmdt(m_shminfo.shmaddr);
+        XCloseDisplay(m_display);
+    }
 
 
 public:
     screenShotX11Shm():IscreenShot()
     {
-        imageGrabbed = false;
-        init = false;
+        m_imageGrabbed = false;
+        m_init = false;
     }
 
     virtual cv::Mat operator() ()
     {
 
-        imageGrabbed = true;
+        m_imageGrabbed = true;
 
-        XShmGetImage(display, root, ximg, m_x, m_y, 0x00ffffff);
+        XShmGetImage(m_display, m_root, m_ximg, m_x, m_y, 0x00ffffff);
 
-        cv::Mat img = cv::Mat(m_h, m_w, CV_8UC4, ximg->data);
+        cv::Mat img = cv::Mat(m_h, m_w, CV_8UC4, m_ximg->data);
 
         Window win;
         int32_t xR,yR,xW,yW;
         uint32_t sad;
-        XQueryPointer(display,root,&win,&win,&xR,&yR,&xW,&yW,&sad);
+        XQueryPointer(m_display,m_root,&win,&win,&xR,&yR,&xW,&yW,&sad);
 
         if(checkCoordinates(xR,yR))
         {
+            grabMousePtr();
             auto coord = calculateCoordinates(xR,yR,img.cols,img.rows);
+
+
+            RGBA* ptrCurs = reinterpret_cast<RGBA*>(m_cursImage.ptr());
             for(int y = coord.yStart ; y < coord.yEnd;++y )
             {
                 RGBA* ptrRgba = reinterpret_cast<RGBA*>(img.ptr(y))+coord.xStart;
+
                 for(int x = coord.xStart ; x < coord.xEnd;++x )
                 {
-                    ptrRgba->r = ~(ptrRgba->r);
-                    ptrRgba->g = ~(ptrRgba->g);
-                    ptrRgba->b = ~(ptrRgba->b);
+                    double alpha = (ptrCurs->a)/255.0;
+
+                    ptrRgba->r =  ((ptrCurs->r)*alpha+ptrRgba->r)*(1-alpha);
+                    ptrRgba->g = ((ptrCurs->g)*alpha+ptrRgba->g)*(1-alpha);
+                    ptrRgba->b = ((ptrCurs->b)*alpha+ptrRgba->b)*(1-alpha);
                     ptrRgba++;
+                    ptrCurs++;
                 }
             }
         }
@@ -101,28 +196,28 @@ public:
         m_y = y;
         m_w = w;
         m_h = h;
-        if(init)
+        if(m_init)
             destruct();
 
-        display = XOpenDisplay(nullptr);
-        root = DefaultRootWindow(display);
+        m_display = XOpenDisplay(nullptr);
+        m_root = DefaultRootWindow(m_display);
 
-        XGetWindowAttributes(display, root, &window_attributes);
-        screen = window_attributes.screen;
-        auto visual = DefaultVisualOfScreen(screen);
+        XGetWindowAttributes(m_display, m_root, &m_windowAttributes);
+        m_screen = m_windowAttributes.screen;
+        auto visual = DefaultVisualOfScreen(m_screen);
 
-        ximg = XShmCreateImage(display, visual, DefaultDepthOfScreen(screen),  ZPixmap, nullptr, &shminfo, m_w, m_h);
+        m_ximg = XShmCreateImage(m_display, visual, DefaultDepthOfScreen(m_screen),  ZPixmap, nullptr, &m_shminfo, m_w, m_h);
 
-        shminfo.shmid = shmget(IPC_PRIVATE, ximg->bytes_per_line * ximg->height, IPC_CREAT|0777);
-        shminfo.shmaddr = ximg->data = (char*)shmat(shminfo.shmid, 0, 0);
-        shminfo.readOnly = False;
-        if(shminfo.shmid < 0)
+        m_shminfo.shmid = shmget(IPC_PRIVATE, m_ximg->bytes_per_line * m_ximg->height, IPC_CREAT|0777);
+        m_shminfo.shmaddr = m_ximg->data = (char*)shmat(m_shminfo.shmid, 0, 0);
+        m_shminfo.readOnly = False;
+        if(m_shminfo.shmid < 0)
             puts("Fatal shminfo error!");;
-        Status s1 = XShmAttach(display, &shminfo);
+        Status s1 = XShmAttach(m_display, &m_shminfo);
         printf("XShmAttach() %s\n", s1 ? "success!" : "failure!");
 
-        imageGrabbed = false;
-        init = true;
+        m_imageGrabbed = false;
+        m_init = true;
     }
 
 
@@ -156,29 +251,7 @@ public:
 
 
         return ret;
-    }
-private:
-    void destruct()
-    {
-        if(imageGrabbed)
-            XDestroyImage(ximg);
-        init = false;
-        XShmDetach(display, &shminfo);
-        shmdt(shminfo.shmaddr);
-        XCloseDisplay(display);
-    }
-
-
-    Display* display;
-    Window root;
-    XWindowAttributes window_attributes;
-    Screen* screen;
-    XImage* ximg;
-    XShmSegmentInfo shminfo;
-
-
-
-    bool imageGrabbed,init;
+    } 
 };
 
 #endif // SCREENSHOTX11SHM_H
