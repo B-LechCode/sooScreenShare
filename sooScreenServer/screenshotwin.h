@@ -4,24 +4,12 @@
 #include "iscreenshot.h"
 #include <windows.h>
 
-struct screenShotWin : public IscreenShot
+class screenShotWin : public IscreenShot
 {
-	screenShotWin(int x, int y, uint w, uint h) : IscreenShot(x, y, w, h)
+public:
+	screenShotWin() : IscreenShot()
 	{
-		//GetWindowDC(GetDesktopWindow());
-		screenDC = GetDC(NULL);
-		memoryDC = CreateCompatibleDC(screenDC);
-
-		hBitmap = CreateCompatibleBitmap(screenDC, w, h);
-
-		m_x = x;
-		m_y = y;
-		m_w = w;
-		m_h = h;
-
-		lpPixels = new unsigned char[w * h * 4];
-		
-		init = true;
+		init = false;
 	}
 
 	virtual cv::Mat operator() () {
@@ -44,6 +32,23 @@ struct screenShotWin : public IscreenShot
 		cv::Mat img = cv::Mat(m_h, m_w, CV_8UC4, lpPixels);
 
 		return img;
+	}
+
+	virtual void initialize(int32_t x, int32_t y, uint32_t w, uint32_t h)
+	{
+		screenDC = GetDC(NULL);
+		memoryDC = CreateCompatibleDC(screenDC);
+
+		hBitmap = CreateCompatibleBitmap(screenDC, w, h);
+
+		m_x = x;
+		m_y = y;
+		m_w = w;
+		m_h = h;
+
+		lpPixels = new unsigned char[w * h * 4];
+
+		init = true;
 	}
 
 	virtual ~screenShotWin() {
