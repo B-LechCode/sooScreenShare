@@ -50,6 +50,7 @@ include_directories (
 FILE ( GLOB SRC_FILES "*.cpp")
 FILE ( GLOB HEADER_FILES "*.h")
 LIST(APPEND HEADER_FILES "./../header.h")
+LIST(APPEND HEADER_FILES "./../parameter.h")
 
 FILE ( GLOB UI_FILES "*.ui")
 MESSAGE(${HEADER_FILES})

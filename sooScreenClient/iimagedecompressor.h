@@ -4,7 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
-#include "parameter.h"
+#include "./../parameter.h"
 #include "./../header.h"
 
 class IImageDecompressor

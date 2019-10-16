@@ -30,7 +30,6 @@ message(${lz4_lib})
 set(lz4_include_path /usr/local/include)
 message(${lz4_include_path})
 
-#Don't know how to deal with it...
 
 
 # Pfade für Include-Dateien
@@ -47,6 +46,7 @@ include_directories (
 FILE ( GLOB SRC_FILES "*.cpp")
 FILE ( GLOB HEADER_FILES "*.h")
 LIST(APPEND HEADER_FILES "./../header.h")
+LIST(APPEND HEADER_FILES "./../parameter.h")
 
 FILE ( GLOB UI_FILES "*.ui")
 
