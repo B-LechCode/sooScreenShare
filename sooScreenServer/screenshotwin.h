@@ -18,6 +18,22 @@ public:
 
 		oldBmp = SelectObject(memoryDC, hBitmap);
 		BitBlt(memoryDC, 0, 0, m_w, m_h, screenDC, m_x, m_y, SRCCOPY | CAPTUREBLT);
+
+		CURSORINFO cursor = { sizeof(cursor) };
+		GetCursorInfo(&cursor);
+		if (cursor.flags == CURSOR_SHOWING) {
+			RECT rect;
+			GetWindowRect(hwnd, &rect);
+			ICONINFOEXW info = { sizeof(info) };
+			if (GetIconInfoExW(cursor.hCursor, &info) != 0) {
+				const int x = cursor.ptScreenPos.x - rect.left - rect.left - info.xHotspot;
+				const int y = cursor.ptScreenPos.y - rect.top - rect.top - info.yHotspot;
+				BITMAP bmpCursor = { 0 };
+				GetObject(info.hbmMask, sizeof(bmpCursor), &bmpCursor);
+				DrawIconEx(memoryDC, x, y, cursor.hCursor, bmpCursor.bmWidth, bmpCursor.bmHeight, 0, NULL, DI_NORMAL);
+			}
+		}
+
 		SelectObject(memoryDC, oldBmp);
 
 		BITMAPINFO bmInfo = { 0 };
@@ -36,7 +52,8 @@ public:
 
 	virtual void initialize(int32_t x, int32_t y, uint32_t w, uint32_t h)
 	{
-		screenDC = GetDC(NULL);
+		hwnd = GetDesktopWindow();
+		screenDC = GetDC(hwnd);
 		memoryDC = CreateCompatibleDC(screenDC);
 
 		hBitmap = CreateCompatibleBitmap(screenDC, w, h);
@@ -93,6 +110,7 @@ public:
 	}
 
 private:
+	HWND hwnd = nullptr;
 	HDC screenDC = nullptr;
 	HDC memoryDC = nullptr;
 	HBITMAP hBitmap = nullptr;
