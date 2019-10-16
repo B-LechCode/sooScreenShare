@@ -12,7 +12,7 @@ ItransportClientObserver::~ItransportClientObserver()
 }
 
 ItransportClient::ItransportClient():
-    m_observers(),
+    m_observer(),
     m_defaultParameters(),
     m_parameters(m_defaultParameters)
 {
@@ -41,10 +41,10 @@ parameterMap ItransportClient::getParameters()
 
 void ItransportClient::addObserverSubscriber(ItransportClientObserver &o)
 {
-    m_observers.push_back(&o);
+    m_observer = &o;
 }
 
-void ItransportClient::removeObserverSubscriber(ItransportClientObserver &o)
+void ItransportClient::removeObserverSubscriber()
 {
-    m_observers.remove(&o);
+    m_observer = nullptr;
 }
