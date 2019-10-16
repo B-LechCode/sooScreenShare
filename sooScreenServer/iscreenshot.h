@@ -4,7 +4,7 @@
 #include <vector>
 
 struct screenDef{
-    screenDef(){}
+
     screenDef(int32_t x,int32_t y, uint32_t w,uint32_t h)
     {
         this->x = x;
@@ -18,8 +18,9 @@ struct screenDef{
 
 class IscreenShot{
 public:
-    IscreenShot(int32_t x, int32_t y, uint32_t w, uint32_t h);
+    IscreenShot();
     virtual ~IscreenShot();
+    virtual void initialize(int32_t x,int32_t y, uint32_t w,uint32_t h)=0;
     virtual std::vector<screenDef> getScreens()=0;
     virtual cv::Mat operator()() = 0;
 protected:

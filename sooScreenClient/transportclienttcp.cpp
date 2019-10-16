@@ -12,18 +12,14 @@ transportClientTCP::transportClientTCP()/*:m_pollInterface(&m_sock)*/
     connect(&m_sock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
     connect(&m_sock,SIGNAL(connected()),this,SLOT(on_socketConnected()));
     connect(&m_sock,SIGNAL(readyRead()),this,SLOT(on_readyRead()));
-
-
+    connect(&m_tmr,SIGNAL(timeout()),this,SLOT(on_timerTimeout()));
+    m_tmr.setSingleShot(true);
 
 }
 
 transportClientTCP::~transportClientTCP()
 {
-    /*if(m_tcpWorker.isRunning())
-    {
-        m_tcpWorker.setRun(false);
-        m_tcpWorker.wait();
-    }*/
+    m_sock.close();
 }
 
 void transportClientTCP::setParameters(parameterMap &para)
@@ -42,9 +38,13 @@ void transportClientTCP::setParameters(parameterMap &para)
 void transportClientTCP::init()
 {
     notifyMessage("start connecting on "+m_parameters[HOST_ADDRESS].value()+":"+m_parameters[PORT].value());
-
+    m_sock.close();
     m_sock.connectToHost(m_address,m_port);
-    m_sock.waitForConnected();
+    if(!m_sock.waitForConnected()) //Retry
+    {
+        notifyMessage("Error connecting! Starting retry timer");
+        m_tmr.start(3000);
+    }
 
 }
 
@@ -77,6 +77,11 @@ void transportClientTCP::on_readyRead()
     (*m_observers.begin())->transportDataAvailable(std::move(m_recData));
 }
 
+void transportClientTCP::on_timerTimeout()
+{
+     init();
+}
+
 void transportClientTCP::notifyMessage(const char* str)
 {
     notifyMessage(std::string(str));
@@ -89,6 +94,7 @@ void transportClientTCP::notifyMessage(const std::string &str)
 
 void transportClientTCP::on_socketDisconnected()
 {
+    transportClientTCP::init();
     notifyMessage("connection closed!");
 }
 
