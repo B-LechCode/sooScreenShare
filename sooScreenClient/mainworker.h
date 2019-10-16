@@ -12,9 +12,12 @@ class mainWorker:private ItransportClientObserver
 public:
     mainWorker();
     virtual ~mainWorker();
-    void init(Idraw* ptrDraw);
+    void init(std::string decompBackend, std::string transportBackend, Idraw* ptrDraw);
     void run();
     void end();
+    IImageDecompressor *decomp() const;
+    ItransportClient *trans() const;
+
 private:
     //IscreenShot* m_screen = nullptr;
     IImageDecompressor* m_decomp = nullptr;

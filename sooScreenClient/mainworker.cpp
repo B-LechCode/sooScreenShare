@@ -20,14 +20,14 @@ mainWorker::~mainWorker()
     if(m_trans) delete m_trans;
 }
 
-void mainWorker::init(Idraw* ptrDraw)
+void mainWorker::init(std::string decompBackend,std::string transportBackend,Idraw* ptrDraw)
 {
     if(!ptrDraw)
         return;
     m_ptrDraw = ptrDraw;
     //TODO parameter change    
-    m_decomp   = imageDecompressorFactory::getBackend(compressback);
-    m_trans    = transportClientFactory::getBackend(qtTcpServer);
+    m_decomp   = imageDecompressorFactory::getBackend(decompBackend);
+    m_trans    = transportClientFactory::getBackend(transportBackend);
     m_trans->addObserverSubscriber(*reinterpret_cast<ItransportClientObserver*>(this));
     m_trans->init();
 
@@ -44,6 +44,16 @@ void mainWorker::run()
 void mainWorker::end()
 {
 
+}
+
+IImageDecompressor *mainWorker::decomp() const
+{
+    return m_decomp;
+}
+
+ItransportClient *mainWorker::trans() const
+{
+    return m_trans;
 }
 
 dataHeaderHandling::dataHeader checkFrameAvail(std::vector<uint8_t>& data,size_t pos)
