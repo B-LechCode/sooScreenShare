@@ -12,8 +12,9 @@
 
 #include "screenshotx11shm.h"
 
+#if WITH_X11
 #define x11 "X11_Shm_Grab"
-
+#endif
 
 
 class screenShotFactory
@@ -24,15 +25,19 @@ public:
     {
         if(!m_backends.size())
         {
+#if WITH_X11
             m_backends.push_back(x11);
+#endif
         }
         return  m_backends;
     }
 
     static IscreenShot* getBackend(std::string backendName)
     {
+#if WITH_X11
         if(backendName == x11)
             return new screenShotX11Shm();
+#endif
 
         return nullptr;
     }

@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #ifndef SCREENSHOTX11SHM_H
 #define SCREENSHOTX11SHM_H
-
+#if WITH_X11
 #include <opencv2/stitching.hpp>
 #include "iscreenshot.h"
 
@@ -257,5 +257,5 @@ public:
         return ret;
     } 
 };
-
+#endif
 #endif // SCREENSHOTX11SHM_H
