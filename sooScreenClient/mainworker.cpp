@@ -1,3 +1,7 @@
+//SooScreenServer by Simon Wezstein (B-LechCode), 2019
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "mainworker.h"
 #include "factories.h"
 #include <opencv2/opencv.hpp>
@@ -185,19 +189,18 @@ void mainWorker::transportDataAvailable(const char *dat, int64_t len)
 
         m_ptrDraw->display(img);
 
-
+        size_t processedFrameSize = myPos+HEADER_SIZE+static_cast<size_t>(myHeader.length);
         if(workingWithMemberBuffer)
         {
-            if(dataLen == (myPos+HEADER_SIZE+static_cast<size_t>(myHeader.length)))
+            if(dataLen == processedFrameSize)
                 myBuf.clear();//We're done: erase everything
             else
-                myBuf.erase(myBuf.begin(),myBuf.begin()+static_cast<int>(myPos)+HEADER_SIZE+myHeader.length); //We're only partially done, trim the member buffer
+                myBuf.erase(myBuf.begin(),myBuf.begin()+static_cast<int>(processedFrameSize)); //We're only partially done, trim the member buffer
         }
-        else if(dataLen > (myPos+HEADER_SIZE+static_cast<size_t>(myHeader.length)))
+        else if(dataLen > processedFrameSize)
         {
             //We have more than one frame in our input buffer, save the unprocessed to the member buffer!
             size_t oldSize = myBuf.size();
-            size_t processedFrameSize = myPos+HEADER_SIZE+static_cast<size_t>(myHeader.length);
             myBuf.resize(oldSize+(dataLen-processedFrameSize));
             ptrmyBuff = myBuf.data();
             memcpy(ptrmyBuff+oldSize,dat+processedFrameSize,(dataLen-(processedFrameSize)));
