@@ -35,13 +35,13 @@ if ( USE_X11 )
 
     find_library(X11_Xrandr_LIB Xrandr)
     find_library(X11_Xfixes_LIB Xfixes)
-    message(${X11_Xfixes_LIB})
-
-    find_library (lz4_lib lz4)
-    find_path (lz4_path /lz4.h)
-    message(${lz4_lib})
-    set(lz4_include_path /usr/local/include)
+    message(${X11_Xfixes_LIB})    
 ENDIF ( USE_X11 )
+
+find_library (lz4_lib lz4)
+find_path (lz4_path /lz4.h)
+message(${lz4_lib})
+set(lz4_include_path /usr/local/include)
 
 # Pfade für Include-Dateien
 include_directories (
