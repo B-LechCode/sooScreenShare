@@ -1,3 +1,7 @@
+//SooScreenServer by Simon Wezstein (B-LechCode), 2019
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "mainworker.h"
 #include "factories.h"
 #include <opencv2/opencv.hpp>
@@ -24,7 +28,7 @@ void mainWorker::init()
     //TODO parameter change
     m_screen = screenShotFactory::getBackend(x11); //TODO set screen size!
     auto screens = m_screen->getScreens();
-    int i = 1;
+    int i = 0;
     m_screen->initialize(screens[i].x,screens[i].y,screens[i].w,screens[i].h);
 
     m_comp   = imageCompressorFactory::getBackend(compressback);
