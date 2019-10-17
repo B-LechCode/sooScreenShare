@@ -50,11 +50,6 @@ find_path (lz4_path /lz4.h)
 message(${lz4_lib})
 set(lz4_include_path /usr/local/include)
 
-find_library (lz4_lib lz4)
-find_path (lz4_path /lz4.h)
-message(${lz4_lib})
-set(lz4_include_path /usr/local/include)
-
 
 # Pfade für Include-Dateien
 include_directories (
