@@ -19,6 +19,8 @@ transportClientTCP::transportClientTCP()/*:m_pollInterface(&m_sock)*/
 
 transportClientTCP::~transportClientTCP()
 {
+    notifyMessage("destruct tcp!");
+    m_noReconnect = true;
     m_sock.close();
 }
 
@@ -96,8 +98,11 @@ void transportClientTCP::notifyMessage(const std::string &str)
 
 void transportClientTCP::on_socketDisconnected()
 {
-    transportClientTCP::init();
-    notifyMessage("connection closed!");
+    if(!m_noReconnect)
+    {
+        transportClientTCP::init();
+        notifyMessage("connection closed!");
+    }
 }
 
 void transportClientTCP::on_socketConnected()
