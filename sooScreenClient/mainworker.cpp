@@ -16,6 +16,8 @@ mainWorker::mainWorker():
 mainWorker::~mainWorker()
 {
     end();
+    if(m_sendbuffer)
+        delete[] m_sendbuffer;
 }
 
 void mainWorker::init(std::string decompBackend,std::string transportBackend,Idraw* ptrDraw)
@@ -145,7 +147,7 @@ void mainWorker::transportDataAvailable(const char *dat, int64_t len)
 { 
     static uint32_t droppedFrames = 0;
 
-    uint8_t* refBuff = reinterpret_cast<uint8_t*>(const_cast<char**>(&dat));
+    uint8_t* refBuff = reinterpret_cast<uint8_t*>(const_cast<char*>(dat));
     uint8_t*  ptrmyBuff = myBuf.data();
     size_t  dataLen = static_cast<size_t>(len);
 
