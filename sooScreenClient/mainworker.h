@@ -36,9 +36,8 @@ private:
     virtual void transportNewMessage(std::string str)
     {
         std::cout << str << std::endl;
-    }
-
-    virtual void transportDataAvailable(std::vector<uint8_t> data);
+    }    
+    virtual void transportDataAvailable(const char *dat, int64_t len);
 
 
 };
