@@ -5,6 +5,12 @@ project( ${PROJECT_NAME} )
 # Altersbegrenzung fuer CMAKE: mindestens Version 2.8
 cmake_minimum_required(VERSION 3.6)
 
+if ( UNIX )
+option(USE_X11 "Check this if you want to use the X11 backend" true)
+ENDIF ( UNIX )
+if ( WIN32 )
+option(USE_WINAPI "Check this if you want to use the WINAPI backend" true)
+ENDIF ( WIN32 )
 # Build-Typ
 set(CMAKE_BUILD_TYPE Debug CACHE TYPE STRING FORCE )
 
@@ -26,15 +32,25 @@ FIND_PACKAGE(OpenCV REQUIRED )
 find_package(Qt5 COMPONENTS  Core Network Widgets Gui REQUIRED)
 
 #X11 suchen
-FIND_PACKAGE(X11 REQUIRED)
-#find_library(X11_Xrandr_LIB Xrandr)
-#find_library(X11_Xfixes_LIB Xfixes)
-#message(${X11_Xfixes_LIB})
+if ( USE_X11 )
+    add_compile_definitions(WITH_X11)
+    FIND_PACKAGE(X11 REQUIRED)
+
+    find_library(X11_Xrandr_LIB Xrandr)
+    find_library(X11_Xfixes_LIB Xfixes)
+    message(${X11_Xfixes_LIB})
+ENDIF ( USE_X11 )
 
 find_library (lz4_lib lz4)
 find_path (lz4_path /lz4.h)
 message(${lz4_lib})
 set(lz4_include_path /usr/local/include)
+
+find_library (lz4_lib lz4)
+find_path (lz4_path /lz4.h)
+message(${lz4_lib})
+set(lz4_include_path /usr/local/include)
+
 
 # Pfade für Include-Dateien
 include_directories (

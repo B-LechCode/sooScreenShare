@@ -13,9 +13,12 @@
 //#include "screenshotx11shm.h"
 #include "screenshotwin.h"
 
+#if WITH_X11
 #define x11 "X11_Shm_Grab"
+#endif
+#if WITH_WINAPI
 #define backend_win "Windows_Grab"
-
+#endif
 
 
 class screenShotFactory
@@ -26,18 +29,23 @@ public:
     {
         if(!m_backends.size())
         {
+#if WITH_X11
             m_backends.push_back(x11);
+#endif
         }
         return  m_backends;
     }
 
     static IscreenShot* getBackend(std::string backendName)
     {
-        //if(backendName == x11)
-        //    return new screenShotX11Shm();
-
-		if (backendName == backend_win)
-			return new screenShotWin();
+#if WITH_X11
+        if(backendName == x11)
+            return new screenShotX11Shm();
+#endif
+#if WITH_WINAPI
+        if (backendName == backend_win)
+             return new screenShotWin();
+#endif
 
         return nullptr;
     }

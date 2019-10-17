@@ -5,15 +5,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#define SO QTcpSocket
-#define S02 <QtNetwork/SO>
-
 #include <QMainWindow>
-#include <vector>
-
-#include S02
-#include <QtNetwork/QHostAddress>
-#include <QString>
 #include <QTimer>
 #include "mainworker.h"
 #include "iscreenshot.h"
