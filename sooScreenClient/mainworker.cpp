@@ -15,35 +15,69 @@ mainWorker::mainWorker():
 
 mainWorker::~mainWorker()
 {
-    //if(m_screen) delete m_screen;
-    if(m_decomp) delete m_decomp;
-    if(m_trans) delete m_trans;
+    end();
 }
 
-void mainWorker::init(Idraw* ptrDraw)
+void mainWorker::init(std::string decompBackend,std::string transportBackend,Idraw* ptrDraw)
 {
     if(!ptrDraw)
         return;
     m_ptrDraw = ptrDraw;
     //TODO parameter change    
-    m_decomp   = imageDecompressorFactory::getBackend(compressback);
-    m_trans    = transportClientFactory::getBackend(qtTcpServer);
-    m_trans->addObserverSubscriber(*reinterpret_cast<ItransportClientObserver*>(this));
-    m_trans->init();
-
-    m_initOk = true;
+    setDecompressionBackend(decompBackend);
+    setTransportBackend(transportBackend);
 }
 
 void mainWorker::run()
 {
     if(!m_initOk)
         return;
-
+    m_trans->init();
 }
 
 void mainWorker::end()
-{
+{    
+    if(m_decomp) delete m_decomp;
+    m_decomp = nullptr;
+    if(m_trans) delete m_trans;
+    m_trans = nullptr;
+}
 
+void mainWorker::setDecompressionBackend(std::string decompBackend)
+{
+    m_initOk = false;
+    if(m_decomp)
+        delete m_decomp;
+    m_decomp   = imageDecompressorFactory::getBackend(decompBackend);
+
+    if(m_decomp)
+        m_initOk = true;
+}
+
+void mainWorker::setTransportBackend(std::string transportBackend)
+{
+    m_initOk = false;
+    if(m_trans)
+        delete m_trans;
+    m_trans    = transportClientFactory::getBackend(transportBackend);
+
+
+    if(m_trans)
+    {
+        m_trans->addObserverSubscriber(*reinterpret_cast<ItransportClientObserver*>(this));
+
+        m_initOk = true;
+    }
+}
+
+IImageDecompressor *mainWorker::decomp() const
+{
+    return m_decomp;
+}
+
+ItransportClient *mainWorker::trans() const
+{
+    return m_trans;
 }
 
 dataHeaderHandling::dataHeader checkFrameAvail(std::vector<uint8_t>& data,size_t pos)

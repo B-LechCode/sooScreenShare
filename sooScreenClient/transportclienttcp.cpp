@@ -19,6 +19,8 @@ transportClientTCP::transportClientTCP()/*:m_pollInterface(&m_sock)*/
 
 transportClientTCP::~transportClientTCP()
 {
+    notifyMessage("destruct tcp!");
+    m_noReconnect = true;
     m_sock.close();
 }
 
@@ -74,7 +76,8 @@ void transportClientTCP::on_readyRead()
     m_recData = std::vector<uint8_t>(l.size());
     memcpy(m_recData.data(),l.data(),l.size());
 
-    (*m_observers.begin())->transportDataAvailable(std::move(m_recData));
+    if(m_observer)
+        (m_observer)->transportDataAvailable(std::move(m_recData));
 }
 
 void transportClientTCP::on_timerTimeout()
@@ -89,13 +92,17 @@ void transportClientTCP::notifyMessage(const char* str)
 
 void transportClientTCP::notifyMessage(const std::string &str)
 {
-    (*m_observers.begin())->transportNewMessage(str);
+    if(m_observer)
+        (m_observer)->transportNewMessage(str);
 }
 
 void transportClientTCP::on_socketDisconnected()
 {
-    transportClientTCP::init();
-    notifyMessage("connection closed!");
+    if(!m_noReconnect)
+    {
+        transportClientTCP::init();
+        notifyMessage("connection closed!");
+    }
 }
 
 void transportClientTCP::on_socketConnected()

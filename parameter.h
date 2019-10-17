@@ -29,17 +29,17 @@ public:
              this->m_value = p.m_value;
          }
      }
-     std::string description()
+     std::string description() const
      {
          return m_description;
      }
 
-     std::string type()
+     std::string type() const
      {
          return m_type;
      }
 
-     std::string value()
+     std::string value() const
      {
          return m_value;
      }

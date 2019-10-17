@@ -29,7 +29,6 @@ find_path (lz4_path /lz4.h)
 message(${lz4_lib})
 set(lz4_include_path /usr/local/include)
 message(${lz4_include_path})
-message(${lz4_path})
 
 # Pfade für Include-Dateien
 include_directories (
@@ -46,6 +45,9 @@ include_directories (
 FILE ( GLOB SRC_FILES "*.cpp")
 FILE ( GLOB HEADER_FILES "*.h")
 LIST(APPEND HEADER_FILES "./../header.h")
+LIST(APPEND HEADER_FILES "./../parameter.h")
+LIST(APPEND HEADER_FILES "./../parameterserialization.h")
+LIST(APPEND SRC_FILES "./../parameterserialization.cpp")
 
 FILE ( GLOB UI_FILES "*.ui")
 

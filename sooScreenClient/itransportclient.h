@@ -5,7 +5,7 @@
 #include <string>
 #include <list>
 #include <vector>
-#include "parameter.h"
+#include "./../parameter.h"
 
 class ItransportClientObserver
 {
@@ -25,11 +25,11 @@ public:
     virtual void setParameters(parameterMap& para);
     virtual parameterMap getParameters();
     virtual void addObserverSubscriber(ItransportClientObserver& o);
-    virtual void removeObserverSubscriber(ItransportClientObserver& o);
+    virtual void removeObserverSubscriber();
     virtual void init() = 0;
     virtual int64_t send(const char* dat, int64_t len) = 0;
 protected:
-    std::list<ItransportClientObserver*> m_observers;
+    ItransportClientObserver* m_observer;
     parameterMap m_defaultParameters;
     parameterMap m_parameters;
 

@@ -28,7 +28,8 @@ find_package(Qt5 COMPONENTS  Core Network Widgets Gui REQUIRED)
 #X11 suchen
 FIND_PACKAGE(X11 REQUIRED)
 #find_library(X11_Xrandr_LIB Xrandr)
-#message(${X11_Xrandr_LIB})
+#find_library(X11_Xfixes_LIB Xfixes)
+#message(${X11_Xfixes_LIB})
 
 find_library (lz4_lib lz4)
 find_path (lz4_path /lz4.h)
@@ -49,6 +50,9 @@ include_directories (
 FILE ( GLOB SRC_FILES "*.cpp")
 FILE ( GLOB HEADER_FILES "*.h")
 LIST(APPEND HEADER_FILES "./../header.h")
+LIST(APPEND HEADER_FILES "./../parameter.h")
+LIST(APPEND HEADER_FILES "./../parameterserialization.h")
+LIST(APPEND SRC_FILES "./../parameterserialization.cpp")
 
 FILE ( GLOB UI_FILES "*.ui")
 MESSAGE(${HEADER_FILES})
@@ -88,6 +92,7 @@ TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
                 ${Qt5Gui_LIBRARIES}
                 ${lz4_lib}
                 # ${X11_Xrandr_LIB}
+                # ${X11_Xfixes_LIB}
 
 )
 

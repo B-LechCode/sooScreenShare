@@ -1,7 +1,7 @@
 #ifndef TRANSPORTSERVERFACTORY_H
 #define TRANSPORTSERVERFACTORY_H
 
-#define qtTcpServer "qtTCP"
+#define qtTcpclient "qtTCP"
 
 #include "itransportclient.h"
 #include "transportclienttcp.h"
@@ -15,14 +15,14 @@ public:
     {
         if(!m_backends.size())
         {
-            m_backends.push_back(qtTcpServer);
+            m_backends.push_back(qtTcpclient);
         }
         return  m_backends;
     }
 
     static ItransportClient* getBackend(std::string backendName)
     {
-        if(backendName == qtTcpServer)
+        if(backendName == qtTcpclient)
             return new transportClientTCP();
 
         return nullptr;
