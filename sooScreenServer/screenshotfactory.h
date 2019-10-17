@@ -10,7 +10,7 @@
 
 #include "iscreenshot.h"
 
-//#include "screenshotx11shm.h"
+#include "screenshotx11shm.h"
 #include "screenshotwin.h"
 
 #if WITH_X11

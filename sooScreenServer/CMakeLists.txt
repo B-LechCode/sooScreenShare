@@ -41,6 +41,10 @@ if ( USE_X11 )
     message(${X11_Xfixes_LIB})
 ENDIF ( USE_X11 )
 
+if ( USE_WINAPI )
+    add_compile_definitions(WITH_WINAPI)
+ENDIF ( USE_WINAPI )
+
 find_library (lz4_lib lz4)
 find_path (lz4_path /lz4.h)
 message(${lz4_lib})

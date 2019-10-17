@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #ifndef SCREENSHOTWIN_H
 #define SCREENSHOTWIN_H
-
+#if WITH_WINAPI
 #include "iscreenshot.h"
 #include <windows.h>
 
@@ -124,5 +124,5 @@ private:
 
 	bool init = false;
 };
-
+#endif //WITH_WINAPI
 #endif //SCREENSHOTWIN_H

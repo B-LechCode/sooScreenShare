@@ -42,7 +42,7 @@ private:
     Ui::MainWindow *ui; 
     drawWidget* m_draw;
     mainWorker m_work;
-    const std::string filePath = "/tmp/parameters.json";
+    const std::string filePath = "parameters.json";
     std::vector<std::string> m_decompressBackends;
     size_t m_selectedDecompressBackend = 0;
     std::vector<std::string> m_transportBackends;
