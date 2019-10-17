@@ -12,8 +12,8 @@ class ItransportClientObserver
 public:
     ItransportClientObserver();
     virtual ~ItransportClientObserver();
-    virtual void transportNewMessage(std::string str)=0;
-    virtual void transportDataAvailable(std::vector<uint8_t> data)=0;
+    virtual void transportNewMessage(std::string str)=0;    
+    virtual void transportDataAvailable(const char *dat, int64_t len)=0;
 };
 
 class ItransportClient

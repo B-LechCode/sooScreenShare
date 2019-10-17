@@ -70,14 +70,10 @@ void transportClientTCP::on_message(const QString msg)
 
 void transportClientTCP::on_readyRead()
 {
-    auto l = m_sock.readAll();
-
-    //We can do this, because we are sure that we won't sacrifice existing data in the Buffer!
-    m_recData = std::vector<uint8_t>(l.size());
-    memcpy(m_recData.data(),l.data(),l.size());
+    m_recData = m_sock.readAll();
 
     if(m_observer)
-        (m_observer)->transportDataAvailable(std::move(m_recData));
+        (m_observer)->transportDataAvailable(m_recData.data(),m_recData.length()/*std::move(m_recData)*/);
 }
 
 void transportClientTCP::on_timerTimeout()

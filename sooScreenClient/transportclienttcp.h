@@ -42,7 +42,8 @@ private:
     QTcpSocket m_sock;
     uint16_t   m_port;
     QHostAddress m_address;
-    std::vector<uint8_t> m_recData;
+
+    QByteArray m_recData;
     QTimer               m_tmr;
     bool                 m_noReconnect = false;
 
