@@ -5,6 +5,16 @@
 #ifndef SCREENSHOTX11SHM_H
 #define SCREENSHOTX11SHM_H
 #if WITH_X11
+
+namespace shot {
+#define DISPLAY_NUMBER "Display Number"
+#define OVERRIDE_DISPLAY_SELECTION "Override Display Selection"
+#define Grab_X "X"
+#define Grab_Y "Y"
+#define Grab_W "Width"
+#define Grab_H "Height"
+}
+
 #include <opencv2/stitching.hpp>
 #include "iscreenshot.h"
 
@@ -15,6 +25,9 @@
 #include <X11/Xutil.h>
 #include <X11/extensions/Xrandr.h>
 #include <X11/extensions/Xfixes.h>
+#include <iostream>
+#include <cctype>
+#include <algorithm>
 
 //screenShotX11Shm
 
@@ -45,7 +58,55 @@ class screenShotX11Shm : public IscreenShot
 
 
 
-    bool m_imageGrabbed,m_init;
+    bool m_imageGrabbed,m_init,grabbing;
+
+    virtual void parameterMapChangedEvent()
+    {
+        initialize();
+    }
+
+    void applyParameters()
+    {
+        std::string overrideStr = m_parameters[OVERRIDE_DISPLAY_SELECTION].value();
+        std::transform(overrideStr.begin(),overrideStr.end(),overrideStr.begin(),[](int c) -> int { return std::tolower(c); });
+        bool override = overrideStr == "true";
+
+
+
+        if(!override)
+        {
+            int displayNumber = std::stoi(m_parameters[DISPLAY_NUMBER].value());
+            auto displays = getScreens();
+
+            if(displays.size()-1<displayNumber)
+                ;//FAIL!
+            else
+            {
+                auto displayNumberS = static_cast<size_t>(displayNumber);
+                m_x = displays[displayNumberS].x;
+                m_y = displays[displayNumberS].y;
+                m_h = displays[displayNumberS].h;
+                m_w = displays[displayNumberS].w;
+            }
+        }
+        else
+        {
+            m_x = std::stoi(m_parameters[Grab_X].value());
+            m_y = std::stoi(m_parameters[Grab_Y].value());
+            m_h = static_cast<uint32_t>(std::stoi(m_parameters[Grab_H].value()));
+            m_w = static_cast<uint32_t>(std::stoi(m_parameters[Grab_W].value()));
+        }
+
+
+    }
+
+    virtual void parameterChangedEvent(const std::string& key)
+    {
+        if(grabbing)
+            std::cout << "ERROR!" << std::endl;
+        else
+            initialize();
+    }
 
     bool checkCoordinates(int32_t xR,int32_t yR)
     {
@@ -58,7 +119,7 @@ class screenShotX11Shm : public IscreenShot
     {        
         int wX = m_cursImage.cols;
         int wY = m_cursImage.rows;
-        std::cout << m_hotX << " " << m_hotY << std::endl;
+
         pointerStr pointer;
         pointer.xStart = xR-m_x-m_hotX;
         pointer.xEnd = pointer.xStart+wX;
@@ -139,6 +200,10 @@ class screenShotX11Shm : public IscreenShot
     {
         if(m_imageGrabbed)
             XDestroyImage(m_ximg);
+        if(m_cursBuff)
+            delete[] m_cursBuff;
+        m_cursBuff = nullptr;
+
         m_init = false;
         XShmDetach(m_display, &m_shminfo);
         shmdt(m_shminfo.shmaddr);
@@ -147,14 +212,22 @@ class screenShotX11Shm : public IscreenShot
 
 
 public:
-    screenShotX11Shm():IscreenShot()
+    screenShotX11Shm():IscreenShot(),m_imageGrabbed(false),m_init(false)
     {
-        m_imageGrabbed = false;
-        m_init = false;
+        m_defaultParameters[OVERRIDE_DISPLAY_SELECTION] = parameter("Override display selection to freely define the grab ROI","bool","false");
+        m_defaultParameters[DISPLAY_NUMBER] = parameter("The display to grab","int16","0");        
+        m_defaultParameters[Grab_X] = parameter("The X coordinate of the grab ROI","int32","0");
+        m_defaultParameters[Grab_Y] = parameter("The Y coordinate of the grab ROI","int32","0");
+        m_defaultParameters[Grab_W] = parameter("The width of the grab ROI","uint32","640");
+        m_defaultParameters[Grab_H] = parameter("The width of the grab ROI","uint32","480");
+        setParameters(m_defaultParameters);      
     }
 
     virtual cv::Mat operator() ()
     {
+        grabbing = true;
+        if(!m_init)
+            return cv::Mat();
 
         m_imageGrabbed = true;
 
@@ -190,16 +263,15 @@ public:
                 }
             }
         }
-
+        grabbing = false;
         return img;
     }
 
-    virtual void initialize(int32_t x,int32_t y, uint32_t w,uint32_t h)
+
+
+    virtual void initialize(/*int32_t x,int32_t y, uint32_t w,uint32_t h*/)
     {
-        m_x = x;
-        m_y = y;
-        m_w = w;
-        m_h = h;
+        applyParameters();
         if(m_init)
             destruct();
 

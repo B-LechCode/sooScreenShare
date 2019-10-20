@@ -13,6 +13,7 @@
 
 class transportClientFactory
 {
+    transportClientFactory(){}
     static std::vector<std::string> m_backends;
 public:
     static const std::vector<std::string>& getAvailableBackends()

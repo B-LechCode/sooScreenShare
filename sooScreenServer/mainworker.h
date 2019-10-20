@@ -14,9 +14,13 @@ class mainWorker:private ItransportServerObserver
 public:
     mainWorker();
     virtual ~mainWorker();
-    void init();
+    void init(std::string screenShotBackend,std::string imageCompressorBackend, std::string transportServerBackend);
     void run();
     void end();
+    IscreenShot *screen() const;
+    IImageCompressor *comp() const;
+    ItransportServer *trans() const;
+
 private:
     IscreenShot* m_screen = nullptr;
     IImageCompressor* m_comp = nullptr;

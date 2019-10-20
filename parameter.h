@@ -69,6 +69,12 @@ public:
             itPara++;
         }
     }
+
+    static parameterMap setParameterValue(parameterMap map,std::string key,std::string value)
+    {
+        map[key].setValue(value);
+        return map;
+    }
 };
 
 #endif // PARAMETER_H

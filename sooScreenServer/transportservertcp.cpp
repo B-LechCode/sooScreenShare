@@ -14,7 +14,9 @@ transportServerTCP::transportServerTCP()
 
 transportServerTCP::~transportServerTCP()
 {
-
+    if(m_ptrSock)
+        m_ptrSock->disconnect();
+    m_srvr.close();
 }
 
 void transportServerTCP::setParameters(parameterMap &para)

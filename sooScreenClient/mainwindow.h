@@ -36,9 +36,9 @@ private slots:
     void on_qLineEditEditingFinished();
 private:
     void addSettingsCat(QTreeWidget* tree, const std::vector<std::string> transBackends, parameterMap transParam, QString sectionName, section sec, int currentIndex = 0);
-    QTreeWidgetItem* addToplevelWidgetItem(QTreeWidget* wid,QString text);
+    /*QTreeWidgetItem* addToplevelWidgetItem(QTreeWidget* wid,QString text);
     QTreeWidgetItem* addWidgetItem(QTreeWidget* wid,QTreeWidgetItem* itm,QString text,QWidget* cwid,QString textDescr);
-    QTreeWidgetItem* addWidgetItem(QTreeWidgetItem* itm,QString text,QString text2,QString textDescr);
+    QTreeWidgetItem* addWidgetItem(QTreeWidgetItem* itm,QString text,QString text2,QString textDescr);*/
     Ui::MainWindow *ui; 
     drawWidget* m_draw;
     mainWorker m_work;

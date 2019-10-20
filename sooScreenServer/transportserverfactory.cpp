@@ -2,12 +2,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
-#ifndef INTERFACES_H
-#define INTERFACES_H
+#include "transportserverfactory.h"
 
-#include "iimagecompressor.h"
-#include "itransportserver.h"
-#include "iscreenshot.h"
-#include "./../iparameter.h"
-
-#endif // INTERFACES_H
+std::vector<std::string> transportServerFactory::m_backends;
