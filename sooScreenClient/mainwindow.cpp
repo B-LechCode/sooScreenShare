@@ -6,6 +6,7 @@
 #include "ui_mainwindow.h"
 #include "factories.h"
 #include "./../header.h"
+#include "./../guihelpers.h"
 #include <algorithm>
 #include <QComboBox>
 #include <QString>
@@ -13,71 +14,7 @@
 
 #include <QPushButton>
 
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-
-#define PARAMETER_PROPERTY "parameter"
-#define SECTION_PROPERTY "sec"
-
-QTreeWidgetItem* MainWindow::addToplevelWidgetItem(QTreeWidget* wid,QString text)
-{
-    QTreeWidgetItem* itm = new QTreeWidgetItem(wid);
-    itm->setText(0,text);
-    return itm;
-}
-
-QTreeWidgetItem* MainWindow::addWidgetItem(QTreeWidgetItem* itm,QString text,QString text2,QString textDescr)
-{
-    QTreeWidgetItem* itm2 = new QTreeWidgetItem(itm);
-    itm2->setText(0,text);
-    itm2->setText(1,text2);
-    itm2->setText(2,textDescr);
-
-
-    return itm2;
-}
-
-QTreeWidgetItem* MainWindow::addWidgetItem(QTreeWidget* wid,QTreeWidgetItem* itm,QString text,QWidget* cwid,QString textDescr)
-{
-    QTreeWidgetItem* itm2 = new QTreeWidgetItem(itm);
-    itm2->setText(0,text);
-    wid->setItemWidget(itm2,1,cwid);
-    itm2->setText(2,textDescr);
-
-    return itm2;
-}
-
-void MainWindow::addSettingsCat(QTreeWidget* tree,const std::vector<std::string> transBackends,parameterMap transParam,QString sectionName,section sec,int currentIndex)
-{
-    QTreeWidgetItem* itmBackendSection = addToplevelWidgetItem(tree,sectionName);
-
-    //Backend selector
-    QComboBox* cboxTrans = new QComboBox();
-
-    for(uint32_t i = 0;i<transBackends.size();++i)
-        cboxTrans->addItem(QString(transBackends[i].c_str()));
-
-    cboxTrans->setProperty(SECTION_PROPERTY,QVariant(sec));    
-    cboxTrans->setCurrentIndex(currentIndex);
-
-    connect(cboxTrans,SIGNAL(currentIndexChanged(int)),this,SLOT(on_qComboBoxCurrentIndexChanged(int)));
-
-    QTreeWidgetItem* transItem = addWidgetItem(tree,itmBackendSection,sectionName,cboxTrans,"");
-
-
-    for(auto i = transParam.begin();i!=transParam.end();++i)
-    {
-        QLineEdit* ledit = new QLineEdit();
-        ledit->setText((*i).second.value().c_str());
-
-        ledit->setProperty(PARAMETER_PROPERTY,QVariant(QString((*i).first.c_str())));
-        ledit->setProperty(SECTION_PROPERTY,QVariant(sec));
-
-        addWidgetItem(tree,transItem,QString((*i).first.c_str()),ledit,QString((*i).second.description().c_str()));
-        connect(ledit,SIGNAL(editingFinished()),this,SLOT(on_qLineEditEditingFinished()));
-    }
-}
+#include "./../guihelpers.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -105,26 +42,16 @@ void MainWindow::workerInitialize()
     treeviewInitialize();
 }
 
-size_t findIndex(std::vector<std::string>& vec,std::string str)
-{
-    for (size_t i = 0; i<vec.size();++i)
-    {
-       if(vec[i] == str)
-           return i;
-    }
-    return 0;
-}
-
 void MainWindow::readData()
 {
     m_serialize.readData(filePath);
 
     //get the selected backends
     std::string selectedDecompressBackend = m_serialize.getStringValue("Decompression");
-    m_selectedDecompressBackend = findIndex(m_decompressBackends,selectedDecompressBackend);
+    m_selectedDecompressBackend = GuiHelpers::findIndex(m_decompressBackends,selectedDecompressBackend);
 
     std::string selectedTransportBackend = m_serialize.getStringValue("Transportlayer");
-    m_selectedTransportBackend = findIndex(m_transportBackends,selectedTransportBackend);
+    m_selectedTransportBackend = GuiHelpers::findIndex(m_transportBackends,selectedTransportBackend);
 
     workerInitialize();
 
@@ -137,8 +64,8 @@ void MainWindow::readData()
 void MainWindow::treeviewInitialize()
 {    
     ui->twSettings->clear();
-    addSettingsCat(ui->twSettings,m_decompressBackends,m_work.decomp()->getParameters(),QString("Decompression"),section::decomp,static_cast<int>(m_selectedDecompressBackend));
-    addSettingsCat(ui->twSettings,m_transportBackends,m_work.trans()->getParameters(),QString("Transport layer"),section::transport,static_cast<int>(m_selectedTransportBackend));
+    GuiHelpers::addSettingsCat(this,ui->twSettings,m_decompressBackends,m_work.decomp()->getParameters(),QString("Decompression"),section::decomp,static_cast<int>(m_selectedDecompressBackend));
+    GuiHelpers::addSettingsCat(this,ui->twSettings,m_transportBackends,m_work.trans()->getParameters(),QString("Transport layer"),section::transport,static_cast<int>(m_selectedTransportBackend));
     m_transistion = false;
     ui->twSettings->expandAll();
 }
@@ -209,11 +136,7 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
 
 }
 
-parameterMap setParameterValue(parameterMap map,std::string key,std::string value)
-{
-    map[key].setValue(value);
-    return map;
-}
+
 
 void MainWindow::on_qLineEditEditingFinished()
 {
@@ -231,13 +154,13 @@ void MainWindow::on_qLineEditEditingFinished()
     {
         case transport:
         {
-            auto paraMap = setParameterValue(m_work.trans()->getParameters(),key,value);
+            auto paraMap = parameterMap::setParameterValue(m_work.trans()->getParameters(),key,value);
             m_work.trans()->setParameters(paraMap);
         }
         break;
         case decomp:            
         {
-            auto paraMap = setParameterValue(m_work.decomp()->getParameters(),key,value);
+            auto paraMap = parameterMap::setParameterValue(m_work.decomp()->getParameters(),key,value);
             m_work.decomp()->setParameters(paraMap);
         }
         break;

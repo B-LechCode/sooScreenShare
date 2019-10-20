@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "iscreenshot.h"
 
-IscreenShot::IscreenShot()
+IscreenShot::IscreenShot():Iparameter()
 {
     m_x = m_y = m_w = m_h = 0;
 }

@@ -5,6 +5,8 @@ project( ${PROJECT_NAME} )
 # Altersbegrenzung fuer CMAKE: mindestens Version 2.8
 cmake_minimum_required(VERSION 3.6)
 
+option(USE_SDL2 "Check this if you want to use the SDL backend" true)
+
 if ( UNIX )
 option(USE_X11 "Check this if you want to use the X11 backend" true)
 ENDIF ( UNIX )
@@ -28,8 +30,13 @@ FIND_PACKAGE(OpenCV REQUIRED )
 #QT suchen
 find_package(Qt5 COMPONENTS  Core Network Widgets Gui REQUIRED)
 
+IF (USE_SDL2)
+FIND_PACKAGE(SDL2 REQUIRED )
+add_compile_definitions(WITH_SDL)
+ENDIF(USE_SDL2)
+
 #X11 suchen
-if ( USE_X11 )
+IF ( USE_X11 )
     add_compile_definitions(WITH_X11)
     FIND_PACKAGE(X11 REQUIRED)
 
@@ -46,6 +53,7 @@ set(lz4_include_path /usr/local/include)
 # Pfade für Include-Dateien
 include_directories (
         ${QT_INCLUDES}
+        ${SDL2_INCLUDES}
         ${OpenCV_INCLUDES}
         ${OpenCV_INCLUDE_DIRS}
         ${lz4_include_path}
@@ -57,8 +65,12 @@ FILE ( GLOB SRC_FILES "*.cpp")
 FILE ( GLOB HEADER_FILES "*.h")
 LIST(APPEND HEADER_FILES "./../header.h")
 LIST(APPEND HEADER_FILES "./../parameter.h")
+LIST(APPEND HEADER_FILES "./../iparameter.h")
 LIST(APPEND HEADER_FILES "./../parameterserialization.h")
+LIST(APPEND HEADER_FILES "./../guihelpers.h")
+LIST(APPEND HEADER_FILES "./../iparameter.cpp")
 LIST(APPEND SRC_FILES "./../parameterserialization.cpp")
+LIST(APPEND SRC_FILES "./../guihelpers.cpp")
 
 FILE ( GLOB UI_FILES "*.ui")
 MESSAGE(${HEADER_FILES})
@@ -91,6 +103,7 @@ ADD_EXECUTABLE ( ${PROJECT_NAME}
 TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
         ${OpenCV_LIBS}
         ${X11_LIBRARIES}
+        ${SDL2_LIBRARIES}
         ${QT_LIBRARIES}                
                 ${Qt5Widgets_LIBRARIES}
                 ${Qt5Network_LIBRARIES}

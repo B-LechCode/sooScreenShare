@@ -19,28 +19,30 @@ mainWorker::mainWorker():
 mainWorker::~mainWorker()
 {
     if(m_screen) delete m_screen;
+    m_screen = nullptr;
     if(m_comp) delete m_comp;
+    m_comp = nullptr;
     if(m_trans) delete m_trans;
+    m_trans = nullptr;
 }
 
-void mainWorker::init()
+void mainWorker::init(std::string screenShotBackend,std::string imageCompressorBackend, std::string transportServerBackend)
 {
     //TODO parameter change
-    m_screen = screenShotFactory::getBackend(x11); //TODO set screen size!
-    auto screens = m_screen->getScreens();
-    int i = 0;
-    m_screen->initialize(screens[i].x,screens[i].y,screens[i].w,screens[i].h);
+    m_screen = screenShotFactory::getBackend(screenShotBackend); //TODO set screen size!
+    //m_screen->initialize(screens[i].x,screens[i].y,screens[i].w,screens[i].h);
 
-    m_comp   = imageCompressorFactory::getBackend(compressback);
-    m_trans  = transportServerFactory::getBackend(qtTcpServer);
+    m_comp   = imageCompressorFactory::getBackend(imageCompressorBackend);
+    m_trans  = transportServerFactory::getBackend(transportServerBackend);
     m_trans->addObserverSubscriber(*(ItransportServerObserver*)this);
-    m_trans->init();
+    m_trans->init(); //TODO: not here!
     createHeader();
 }
 
 void mainWorker::run()
 {
-
+    if(!m_comp || !m_trans || !m_screen)
+        return;
     bool compressOk;
 
     //Get Screenshot
@@ -51,7 +53,7 @@ void mainWorker::run()
 
     if(!compressOk)
         return; //TODO user notification
-    std::cout << compressedImageData.size() << std::endl;
+    //std::cout << compressedImageData.size() << std::endl;
     //check size
     if((compressedImageData.size()+HEADER_SIZE)>m_bufferSize)
     {
@@ -75,7 +77,27 @@ void mainWorker::run()
 
 void mainWorker::end()
 {
+    if(m_screen) delete m_screen;
+    m_screen = nullptr;
+    if(m_comp) delete m_comp;
+    m_comp = nullptr;
+    if(m_trans) delete m_trans;
+    m_trans = nullptr;
+}
 
+IscreenShot *mainWorker::screen() const
+{
+    return m_screen;
+}
+
+IImageCompressor *mainWorker::comp() const
+{
+    return m_comp;
+}
+
+ItransportServer *mainWorker::trans() const
+{
+    return m_trans;
 }
 
 //Helpers

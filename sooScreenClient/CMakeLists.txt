@@ -48,7 +48,9 @@ FILE ( GLOB HEADER_FILES "*.h")
 LIST(APPEND HEADER_FILES "./../header.h")
 LIST(APPEND HEADER_FILES "./../parameter.h")
 LIST(APPEND HEADER_FILES "./../parameterserialization.h")
+LIST(APPEND HEADER_FILES "./../guihelpers.h")
 LIST(APPEND SRC_FILES "./../parameterserialization.cpp")
+LIST(APPEND SRC_FILES "./../guihelpers.cpp")
 
 FILE ( GLOB UI_FILES "*.ui")
 
