@@ -19,7 +19,6 @@ public:
     opencvJpegImageDecompressor();
     virtual ~opencvJpegImageDecompressor();
 
-    virtual void setParameters(parameterMap& para);
 
     inline virtual cv::Mat decompress(uint8_t* ptrDat,dataHeaderHandling::dataHeader hdr, bool& ok)
     {
@@ -41,7 +40,8 @@ public:
         return !img.empty();
     }
 private:
-
+    virtual void parameterMapChangedEvent();
+    virtual void parameterChangedEvent(const std::string& key);
 };
 
 #endif // OPENCVJPEGIMAGECOMPRESSOR_H

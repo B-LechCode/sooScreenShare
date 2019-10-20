@@ -7,7 +7,7 @@
 
 
 
-transportClientTCP::transportClientTCP()/*:m_pollInterface(&m_sock)*/
+transportClientTCP::transportClientTCP()
 {
     m_defaultParameters[PORT] = parameter("The TCP port to connect on","int16","12345");
     m_defaultParameters[HOST_ADDRESS] = parameter("The address interface to connect on","string","127.0.0.1");
@@ -28,30 +28,20 @@ transportClientTCP::~transportClientTCP()
     m_sock.close();
 }
 
-void transportClientTCP::setParameters(parameterMap &para)
-{
-    ItransportClient::setParameters(para);
-
-    //port
-    m_port = static_cast<uint16_t>(std::stoi(m_defaultParameters[PORT].value()));
-
-    //network interface    
-    std::string  par = m_defaultParameters[HOST_ADDRESS].value();   
-    m_address.setAddress(QString(par.c_str()));
-
-}
 
 void transportClientTCP::init()
 {
+    initParameters();
     notifyMessage("start connecting on "+m_parameters[HOST_ADDRESS].value()+":"+m_parameters[PORT].value());
-    m_sock.close();
+
+
     m_sock.connectToHost(m_address,m_port);
     if(!m_sock.waitForConnected()) //Retry
     {
         notifyMessage("Error connecting! Starting retry timer");
         m_tmr.start(3000);
     }
-
+    connect(&m_sock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
 }
 
 int64_t transportClientTCP::send(const char *dat, int64_t len)
@@ -82,11 +72,45 @@ void transportClientTCP::on_readyRead()
 
 void transportClientTCP::on_timerTimeout()
 {
-     init();
+    init();
+}
+
+void transportClientTCP::end()
+{
+    disconnect(&m_sock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
+    notifyMessage("close socket!");
+    m_sock.close();
+    m_sock.abort();
+
+
+}
+
+void transportClientTCP::initParameters()
+{
+    //port
+    m_port = static_cast<uint16_t>(std::stoi(m_parameters[PORT].value()));
+
+    //network interface
+    std::string  par = m_parameters[HOST_ADDRESS].value();
+    m_address.setAddress(QString(par.c_str()));
+}
+
+void transportClientTCP::parameterMapChangedEvent()
+{
+    end();
+    m_tmr.stop();
+    m_tmr.start(1000);
+}
+
+void transportClientTCP::parameterChangedEvent(const std::string &key)
+{
+    end();
+    m_tmr.stop();
+    m_tmr.start(1000);
 }
 
 void transportClientTCP::notifyMessage(const char* str)
-{
+{    
     notifyMessage(std::string(str));
 }
 
@@ -100,6 +124,7 @@ void transportClientTCP::on_socketDisconnected()
 {
     if(!m_noReconnect)
     {
+        end();
         transportClientTCP::init();
         notifyMessage("connection closed!");
     }

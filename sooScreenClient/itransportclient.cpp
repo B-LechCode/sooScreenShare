@@ -16,9 +16,7 @@ ItransportClientObserver::~ItransportClientObserver()
 }
 
 ItransportClient::ItransportClient():
-    m_observer(),
-    m_defaultParameters(),
-    m_parameters(m_defaultParameters)
+    m_observer()
 {
 
 }
@@ -26,21 +24,6 @@ ItransportClient::ItransportClient():
 ItransportClient::~ItransportClient()
 {
 
-}
-
-parameterMap ItransportClient::getDefaultParameters()
-{
-    return m_defaultParameters;
-}
-
-void ItransportClient::setParameters(parameterMap &para)
-{
-    parameterMap::insertParameters(m_parameters,para);
-}
-
-parameterMap ItransportClient::getParameters()
-{
-    return  m_parameters;
 }
 
 void ItransportClient::addObserverSubscriber(ItransportClientObserver &o)

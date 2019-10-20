@@ -15,7 +15,12 @@ opencvJpegImageDecompressor::~opencvJpegImageDecompressor()
 
 }
 
-void opencvJpegImageDecompressor::setParameters(parameterMap &para)
+void opencvJpegImageDecompressor::parameterMapChangedEvent()
 {
-    IImageDecompressor::setParameters(para);
+
+}
+
+void opencvJpegImageDecompressor::parameterChangedEvent(const std::string &key)
+{
+
 }

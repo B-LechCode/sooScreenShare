@@ -15,8 +15,6 @@
 #include <thread>
 #include <chrono>
 #include <QString>
-#include <QThread>
-#include <QMutex>
 #include <QElapsedTimer>
 #include <QTimer>
 #include <iostream>
@@ -30,8 +28,7 @@ class transportClientTCP :private QObject, public ItransportClient
     Q_OBJECT
 public:
     transportClientTCP();
-    virtual ~transportClientTCP();
-    virtual void setParameters(parameterMap& para);
+    virtual ~transportClientTCP();    
     virtual void init();
     virtual int64_t send(const char* dat, int64_t len);
 
@@ -43,6 +40,13 @@ private slots:
     void on_readyRead();
     void on_timerTimeout();
 private:    
+    void end();
+    void initParameters();
+    virtual void parameterMapChangedEvent();
+    virtual void parameterChangedEvent(const std::string& key);
+    void notifyMessage(const char* str);
+    void notifyMessage(const std::string& str);
+
     QTcpSocket m_sock;
     uint16_t   m_port;
     QHostAddress m_address;
@@ -50,9 +54,6 @@ private:
     QByteArray m_recData;
     QTimer               m_tmr;
     bool                 m_noReconnect = false;
-
-    void notifyMessage(const char* str);
-    void notifyMessage(const std::string& str);
 };
 
 #endif // TRANSPORTSERVERTCP_H

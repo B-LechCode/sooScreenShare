@@ -8,8 +8,9 @@ transportServerTCP::transportServerTCP()
 {
     m_defaultParameters[PORT] = parameter("The TCP port to listen on","int16","12345");
     m_defaultParameters[HOST_ADDRESS] = parameter("The address/network interface to listen on","string","any");
+    connect(&m_srvr,SIGNAL(newConnection()),this,SLOT(on_newConnection()));
     setParameters(m_defaultParameters);
-    init();
+
 }
 
 transportServerTCP::~transportServerTCP()
@@ -21,13 +22,13 @@ void transportServerTCP::setParameters(parameterMap &para)
 {
     ItransportServer::setParameters(para);
 
-    initParameters();
+    //initParameters();
 }
 
 void transportServerTCP::init()
 {
     notifyMessage("start listening on "+m_parameters[HOST_ADDRESS].value()+":"+m_parameters[PORT].value());
-    connect(&m_srvr,SIGNAL(newConnection()),this,SLOT(on_newConnection()));
+
     m_srvr.listen(m_interface,m_port);
 }
 
@@ -58,14 +59,14 @@ void transportServerTCP::on_socketDisconnected()
 {
     notifyMessage("connection closed!");
 
-    disconnect(m_ptrSock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
+    //disconnect(m_ptrSock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
 
     init();
 }
 
 void transportServerTCP::end()
 {
-    disconnect(&m_srvr,SIGNAL(newConnection()),this,SLOT(on_newConnection()));
+    //disconnect(&m_srvr,SIGNAL(newConnection()),this,SLOT(on_newConnection()));
     if(m_ptrSock)
     {
         m_ptrSock->close();

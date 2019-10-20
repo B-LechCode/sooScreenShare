@@ -27,8 +27,7 @@ public:
     virtual void init();
     virtual int64_t send(const char* dat, int64_t len);
 private slots:
-    void on_newConnection();
-    //void on_timerTimeout();
+    void on_newConnection();    
     void on_socketDisconnected();
 private:
     QTcpServer m_srvr;
