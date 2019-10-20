@@ -35,9 +35,15 @@ private:
     QTcpSocket* m_ptrSock = nullptr;
     uint16_t   m_port;
     QHostAddress m_interface;
-
+    void end();
+    void initParameters();
     void notifyMessage(const char* str);
     void notifyMessage(const std::string& str);
+
+    virtual void parameterMapChangedEvent();
+    virtual void parameterChangedEvent(const std::string& key);
+
+
 };
 
 #endif // TRANSPORTSERVERTCP_H

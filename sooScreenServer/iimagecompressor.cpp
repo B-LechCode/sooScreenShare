@@ -6,9 +6,7 @@
 
 
 
-IImageCompressor::IImageCompressor():
-    m_defaultParameters(),
-    m_parameters(m_defaultParameters)
+IImageCompressor::IImageCompressor()
 {
 
 }
@@ -16,19 +14,4 @@ IImageCompressor::IImageCompressor():
 IImageCompressor::~IImageCompressor()
 {
 
-}
-
-parameterMap IImageCompressor::getDefaultParameters()
-{
-    return m_defaultParameters;
-}
-
-parameterMap IImageCompressor::getParameters()
-{
-    return m_parameters;
-}
-
-void IImageCompressor::setParameters(parameterMap &para)
-{
-    parameterMap::insertParameters(m_parameters,para);
 }

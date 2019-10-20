@@ -42,6 +42,8 @@ public:
         return  compSize>0;
     }
 private:
+    virtual void parameterMapChangedEvent();
+    virtual void parameterChangedEvent(const std::string& key);
     std::vector<uint8_t> m_buffer;
 
 };

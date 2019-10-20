@@ -17,9 +17,7 @@ class opencvJpegImageCompressor : public IImageCompressor
 {
 public:
     opencvJpegImageCompressor();
-    virtual ~opencvJpegImageCompressor();
-
-    virtual void setParameters(parameterMap& para);
+    virtual ~opencvJpegImageCompressor();    
 
     inline virtual std::vector<uint8_t> compress(cv::Mat& img, bool& ok)
     {
@@ -37,6 +35,9 @@ public:
         return  cv::imencode(".jpg",img,m_buffer,m_compressionParams);
     }
 private:
+    void initParameters();
+    virtual void parameterMapChangedEvent();
+    virtual void parameterChangedEvent(const std::string& key);
     std::vector<uint8_t> m_buffer;
     std::vector<int> m_compressionParams;
 };

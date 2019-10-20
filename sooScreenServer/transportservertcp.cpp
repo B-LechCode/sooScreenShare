@@ -9,41 +9,25 @@ transportServerTCP::transportServerTCP()
     m_defaultParameters[PORT] = parameter("The TCP port to listen on","int16","12345");
     m_defaultParameters[HOST_ADDRESS] = parameter("The address/network interface to listen on","string","any");
     setParameters(m_defaultParameters);
-    connect(&m_srvr,SIGNAL(newConnection()),this,SLOT(on_newConnection()));
+    init();
 }
 
 transportServerTCP::~transportServerTCP()
 {
-    if(m_ptrSock)
-        m_ptrSock->disconnect();
-    m_srvr.close();
+   end();
 }
 
 void transportServerTCP::setParameters(parameterMap &para)
 {
     ItransportServer::setParameters(para);
 
-    //port
-    m_port = static_cast<uint16_t>(std::stoi(m_defaultParameters[PORT].value()));
-
-    //network interface
-    QHostAddress addr;
-    std::string  par = m_defaultParameters[HOST_ADDRESS].value();
-    if(par == "any")
-        addr = QHostAddress::Any;
-    else if(par == "anyV4")
-        addr = QHostAddress::AnyIPv4;
-    else if(par == "anyV6")
-        addr = QHostAddress::AnyIPv6;
-    else
-    {
-        addr.setAddress(QString(par.c_str()));
-    }
+    initParameters();
 }
 
 void transportServerTCP::init()
 {
     notifyMessage("start listening on "+m_parameters[HOST_ADDRESS].value()+":"+m_parameters[PORT].value());
+    connect(&m_srvr,SIGNAL(newConnection()),this,SLOT(on_newConnection()));
     m_srvr.listen(m_interface,m_port);
 }
 
@@ -79,6 +63,36 @@ void transportServerTCP::on_socketDisconnected()
     init();
 }
 
+void transportServerTCP::end()
+{
+    disconnect(&m_srvr,SIGNAL(newConnection()),this,SLOT(on_newConnection()));
+    if(m_ptrSock)
+    {
+        m_ptrSock->close();
+    }
+    m_srvr.close();
+}
+
+void transportServerTCP::initParameters()
+{
+    //port
+    m_port = static_cast<uint16_t>(std::stoi(m_parameters[PORT].value()));
+
+    //network interface
+    QHostAddress addr;
+    std::string  par = m_parameters[HOST_ADDRESS].value();
+    if(par == "any")
+        addr = QHostAddress::Any;
+    else if(par == "anyV4")
+        addr = QHostAddress::AnyIPv4;
+    else if(par == "anyV6")
+        addr = QHostAddress::AnyIPv6;
+    else
+    {
+        addr.setAddress(QString(par.c_str()));
+    }
+}
+
 void transportServerTCP::notifyMessage(const char* str)
 {
     notifyMessage(std::string(str));
@@ -86,14 +100,20 @@ void transportServerTCP::notifyMessage(const char* str)
 
 void transportServerTCP::notifyMessage(const std::string &str)
 {
-    auto itObs = m_observers.begin();
+    if(m_observer)
+        m_observer->transportNewMessage(str);
+}
 
-    while(itObs != m_observers.end())
-    {
-        if(*itObs)
-        {
-            (*itObs)->transportNewMessage(str);
-        }
-        itObs++;
-    }
+void transportServerTCP::parameterMapChangedEvent()
+{
+   end();
+   initParameters();
+   init();
+}
+
+void transportServerTCP::parameterChangedEvent(const std::string &key)
+{
+    end();
+    initParameters();
+    init();
 }
