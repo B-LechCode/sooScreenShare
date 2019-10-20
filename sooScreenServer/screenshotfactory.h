@@ -33,6 +33,9 @@ public:
 #if WITH_X11
             m_backends.push_back(x11);
 #endif
+#if WITH_WINAPI
+			m_backends.push_back(backend_win);
+#endif
         }
         return  m_backends;
     }

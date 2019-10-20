@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     connect(&m_tmr,SIGNAL(timeout()),this,SLOT(on_timerTimeout()));
-    m_tmr.setSingleShot(true);
+    //m_tmr.setSingleShot(true);
 
     m_compressBackends = imageCompressorFactory::getAvailableBackends();
     m_screenshotBackends = screenShotFactory::getAvailableBackends();

@@ -5,20 +5,92 @@
 #ifndef SCREENSHOTWIN_H
 #define SCREENSHOTWIN_H
 #if WITH_WINAPI
+
+namespace shot {
+#define DISPLAY_NUMBER "Display Number"
+#define OVERRIDE_DISPLAY_SELECTION "Override Display Selection"
+#define Grab_X "X"
+#define Grab_Y "Y"
+#define Grab_W "Width"
+#define Grab_H "Height"
+}
+
 #include "iscreenshot.h"
 #include <windows.h>
 
 class screenShotWin : public IscreenShot
 {
-public:
-	screenShotWin() : IscreenShot()
+	virtual void parameterMapChangedEvent()
 	{
-		init = false;
+		initialize();
+	}
+
+	void applyParameters()
+	{
+		std::string overrideStr = m_parameters[OVERRIDE_DISPLAY_SELECTION].value();
+		std::transform(overrideStr.begin(), overrideStr.end(), overrideStr.begin(), [](int c) -> int { return std::tolower(c); });
+		bool override = overrideStr == "true";
+
+
+
+		if (!override)
+		{
+			int displayNumber = std::stoi(m_parameters[DISPLAY_NUMBER].value());
+			auto displays = getScreens();
+
+			if (displays.size() - 1 < displayNumber)
+				;//FAIL!
+			else
+			{
+				auto displayNumberS = static_cast<size_t>(displayNumber);
+				m_x = displays[displayNumberS].x;
+				m_y = displays[displayNumberS].y;
+				m_h = displays[displayNumberS].h;
+				m_w = displays[displayNumberS].w;
+			}
+		}
+		else
+		{
+			m_x = std::stoi(m_parameters[Grab_X].value());
+			m_y = std::stoi(m_parameters[Grab_Y].value());
+			m_h = static_cast<uint32_t>(std::stoi(m_parameters[Grab_H].value()));
+			m_w = static_cast<uint32_t>(std::stoi(m_parameters[Grab_W].value()));
+		}
+
+
+	}
+
+	void destruct()
+	{
+		m_init = false;
+
+		DeleteDC(memoryDC);
+		DeleteDC(screenDC);
+
+		if (lpPixels)
+			delete[] lpPixels;
+	}
+
+	virtual void parameterChangedEvent(const std::string& key)
+	{
+		initialize();
+	}
+
+public:
+	screenShotWin() : IscreenShot(), m_init(false)
+	{
+		m_defaultParameters[OVERRIDE_DISPLAY_SELECTION] = parameter("Override display selection to freely define the grab ROI", "bool", "false");
+		m_defaultParameters[DISPLAY_NUMBER] = parameter("The display to grab", "int16", "0");
+		m_defaultParameters[Grab_X] = parameter("The X coordinate of the grab ROI", "int32", "0");
+		m_defaultParameters[Grab_Y] = parameter("The Y coordinate of the grab ROI", "int32", "0");
+		m_defaultParameters[Grab_W] = parameter("The width of the grab ROI", "uint32", "640");
+		m_defaultParameters[Grab_H] = parameter("The width of the grab ROI", "uint32", "480");
+		setParameters(m_defaultParameters);
 	}
 
 	virtual cv::Mat operator() () {
-		if (init)
-			init = false;
+		if (!m_init)
+			return cv::Mat();
 
 		oldBmp = SelectObject(memoryDC, hBitmap);
 		BitBlt(memoryDC, 0, 0, m_w, m_h, screenDC, m_x, m_y, SRCCOPY | CAPTUREBLT);
@@ -54,30 +126,25 @@ public:
 		return img;
 	}
 
-	virtual void initialize(int32_t x, int32_t y, uint32_t w, uint32_t h)
+	virtual void initialize()
 	{
+		applyParameters();
+		if (m_init)
+			destruct();
+
 		hwnd = GetDesktopWindow();
 		screenDC = GetDC(hwnd);
 		memoryDC = CreateCompatibleDC(screenDC);
 
-		hBitmap = CreateCompatibleBitmap(screenDC, w, h);
+		hBitmap = CreateCompatibleBitmap(screenDC, m_w, m_h);
 
-		m_x = x;
-		m_y = y;
-		m_w = w;
-		m_h = h;
+		lpPixels = new unsigned char[m_w * m_h * 4];
 
-		lpPixels = new unsigned char[w * h * 4];
-
-		init = true;
+		m_init = true;
 	}
 
 	virtual ~screenShotWin() {
-		DeleteDC(memoryDC);
-		DeleteDC(screenDC);
-
-		if (lpPixels)
-			delete[] lpPixels;
+		destruct();
 	}
 
 	static BOOL CALLBACK ScreenInfoEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
@@ -122,7 +189,7 @@ private:
 	unsigned char* lpPixels = nullptr;
 	std::vector<screenDef> screens;
 
-	bool init = false;
+	bool m_init;
 };
 #endif //WITH_WINAPI
 #endif //SCREENSHOTWIN_H
