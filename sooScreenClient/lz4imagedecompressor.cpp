@@ -19,3 +19,13 @@ void lz4ImageDecompressor::setParameters(parameterMap &para)
 {
     IImageDecompressor::setParameters(para);
 }
+
+void lz4ImageDecompressor::parameterMapChangedEvent()
+{
+
+}
+
+void lz4ImageDecompressor::parameterChangedEvent(const std::string &key)
+{
+
+}

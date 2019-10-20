@@ -181,14 +181,12 @@ void MainWindow::on_qLineEditEditingFinished()
     {
         case transport:
         {
-            auto paraMap = parameterMap::setParameterValue(m_work.trans()->getParameters(),key,value);
-            m_work.trans()->setParameters(paraMap);
+            m_work.trans()->setParameterValue(key,value);
         }
         break;
         case comp:
-        {
-            auto paraMap = parameterMap::setParameterValue(m_work.comp()->getParameters(),key,value);
-            m_work.comp()->setParameters(paraMap);
+        {            
+            m_work.comp()->setParameterValue(key,value);
         }
         break;
         case screenshot:

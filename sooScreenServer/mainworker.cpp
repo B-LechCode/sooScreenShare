@@ -34,8 +34,7 @@ void mainWorker::init(std::string screenShotBackend,std::string imageCompressorB
 
     m_comp   = imageCompressorFactory::getBackend(imageCompressorBackend);
     m_trans  = transportServerFactory::getBackend(transportServerBackend);
-    m_trans->addObserverSubscriber(*(ItransportServerObserver*)this);
-    m_trans->init(); //TODO: not here!
+    m_trans->addObserverSubscriber(*(ItransportServerObserver*)this);    
     createHeader();
 }
 

@@ -42,7 +42,8 @@ public:
         return decSize==dst_size;
     }
 private:
-
+    virtual void parameterMapChangedEvent();
+    virtual void parameterChangedEvent(const std::string& key);
 };
 
 #endif // LZ4IMAGEDECOMPRESSOR_H

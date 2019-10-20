@@ -29,7 +29,7 @@ void mainWorker::init(std::string decompBackend,std::string transportBackend,Idr
     if(!ptrDraw)
         return;
     m_ptrDraw = ptrDraw;
-    //TODO parameter change    
+
     setDecompressionBackend(decompBackend);
     setTransportBackend(transportBackend);
 }
@@ -38,7 +38,6 @@ void mainWorker::run()
 {
     if(!m_initOk)
         return;
-    m_trans->init();
 }
 
 void mainWorker::end()
@@ -87,7 +86,6 @@ ItransportClient *mainWorker::trans() const
 }
 
 dataHeaderHandling::dataHeader checkFrameAvail(uint8_t* data,size_t dataLen,size_t pos)
-//dataHeaderHandling::dataHeader checkFrameAvail(std::vector<uint8_t>& data,size_t pos)
 {
     dataHeaderHandling::dataHeader retVal;
     if(dataLen>pos+HEADER_SIZE)

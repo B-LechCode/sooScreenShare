@@ -10,6 +10,7 @@
 #include <list>
 
 #include "./../parameter.h"
+#include "./../iparameter.h"
 
 class ItransportServerObserver
 {
@@ -19,22 +20,16 @@ public:
     virtual void transportNewMessage(std::string str)=0;
 };
 
-class ItransportServer
+class ItransportServer:public Iparameter
 {
 public:
     ItransportServer();
-    virtual ~ItransportServer();
-    virtual parameterMap getDefaultParameters();
-    virtual void setParameters(parameterMap& para);
-    virtual parameterMap getParameters();
-    virtual void addObserverSubscriber(ItransportServerObserver& o);
-    virtual void removeObserverSubscriber(ItransportServerObserver& o);
+    virtual ~ItransportServer();    
+    virtual void addObserverSubscriber(ItransportServerObserver& o);    
     virtual void init() = 0;
     virtual int64_t send(const char* dat, int64_t len) = 0;
 protected:
-    std::list<ItransportServerObserver*> m_observers;
-    parameterMap m_defaultParameters;
-    parameterMap m_parameters;
+    ItransportServerObserver* m_observer = nullptr;
 
 };
 
