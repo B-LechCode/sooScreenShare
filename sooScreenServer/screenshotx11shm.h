@@ -281,9 +281,9 @@ public:
                 {
                     double alpha = (ptrCurs->a)/255.0;
 
-                    ptrRgba->r =  ((ptrCurs->r)*alpha+ptrRgba->r)*(1-alpha);
-                    ptrRgba->g = ((ptrCurs->g)*alpha+ptrRgba->g)*(1-alpha);
-                    ptrRgba->b = ((ptrCurs->b)*alpha+ptrRgba->b)*(1-alpha);
+                    ptrRgba->r = (ptrCurs->r)*alpha+ptrRgba->r*(1-alpha);
+                    ptrRgba->g = (ptrCurs->g)*alpha+ptrRgba->g*(1-alpha);
+                    ptrRgba->b = (ptrCurs->b)*alpha+ptrRgba->b*(1-alpha);
                     ptrRgba++;
                     ptrCurs++;
                 }
