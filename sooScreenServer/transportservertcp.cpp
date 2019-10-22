@@ -39,8 +39,8 @@ int64_t transportServerTCP::send(const char *dat, int64_t len)
     {       
         retVal =  m_ptrSock->write(dat,len);
 
-        /*while(m_ptrSock->bytesToWrite())
-            m_ptrSock->flush();*/
+        while(m_ptrSock->bytesToWrite())
+            m_ptrSock->flush();
     }
 
     return retVal;
