@@ -13,98 +13,67 @@
 #include <QFile>
 #include "parameter.h"
 
+/**
+ * @brief The parameter serialization class based on QJson
+ * The class implements project specific parameter serialization based on the json standard
+ */
 class parameterSerialization
 {
 private:
-    QJsonObject m_object;
+    QJsonObject m_object; /**< The json object to work on */
 public:
 
-    void appendBackendSelection(std::string backendName,std::string backendSelection)
-    {
-        m_object.insert(QString(backendName.c_str()),QString(backendSelection.c_str()));
-    }
+    /**
+     * @brief Appends a backend selection to the config file
+     * This appends the current selection of a specific backend role/purpose.
+     * For instance the currently selected backend for the purpose of the transport server.
+     * @param backendPurpose The backend purpose (e.g. the transport server)
+     * @param backendSelectionName The name of the selected backend for this usage/purpose
+     */
+    void appendBackendSelection(std::string backendPurpose,std::string backendSelectionName);
 
-    void appendParameterMap(parameterMap map,std::string backendName)
-    {
-        QJsonObject  recordObject;
+    /**
+     * @brief Appends a parameter map linked to a specified backend
+     * This allows the storage of parameters for all existing backends, not only for those currently selected.
+     * @param map The parameter map
+     * @param backendName The backend name linked with this settings (e.g. tcp server)
+     */
+    void appendParameterMap(parameterMap map,std::string backendName);
 
-        //m_object.insert("backendName",QString(backendName.c_str()));
+    /**
+     * @brief Getter method for a simple string key
+     * This method returns the string associated with the key.
+     * In this project, the method is used to extract the selected backend for the available backend purposes.
+     * @param key The key to look up
+     * @return std::string The value
+     */
+    std::string getStringValue(std::string key);
 
-        std::map<std::string, parameter>::const_iterator i;
-        for (i = map.begin(); i != map.end(); ++i)
-        {
-            parameter p = (*i).second;
-            QJsonObject paraObject;
-            paraObject.insert("value",QJsonValue::fromVariant(QString(p.value().c_str())));
-            paraObject.insert("description",QJsonValue::fromVariant(QString(p.description().c_str())));
-            paraObject.insert("type",QJsonValue::fromVariant(QString(p.type().c_str())));
-            recordObject.insert(QString((*i).first.c_str()), paraObject);
-        }
+    /**
+     * @brief Getter method for a whole parameter map
+     * This method returns the parameter map associated with the key.
+     * In this project, the method is used to extract the parameter map which is stored for a specified backend name.
+     * @param key The key to look up
+     * @return parameterMap The parameter map (empty if not available)
+     */
+    parameterMap getParameterMap(std::string key);
 
-        m_object.insert(QString(backendName.c_str()),recordObject);
-        /*
+    /**
+     * @brief Reads data from json file to the internal object
+     * Starts reading a json file from text
+     * @param filename Path to the file
+     * @return bool Read status (true if ok)
+     */
+    bool readData(std::string filename);
 
-        QString o = QString::fromStdString(doc.toJson().toStdString());*/
-    }
-
-    std::string getStringValue(std::string key)
-    {
-        return m_object.value(key.c_str()).toString().toStdString();
-    }
-
-    parameterMap getParameterMap(std::string key)
-    {
-        QJsonObject t =  m_object.value(key.c_str()).toObject();
-
-        parameterMap map;
-
-        QStringList k = t.keys();
-
-        for (int i = 0;i<k.length();++i)
-        {
-            QJsonObject paraObject = t.value(k[i]).toObject();
-
-            map[k[i].toStdString()] = parameter(paraObject.value("description").toString().toStdString(),
-                                                paraObject.value("type").toString().toStdString(),
-                                                paraObject.value("value").toString().toStdString());
-        }
-
-        return map;
-    }
-
-    bool readData(std::string filename)
-    {
-        bool ok;
-        QFile file(QString(filename.c_str()));
-        ok = file.open(QFile::ReadOnly| QIODevice::Text);
-
-        if(ok)
-        {
-            QJsonDocument doc;
-            QByteArray t = file.readAll();
-            file.close();
-            QJsonParseError err;
-            doc = QJsonDocument::fromJson(t,&err);
-            ok = err.error == QJsonParseError::NoError;
-            m_object = doc.object();
-        }
-
-        return ok;
-    }
-
-    bool writeData(std::string filename)
-    {
-        bool ok;
-        QFile file(QString(filename.c_str()));
-        ok = file.open(QFile::WriteOnly| QIODevice::Text);
-        if(ok)
-        {
-            QJsonDocument doc(m_object);
-            file.write(doc.toJson());
-        }
-        file.close();
-        return ok;
-    }
+    /**
+     * @brief Writes internal object data to file
+     * Starts writing the internal object to the specified textfile.
+     * Existing data will be overwritten.
+     * @param filename Path to the file
+     * @return bool Write status (true if ok)
+     */
+    bool writeData(std::string filename);
 };
 
 #endif // PARAMETERSERIALIZATION_H

@@ -67,11 +67,12 @@ void drawWidget::paintGL()
     glEnable(GL_TEXTURE_2D);
     GLuint texture_id;
 
-    if(!m_init)
+    if(m_init)
         glDeleteTextures(1,&m_oldid);
 
     glGenTextures(1, &texture_id);
     m_oldid = texture_id;
+    m_init = true;
     glBindTexture(GL_TEXTURE_2D, texture_id);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

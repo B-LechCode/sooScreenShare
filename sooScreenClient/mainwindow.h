@@ -15,40 +15,89 @@ namespace Ui {
 class MainWindow;
 }
 
+/**
+ * @brief The mainwindow class
+ *
+ */
 class MainWindow : public QMainWindow,private IdrawObserver
 {
     Q_OBJECT
+    /**
+     * @brief The enumeration for the backend sections
+     * This is used to distinct the settings sections of the tree view
+     */
     enum section{
         transport,decomp
     };
 public:
+    /**
+     * @brief The standard constructor
+     *
+     * @param parent The parent widget
+     */
     explicit MainWindow(QWidget *parent = nullptr);
+    /**
+     * @brief (Re)Initialize the main worker
+     *
+     */
     void workerInitialize();
+    /**
+     * @brief (Re)Initialize the tree view
+     *
+     */
     void treeviewInitialize();
+    /**
+     * @brief Read data from config
+     *
+     */
     void readData();
+    /**
+     * @brief Write data to config
+     *
+     */
     void writeData();
+    /**
+     * @brief The destructor
+     *
+     */
     ~MainWindow();
 protected:
+    /**
+     * @brief Close event of the draw widget
+     * This will close the whole application
+     */
     virtual void drawWidgetClosing();
+    /**
+     * @brief The close event of MainWindow
+     * This will close the draw widget
+     * @param event
+     */
     virtual void closeEvent(QCloseEvent *event);
 private slots:
+    /**
+     * @brief Changed event of the backend selection combo boxes
+     * Every created combo box is connected to this slot, when emitted the right
+     * backend section is selected.
+     * @param idx The new Index
+     */
     void on_qComboBoxCurrentIndexChanged(int idx);
+    /**
+     * @brief Changed event of the QLineEdits
+     * Every created QLineEdit is linked to this slot, when emitted the right
+     * backend section and parameter name is selected.
+     */
     void on_qLineEditEditingFinished();
-private:
-    void addSettingsCat(QTreeWidget* tree, const std::vector<std::string> transBackends, parameterMap transParam, QString sectionName, section sec, int currentIndex = 0);
-    /*QTreeWidgetItem* addToplevelWidgetItem(QTreeWidget* wid,QString text);
-    QTreeWidgetItem* addWidgetItem(QTreeWidget* wid,QTreeWidgetItem* itm,QString text,QWidget* cwid,QString textDescr);
-    QTreeWidgetItem* addWidgetItem(QTreeWidgetItem* itm,QString text,QString text2,QString textDescr);*/
-    Ui::MainWindow *ui; 
-    drawWidget* m_draw;
-    mainWorker m_work;
-    const std::string filePath = "parameters.json";
-    std::vector<std::string> m_decompressBackends;
-    size_t m_selectedDecompressBackend = 0;
-    std::vector<std::string> m_transportBackends;
-    size_t m_selectedTransportBackend = 0;
-    parameterSerialization m_serialize;
-    bool m_transistion = false; //This flag is used to supress ghost signals!
+private:   
+    Ui::MainWindow *ui; /**< Pointer to the own UI */
+    drawWidget* m_draw; /**< Pointer to the draw widget */
+    mainWorker m_work; /**< The main worker instance */
+    const std::string filePath = "parameters.json"; /**< File path to the config file */
+    std::vector<std::string> m_decompressBackends; /**< The available decompress backend names */
+    size_t m_selectedDecompressBackend = 0; /**< The index of the current selected decompress backend */
+    std::vector<std::string> m_transportBackends; /**< The available transport backend names */
+    size_t m_selectedTransportBackend = 0; /**< The index of the current selected transport backend */
+    parameterSerialization m_serialize; /**< Parameter serializer */
+    bool m_transistion = false; /**< This flag is used to supress ghost signals from destructed Qt-Gui widgets */
 
 };
 

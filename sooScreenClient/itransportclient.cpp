@@ -26,12 +26,12 @@ ItransportClient::~ItransportClient()
 
 }
 
-void ItransportClient::addObserverSubscriber(ItransportClientObserver &o)
+ItransportClientObserver *ItransportClient::observer() const
 {
-    m_observer = &o;
+    return  m_observer;
 }
 
-void ItransportClient::removeObserverSubscriber()
+void ItransportClient::setObserver(ItransportClientObserver* observer)
 {
-    m_observer = nullptr;
+    m_observer = observer;
 }
