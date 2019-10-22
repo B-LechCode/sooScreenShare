@@ -37,9 +37,13 @@ class screenShotX11Shm : public IscreenShot
 {
     struct pointerStr{
         int32_t xStart;
+        int32_t xStartOffset;
         int32_t xEnd;
+        int32_t xEndOffset;
         int32_t yStart;
+        int32_t yStartOffset;
         int32_t yEnd;
+        int32_t yEndOffset;
     };
 
     struct RGBA{
@@ -110,9 +114,29 @@ class screenShotX11Shm : public IscreenShot
 
     bool checkCoordinates(int32_t xR,int32_t yR)
     {
-        bool xO = xR>=m_x && xR<=(m_x+m_w);
-        bool yO = xR>=m_x && xR<=(m_x+m_w);
-        return xO&yO;
+        bool xO = xR>=m_x && xR<(m_x+m_w);
+        bool yO = yR>=m_y && yR<(m_y+m_h);
+        return xO&&yO;
+    }
+
+    bool checkCoordinateRange(int& c,int& difference,int lim)
+    {
+        difference = 0;
+        if(c>lim)
+        {
+            difference = c-lim;
+            c = lim;
+            return true;
+        }
+
+        if(c<0)
+        {
+            difference = -c;
+            c = 0;
+            return true;
+        }
+
+        return false;
     }
 
     pointerStr calculateCoordinates(int32_t xR,int32_t yR,int32_t wImg,int32_t hImg)
@@ -126,10 +150,13 @@ class screenShotX11Shm : public IscreenShot
         pointer.yStart = yR-m_y-m_hotY;
         pointer.yEnd = pointer.yStart+wY;
 
-        pointer.xStart = pointer.xStart < 0 ? 0 : pointer.xStart;
-        pointer.xEnd = pointer.xEnd > wImg ? wImg : pointer.xEnd;
-        pointer.yStart = pointer.yStart < 0 ? 0 : pointer.yStart;
-        pointer.yEnd = pointer.yEnd > hImg ? hImg : pointer.yEnd;
+        int xLim = wImg;
+        int yLim = hImg;
+
+        checkCoordinateRange(pointer.xStart,pointer.xStartOffset,xLim);
+        checkCoordinateRange(pointer.xEnd,pointer.xEndOffset,xLim);
+        checkCoordinateRange(pointer.yStart,pointer.yStartOffset,yLim);
+        checkCoordinateRange(pointer.yEnd,pointer.yEndOffset,yLim);
 
         return  pointer;
     }
@@ -239,18 +266,17 @@ public:
         int32_t xR,yR,xW,yW;
         uint32_t sad;
         XQueryPointer(m_display,m_root,&win,&win,&xR,&yR,&xW,&yW,&sad);
+        grabMousePtr();
+        auto coord = calculateCoordinates(xR,yR,img.cols,img.rows);
 
-        if(checkCoordinates(xR,yR))
+        if(coord.yEnd != coord.yStart && coord.xStart != coord.xEnd)
         {
-            grabMousePtr();
-            auto coord = calculateCoordinates(xR,yR,img.cols,img.rows);
+            RGBA* ptrCurs = reinterpret_cast<RGBA*>(m_cursImage.ptr())+coord.yStartOffset*m_cursImage.cols;
 
-
-            RGBA* ptrCurs = reinterpret_cast<RGBA*>(m_cursImage.ptr());
             for(int y = coord.yStart ; y < coord.yEnd;++y )
             {
                 RGBA* ptrRgba = reinterpret_cast<RGBA*>(img.ptr(y))+coord.xStart;
-
+                ptrCurs += coord.xStartOffset;
                 for(int x = coord.xStart ; x < coord.xEnd;++x )
                 {
                     double alpha = (ptrCurs->a)/255.0;
@@ -261,6 +287,7 @@ public:
                     ptrRgba++;
                     ptrCurs++;
                 }
+                ptrCurs += coord.xEndOffset;
             }
         }
         grabbing = false;
