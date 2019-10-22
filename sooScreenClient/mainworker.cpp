@@ -69,7 +69,7 @@ void mainWorker::setTransportBackend(std::string transportBackend)
 
     if(m_trans)
     {
-        m_trans->addObserverSubscriber(*reinterpret_cast<ItransportClientObserver*>(this));
+        m_trans->setObserver(static_cast<ItransportClientObserver*>(this));
 
         m_initOk = true;
     }
@@ -114,7 +114,8 @@ int getLastFullAvailableFrame(uint8_t* data,size_t dataLen,size_t& pos, dataHead
 
     do
     {
-        auto ptrPacketStart = std::search(data+posNow2, data+dataLen, std::begin(HEADER_STRING), std::end(HEADER_STRING));
+        const std::string headerString(HEADER_STRING);
+        auto ptrPacketStart = std::search(data+posNow2, data+dataLen, std::begin(headerString), std::end(headerString));
         if(ptrPacketStart < data+dataLen) //When something is found
         {
             posNow2 = static_cast<size_t>(ptrPacketStart-data);
