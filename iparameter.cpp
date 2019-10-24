@@ -46,27 +46,7 @@ void Iparameter::setParameterValue(std::string key, std::string value)
 void Iparameter::setParameters(parameterMap &para)
 {
     parameterMap::insertParameters(m_parameters,para);
-    parameterMapChangedEvent();
-    //insert into local para map
-    /*auto itPara =  para.begin();
-    while(itPara != para.end())
-    {
-        bool found = m_parameters.find(itPara->first) != m_parameters.end(); //check for existence!
-        bool equal = false;
-        if(found)
-        {
-            equal = m_parameters[itPara->first].value() == itPara->second.value();
-            std::cout << m_parameters[itPara->first].value() << std::endl;
-            std::cout << itPara->second.value() << std::endl;
-        }
-
-        m_parameters[itPara->first] = itPara->second;
-
-        if(!equal)
-            parameterChangedEvent(itPara->first);
-
-        itPara++;
-    }*/
+    parameterMapChangedEvent();  
 }
 
 void Iparameter::parameterMapChangedEvent()

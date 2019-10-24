@@ -15,11 +15,6 @@ lz4ImageDecompressor::~lz4ImageDecompressor()
 
 }
 
-void lz4ImageDecompressor::setParameters(parameterMap &para)
-{
-    IImageDecompressor::setParameters(para);
-}
-
 void lz4ImageDecompressor::parameterMapChangedEvent()
 {
 

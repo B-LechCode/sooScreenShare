@@ -111,23 +111,23 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
     switch(sec)
     {
         case transport:
-        if(m_selectedTransportBackend != static_cast<size_t>(cb->currentIndex()))
+        if(m_selectedTransportBackend != static_cast<size_t>(idx))
         {
             m_transistion = true;
             writeData();
             m_work.end();
-            m_selectedTransportBackend = static_cast<size_t>(cb->currentIndex());
+            m_selectedTransportBackend = static_cast<size_t>(idx);
             workerInitialize();
             m_work.run();
         }
         break;
         case decomp:
-        if(m_selectedDecompressBackend != static_cast<size_t>(cb->currentIndex()))
+        if(m_selectedDecompressBackend != static_cast<size_t>(idx))
         {
             m_transistion = true;
             writeData();
             m_work.end();
-            m_selectedDecompressBackend = static_cast<size_t>(cb->currentIndex());
+            m_selectedDecompressBackend = static_cast<size_t>(idx);
             workerInitialize();
             m_work.run();
         }

@@ -16,8 +16,8 @@ transportClientTCP::transportClientTCP()
     connect(&m_sock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
     connect(&m_sock,SIGNAL(connected()),this,SLOT(on_socketConnected()));
     connect(&m_sock,SIGNAL(readyRead()),this,SLOT(on_readyRead()));
-    connect(&m_tmr,SIGNAL(timeout()),this,SLOT(on_timerTimeout()));
-    m_tmr.setSingleShot(true);
+    connect(&m_reconnectTimer,SIGNAL(timeout()),this,SLOT(on_timerTimeout()));
+    m_reconnectTimer.setSingleShot(true);
 
 }
 
@@ -39,7 +39,7 @@ void transportClientTCP::init()
     if(!m_sock.waitForConnected()) //Retry
     {
         notifyMessage("Error connecting! Starting retry timer");
-        m_tmr.start(3000);
+        m_reconnectTimer.start(3000);
     }
     connect(&m_sock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
 }
@@ -55,11 +55,6 @@ int64_t transportClientTCP::send(const char *dat, int64_t len)
     }
 
     return retVal;
-}
-
-void transportClientTCP::on_message(const QString msg)
-{
-    notifyMessage(msg.toStdString());
 }
 
 void transportClientTCP::on_readyRead()
@@ -98,15 +93,15 @@ void transportClientTCP::initParameters()
 void transportClientTCP::parameterMapChangedEvent()
 {
     end();
-    m_tmr.stop();
-    m_tmr.start(1000);
+    m_reconnectTimer.stop();
+    m_reconnectTimer.start(1000);
 }
 
 void transportClientTCP::parameterChangedEvent(const std::string &key)
 {
     end();
-    m_tmr.stop();
-    m_tmr.start(1000);
+    m_reconnectTimer.stop();
+    m_reconnectTimer.start(1000);
 }
 
 void transportClientTCP::notifyMessage(const char* str)

@@ -33,14 +33,15 @@ void transportServerTCP::init()
 }
 
 int64_t transportServerTCP::send(const char *dat, int64_t len)
-{
+{        
     int64_t retVal = -1;
     if(m_ptrSock)
     {       
+        if(!m_ptrSock->isOpen())
+            return retVal;
         retVal =  m_ptrSock->write(dat,len);
 
-        /*while(m_ptrSock->bytesToWrite())
-            m_ptrSock->flush();*/
+        while(m_ptrSock->isOpen() && m_ptrSock->flush());
     }
 
     return retVal;
@@ -71,6 +72,7 @@ void transportServerTCP::end()
     {
         m_ptrSock->close();
     }
+    m_ptrSock = nullptr;
     m_srvr.close();
 }
 

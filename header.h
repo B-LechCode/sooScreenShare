@@ -5,23 +5,39 @@
 #ifndef HEADER_H
 #define HEADER_H
 #include <cstdint>
-#define HEADER_SIZE 64
-#define HEADERSTRING_OFFSET 32
-#define HEADER_STRING "ScreenImage"
-//#define compressback cvJpeg
-#define compressback lz4
 
+#define HEADER_SIZE sizeof(dataHeaderHandling::dataHeader)
+#define HEADER_STRING "ScreenImage"
+
+/**
+ * @brief Helper class for the handling of the data header
+ *
+ */
 class dataHeaderHandling
 {
+private:
+    /**
+     * @brief The standard constructor
+     *
+     */
+    //dataHeaderHandling();
 public:
+    /**
+     * @brief The standard data header structure
+     *
+     */
     typedef struct dataHeader {
-       char headerString[16] = HEADER_STRING; //16
-       char reserved[16];     //32
-       int32_t  length;           //36
-       uint32_t  width;            //40
-       uint32_t  height;           //44
-       int32_t  cvType;           //48 //TODO: channels?
-       char reserved2[16];    //64
+       char headerString[16] = HEADER_STRING; //16 /**< The standard identifier  */
+       char reserved[16];     //32 /**< Some reserved bytes for future use */
+       int32_t  length;           //36 /**< Payload length */
+       uint32_t  width;            //40 /**< The image width */
+       uint32_t  height;           //44 /**< The image height */
+       int32_t  cvType;           //48 /**< The open cv type of the transmitted image */
+       char reserved2[16];    //64 /**< Some reserved bytes for future use */
+    /**
+     * @brief The standard data header structure
+     *
+     */
     } dHdr;
 };
 

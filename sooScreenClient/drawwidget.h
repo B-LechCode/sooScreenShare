@@ -24,38 +24,38 @@
 #include "idraw.h"
 
 /**
- * @brief
+ * @brief The widget to draw the image with OpenGl support.
  *
  */
 class drawWidget:public QOpenGLWidget,public Idraw
 {
     Q_OBJECT
-    IdrawObserver* m_observer = nullptr; /**< TODO: describe */
-    cv::Mat m_drawImage; /**< TODO: describe */
-    bool m_init = false; /**< TODO: describe */
-    GLuint m_oldid=0; /**< TODO: describe */
-    bool m_max = false; /**< TODO: describe */
-    QCursor m_cursor; /**< TODO: describe */
+    IdrawObserver* m_observer = nullptr; /**< The pointer to the current set observer */
+    cv::Mat m_drawImage; /**< The last set draw image */
+    bool m_init = false; /**< Flag for the init state (Is true after the first paintGL run) */
+    GLuint m_oldid=0; /**< Stores the pointer to the last drawn texture for deletion in next draw attempt */
+    bool m_max = false; /**< Flag indicating the maximized state */
+    QCursor m_cursor; /**< The previously set cursor */
 
 public:
 
     /**
-     * @brief
+     * @brief Standard constructor
      *
-     * @param parent
-     * @param f
+     * @param parent The parent widget
+     * @param f The window flags
      */
     drawWidget(QWidget *parent = nullptr,Qt::WindowFlags f=Qt::WindowFlags());
     /**
-     * @brief
+     * @brief The destructor
      *
      */
     virtual ~drawWidget();
 
     /**
-     * @brief
+     * @brief Sets a new draw image and initiates drawing
      *
-     * @param img
+     * @param img The image to draw
      */
     inline virtual void display(const cv::Mat& img)
     {
@@ -64,25 +64,27 @@ public:
     }
 
     /**
-     * @brief
+     * @brief Reimplemented key press event
      *
-     * @param event
+     * The event is used to trigger entering/leaving the fullscreen mode by pressing the space bar.
+     *
+     * @param event The key event
      */
     void keyPressEvent(QKeyEvent* event);
 
     /**
-     * @brief
+     * @brief Getter method for the current observer
      *
-     * @return IdrawObserver
+     * @return IdrawObserver The current observer
      */
     virtual IdrawObserver *observer() const
     {
         return m_observer;
     }
     /**
-     * @brief
+     * @brief Setter method for the current observer
      *
-     * @param observer
+     * @param observer The observer to be set
      */
     virtual void setObserver(IdrawObserver *observer)
     {
@@ -91,15 +93,17 @@ public:
 
 protected:
     /**
-     * @brief
+     * @brief The close event for this Widget
      *
-     * @param event
+     * This event is used to close the main window after our own closing
+     *
+     * @param event The close event
      */
     virtual void closeEvent(QCloseEvent *event);
     /**
      * @brief The redefined paintGL method.
      *
-     * Paints the draw image on the widget
+     * Paints the draw image on the widget with OpenGl support.
      */
     virtual void paintGL();
 };
