@@ -10,18 +10,15 @@
 
 #include "./../header.h"
 
-mainWorker::mainWorker():
-    m_bufferSize(w*h*4+HEADER_SIZE),
+mainWorker::mainWorker():    
     m_initOk(false)
 {
-     m_sendbuffer = new uint8_t[m_bufferSize];
+
 }
 
 mainWorker::~mainWorker()
 {
     end();
-    if(m_sendbuffer)
-        delete[] m_sendbuffer;
 }
 
 void mainWorker::init(std::string decompBackend,std::string transportBackend,Idraw* ptrDraw)
@@ -32,12 +29,6 @@ void mainWorker::init(std::string decompBackend,std::string transportBackend,Idr
 
     setDecompressionBackend(decompBackend);
     setTransportBackend(transportBackend);
-}
-
-void mainWorker::run()
-{
-    if(!m_initOk)
-        return;
 }
 
 void mainWorker::end()
@@ -151,20 +142,20 @@ void mainWorker::transportDataAvailable(const char *dat, int64_t len)
     static uint32_t droppedFrames = 0;
 
     uint8_t* refBuff = reinterpret_cast<uint8_t*>(const_cast<char*>(dat));
-    uint8_t*  ptrmyBuff = myBuf.data();
+    uint8_t*  ptrmyBuff = m_receiveBuffer.data();
     size_t  dataLen = static_cast<size_t>(len);
 
     bool workingWithMemberBuffer = false;
 
-    if(myBuf.size()>0) //only use member buffer if necesary, better process in place!
+    if(m_receiveBuffer.size()>0) //only use member buffer if necesary, better process in place!
     {
-        size_t oldSize = myBuf.size();
-        myBuf.resize(oldSize+dataLen);
-        ptrmyBuff = myBuf.data();
+        size_t oldSize = m_receiveBuffer.size();
+        m_receiveBuffer.resize(oldSize+dataLen);
+        ptrmyBuff = m_receiveBuffer.data();
         memcpy(ptrmyBuff+oldSize,dat,dataLen);
         refBuff = ptrmyBuff;
         workingWithMemberBuffer = true;
-        dataLen = myBuf.size();
+        dataLen = m_receiveBuffer.size();
     }
 
 
@@ -190,25 +181,25 @@ void mainWorker::transportDataAvailable(const char *dat, int64_t len)
         if(workingWithMemberBuffer)
         {
             if(dataLen == processedFrameSize)
-                myBuf.clear();//We're done: erase everything
+                m_receiveBuffer.clear();//We're done: erase everything
             else
-                myBuf.erase(myBuf.begin(),myBuf.begin()+static_cast<int>(processedFrameSize)); //We're only partially done, trim the member buffer
+                m_receiveBuffer.erase(m_receiveBuffer.begin(),m_receiveBuffer.begin()+static_cast<int>(processedFrameSize)); //We're only partially done, trim the member buffer
         }
         else if(dataLen > processedFrameSize)
         {
             //We have more than one frame in our input buffer, save the unprocessed to the member buffer!
-            size_t oldSize = myBuf.size();
-            myBuf.resize(oldSize+(dataLen-processedFrameSize));
-            ptrmyBuff = myBuf.data();
+            size_t oldSize = m_receiveBuffer.size();
+            m_receiveBuffer.resize(oldSize+(dataLen-processedFrameSize));
+            ptrmyBuff = m_receiveBuffer.data();
             memcpy(ptrmyBuff+oldSize,dat+processedFrameSize,(dataLen-(processedFrameSize)));
         }
     }
     else if(!workingWithMemberBuffer)
     {
         //We need to save the incomplete data!
-        size_t oldSize = myBuf.size();
-        myBuf.resize(oldSize+dataLen);
-        ptrmyBuff = myBuf.data();
+        size_t oldSize = m_receiveBuffer.size();
+        m_receiveBuffer.resize(oldSize+dataLen);
+        ptrmyBuff = m_receiveBuffer.data();
         memcpy(ptrmyBuff+oldSize,dat,dataLen);
     }
 }

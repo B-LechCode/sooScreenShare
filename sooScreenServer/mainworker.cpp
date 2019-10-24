@@ -10,7 +10,7 @@
 
 
 mainWorker::mainWorker():
-    m_bufferSize(defaultBufferSize)
+    m_bufferSize(w*h*4+HEADER_SIZE)
 {
      m_sendbuffer = new uint8_t[m_bufferSize];
      std::cout <<  sizeof( dataHeaderHandling::dataHeader) << std::endl;
@@ -24,6 +24,8 @@ mainWorker::~mainWorker()
     m_comp = nullptr;
     if(m_trans) delete m_trans;
     m_trans = nullptr;
+    if(m_sendbuffer) delete[] m_sendbuffer;
+    m_sendbuffer = nullptr;
 }
 
 void mainWorker::init(std::string screenShotBackend,std::string imageCompressorBackend, std::string transportServerBackend)
@@ -34,7 +36,7 @@ void mainWorker::init(std::string screenShotBackend,std::string imageCompressorB
 
     m_comp   = imageCompressorFactory::getBackend(imageCompressorBackend);
     m_trans  = transportServerFactory::getBackend(transportServerBackend);
-    m_trans->addObserverSubscriber(*(ItransportServerObserver*)this);    
+    m_trans->setObserver(static_cast<ItransportServerObserver*>(this));
     createHeader();
 }
 
@@ -63,7 +65,7 @@ void mainWorker::run()
     }
 
     //Add Header
-    insertHeaderNumBytes(static_cast<int32_t>(compressedImageData.size()),static_cast<int32_t>(img.cols),static_cast<int32_t>(img.rows),img.type());
+    insertHeaderInfo(static_cast<int32_t>(compressedImageData.size()),static_cast<int32_t>(img.cols),static_cast<int32_t>(img.rows),img.type());
 
     memcpy(m_sendbuffer+HEADER_SIZE,compressedImageData.data(),compressedImageData.size());
 
@@ -107,7 +109,7 @@ void mainWorker::createHeader()
 
 }
 
-void mainWorker::insertHeaderNumBytes(int byteCount, int width, int height, int cvType)
+void mainWorker::insertHeaderInfo(int byteCount, int width, int height, int cvType)
 {
     dataHeaderHandling::dHdr* hdr = reinterpret_cast<dataHeaderHandling::dHdr*>(m_sendbuffer);
     hdr->length = byteCount;

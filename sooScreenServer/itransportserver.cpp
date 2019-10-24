@@ -25,7 +25,7 @@ ItransportServer::~ItransportServer()
 
 }
 
-void ItransportServer::addObserverSubscriber(ItransportServerObserver &o)
+void ItransportServer::setObserver(ItransportServerObserver* observer)
 {
-    m_observer = &o;
+    m_observer = observer;
 }

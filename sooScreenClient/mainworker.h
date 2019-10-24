@@ -6,41 +6,86 @@
 #define MAINWORKER_H
 
 #include "interfaces.h"
-
 #include <iostream>
 
+/**
+ * @brief The main worker class
+ * This class handles the interaction between the worker backends as main controll class
+ */
 class mainWorker:private ItransportClientObserver
 {
-    const int32_t x=0,y=0;
-    const uint32_t w=1920,h=1080;
 public:
+    /**
+     * @brief The default constructor
+     *
+     */
     mainWorker();
+    /**
+     * @brief The destructor
+     *
+     */
     virtual ~mainWorker();
+    /**
+     * @brief (Re)Initializes the worker
+     *
+     * @param decompBackend Identifier of the image decompression backend
+     * @param transportBackend Identifier of the transport client backend
+     * @param ptrDraw Pointer to the draw widget
+     */
     void init(std::string decompBackend, std::string transportBackend, Idraw* ptrDraw);
-    void run();
-    void end();
-
-    void setDecompressionBackend(std::string decompBackend);
-    void setTransportBackend(std::string transportBackend);
+    /**
+     * @brief The end.
+     * Frees the ressources of the worker.
+     */
+    void end();   
+    /**
+     * @brief Getter for the image decompressor backend
+     *
+     * @return IImageDecompressor The backend
+     */
     IImageDecompressor *decomp() const;
+    /**
+     * @brief Getter for the transport client backend
+     *
+     * @return ItransportClient The backend
+     */
     ItransportClient *trans() const;
 
 private:
-    //IscreenShot* m_screen = nullptr;
-    IImageDecompressor* m_decomp = nullptr;
-    ItransportClient* m_trans = nullptr;
-    uint8_t*    m_sendbuffer = nullptr;
-    uint64_t         m_bufferSize;
-    Idraw*      m_ptrDraw = nullptr;
+    /**
+     * @brief Sets a new decompression backend
+     *
+     * @param decompBackend Identifier for the backend
+     */
+    void setDecompressionBackend(std::string decompBackend);
+    /**
+     * @brief Sets a new transport client backend
+     *
+     * @param transportBackend Identifier for the backend
+     */
+    void setTransportBackend(std::string transportBackend);
+    IImageDecompressor* m_decomp = nullptr; /**< Pointer to the current image decompressor backend */
+    ItransportClient* m_trans = nullptr; /**< Pointer to the current transport client backend */
+    Idraw*      m_ptrDraw = nullptr; /**< Pointer to the draw widget */
+    std::vector<uint8_t> m_receiveBuffer; /**< The receive buffer */
+    bool m_initOk; /**< The initialize ok flag */
 
-    std::vector<uint8_t> myBuf;
-    bool m_initOk;
 
-
+    /**
+     * @brief Handles new messages from the transport client
+     *
+     * @param str The message
+     */
     virtual void transportNewMessage(std::string str)
     {
         std::cout << str << std::endl;
     }    
+    /**
+     * @brief Handles new available Data
+     *
+     * @param dat Pointer to the data (don't delete!)
+     * @param len Data length
+     */
     virtual void transportDataAvailable(const char *dat, int64_t len);
 
 

@@ -56,9 +56,6 @@ void MainWindow::readData()
     workerInitialize();
 
     treeviewInitialize();
-    m_work.run();
-
-
 }
 
 void MainWindow::treeviewInitialize()
@@ -117,8 +114,7 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
             writeData();
             m_work.end();
             m_selectedTransportBackend = static_cast<size_t>(idx);
-            workerInitialize();
-            m_work.run();
+            workerInitialize();            
         }
         break;
         case decomp:
@@ -128,8 +124,7 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
             writeData();
             m_work.end();
             m_selectedDecompressBackend = static_cast<size_t>(idx);
-            workerInitialize();
-            m_work.run();
+            workerInitialize();            
         }
         break;
     }

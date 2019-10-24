@@ -18,13 +18,6 @@ transportServerTCP::~transportServerTCP()
    end();
 }
 
-void transportServerTCP::setParameters(parameterMap &para)
-{
-    ItransportServer::setParameters(para);
-
-    //initParameters();
-}
-
 void transportServerTCP::init()
 {
     notifyMessage("start listening on "+m_parameters[HOST_ADDRESS].value()+":"+m_parameters[PORT].value());

@@ -61,15 +61,14 @@ public:
      */
     virtual void setParameters(parameterMap& para);
     /**
-     * @brief The changed event of a key/value pair
+     * @brief The changed event of the underlying parameter map
      *
-     * @param key The key of the changed parameter
      */
     virtual void parameterMapChangedEvent() = 0;
     /**
-     * @brief The new message event
-     * Will be called when a new message is available
-     * @param str The message
+     * @brief The changed event of a key/value pair
+     *
+     * @param key The key of the changed parameter
      */
     virtual void parameterChangedEvent(const std::string& key) = 0;
 
