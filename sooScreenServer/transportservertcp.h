@@ -22,8 +22,7 @@ class transportServerTCP :private QObject, public ItransportServer
     Q_OBJECT
 public:
     transportServerTCP();
-    virtual ~transportServerTCP();
-    virtual void setParameters(parameterMap& para);
+    virtual ~transportServerTCP();    
     virtual void init();
     virtual int64_t send(const char* dat, int64_t len);
 private slots:

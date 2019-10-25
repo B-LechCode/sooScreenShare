@@ -16,7 +16,7 @@ class MainWindow;
 }
 
 /**
- * @brief The mainwindow class
+ * @brief The mainwindow class of the client
  *
  */
 class MainWindow : public QMainWindow,private IdrawObserver
@@ -29,6 +29,7 @@ class MainWindow : public QMainWindow,private IdrawObserver
     enum section{
         transport,decomp
     };
+
 public:
     /**
      * @brief The standard constructor
@@ -36,6 +37,36 @@ public:
      * @param parent The parent widget
      */
     explicit MainWindow(QWidget *parent = nullptr);
+
+    ~MainWindow();
+
+private slots:
+    /**
+     * @brief Changed event of the backend selection combo boxes
+     * Every created combo box is connected to this slot, when emitted the right
+     * backend section is selected.
+     * @param idx The new Index
+     */
+    void on_qComboBoxCurrentIndexChanged(int idx);
+    /**
+     * @brief Changed event of the QLineEdits
+     * Every created QLineEdit is linked to this slot, when emitted the right
+     * backend section and parameter name is selected.
+     */
+    void on_qLineEditEditingFinished();
+
+private:   
+    /**
+     * @brief Close event of the draw widget
+     * This will close the whole application
+     */
+    virtual void drawWidgetClosing();
+    /**
+     * @brief The close event of MainWindow
+     * This will close the draw widget
+     * @param event
+     */
+    virtual void closeEvent(QCloseEvent *event);
     /**
      * @brief (Re)Initialize the main worker
      *
@@ -60,34 +91,6 @@ public:
      * @brief The destructor
      *
      */
-    ~MainWindow();
-protected:
-    /**
-     * @brief Close event of the draw widget
-     * This will close the whole application
-     */
-    virtual void drawWidgetClosing();
-    /**
-     * @brief The close event of MainWindow
-     * This will close the draw widget
-     * @param event
-     */
-    virtual void closeEvent(QCloseEvent *event);
-private slots:
-    /**
-     * @brief Changed event of the backend selection combo boxes
-     * Every created combo box is connected to this slot, when emitted the right
-     * backend section is selected.
-     * @param idx The new Index
-     */
-    void on_qComboBoxCurrentIndexChanged(int idx);
-    /**
-     * @brief Changed event of the QLineEdits
-     * Every created QLineEdit is linked to this slot, when emitted the right
-     * backend section and parameter name is selected.
-     */
-    void on_qLineEditEditingFinished();
-private:   
     Ui::MainWindow *ui; /**< Pointer to the own UI */
     drawWidget* m_draw; /**< Pointer to the draw widget */
     mainWorker m_work; /**< The main worker instance */

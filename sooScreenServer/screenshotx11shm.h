@@ -352,7 +352,6 @@ public:
 
         XCloseDisplay(display);
 
-
         return ret;
     } 
 };

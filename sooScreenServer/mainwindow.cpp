@@ -68,7 +68,7 @@ void MainWindow::workerInitialize()
 
 void MainWindow::readData()
 {
-    m_serialize.readData(filePath);
+    m_serialize.readData(m_filePath);
 
     //get the selected backends
     std::string selectedScreenshotBackend = m_serialize.getStringValue("Screenshot");
@@ -110,7 +110,7 @@ void MainWindow::writeData()
 
     m_serialize.appendBackendSelection("Transportlayer",m_transportBackends[m_selectedTransportBackend]);
     m_serialize.appendParameterMap(m_work.trans()->getParameters(),m_transportBackends[m_selectedTransportBackend]);
-    m_serialize.writeData(filePath);
+    m_serialize.writeData(m_filePath);
 }
 
 void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)

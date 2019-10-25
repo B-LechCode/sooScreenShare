@@ -11,12 +11,37 @@
 #include "./../parameter.h"
 #include "./../iparameter.h"
 
+/**
+ * @brief Generic interaface for image compression backends
+ * This interface describes the interaction between the main worker and the compression backend.
+ */
 class IImageCompressor : public Iparameter
 {
 public:
+    /**
+     * @brief The standard constructor
+     *
+     */
     IImageCompressor();
-    virtual ~IImageCompressor(); 
+    /**
+     * @brief The destructor
+     *
+     */
+    virtual ~IImageCompressor();
+    /**
+     * @brief The method for image comression.
+     *
+     * @param img The raw image to compress
+     * @param ok The compression status (true if ok)
+     * @return std::vector<uint8_t> The compressed data
+     */
     virtual std::vector<uint8_t> compress(cv::Mat& img, bool& ok) = 0;
+    /**
+     * @brief The method for image comression.
+     *
+     * @param img The raw image to compress
+     * @return std::vector<uint8_t> The compressed data
+     */
     virtual std::vector<uint8_t> compress(cv::Mat& img) = 0;
 };
 
