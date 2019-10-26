@@ -9,6 +9,9 @@
 #define HEADER_SIZE sizeof(dataHeaderHandling::dataHeader)
 #define HEADER_STRING "ScreenImage"
 
+
+enum imageType{keyFrame,incrementalFrame};
+
 /**
  * @brief Helper class for the handling of the data header
  *

@@ -7,12 +7,9 @@
 
 #include <opencv2/opencv.hpp>
 #include <vector>
-
+#include "./../header.h"
 #include "./../parameter.h"
 #include "./../iparameter.h"
-
-enum imageType{keyFrame,incrementalFrame};
-
 /**
  * @brief Generic interface for image precompression backends
  * This interface describes the interaction between the main worker and the precompression backend.

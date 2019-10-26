@@ -18,12 +18,7 @@ public:
      * @param ok The compression status (true if ok)
      * @return cv::Mat The compressed data
      */
-    virtual cv::Mat compress(cv::Mat& img,imageType& type, bool& ok)
-    {
-        ok = true;
-        type = imageType::keyFrame;
-        return  img;
-    }
+    virtual cv::Mat compress(cv::Mat& img,imageType& type, bool& ok);
     /**
      * @brief The method for image comression.
      *
@@ -48,6 +43,10 @@ private:
      * @param key The key of the changed parameter
      */
     virtual void parameterChangedEvent(const std::string& key);
+    int m_numDifferentialFrames;
+    int m_maxNumOfDifferentialFrames;
+    cv::Mat m_keyImage;
+    cv::Mat m_diffImage;
 };
 
 #endif // IMAGEPRECOMPRESSORDIFFERENTIALIMAGE_H
