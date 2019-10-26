@@ -33,8 +33,6 @@ int64_t transportServerTCP::send(const char *dat, int64_t len)
         if(!m_ptrSock->isOpen())
             return retVal;
         retVal =  m_ptrSock->write(dat,len);
-
-        while(m_ptrSock->isOpen() && m_ptrSock->flush());
     }
 
     return retVal;
@@ -46,6 +44,7 @@ void transportServerTCP::on_newConnection()
     QTcpSocket* ptrSock = m_srvr.nextPendingConnection();
     m_ptrSock = ptrSock;
     connect(m_ptrSock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
+    m_ptrSock->setSocketOption(QAbstractSocket::LowDelayOption,1);
     m_srvr.close();
 }
 
