@@ -20,6 +20,7 @@ cv::Mat ImagePreCompressorDifferentialImage::compress(cv::Mat &img, imageType &t
         int32_t* ptrDiffImg = reinterpret_cast<int32_t*>(m_diffImage.ptr(0));
         int32_t* ptrKeyImg = reinterpret_cast<int32_t*>(m_keyImage.ptr(0));
         int32_t* ptrImg = reinterpret_cast<int32_t*>(img.ptr(0));
+
         for (int i=0;i<img.rows*img.cols ;++i)
         {
             (*ptrDiffImg) = (*ptrImg)-(*ptrKeyImg);
@@ -28,6 +29,7 @@ cv::Mat ImagePreCompressorDifferentialImage::compress(cv::Mat &img, imageType &t
             ++ptrImg;
             ++ptrKeyImg;
         }
+
        type = imageType::incrementalFrame;
        m_numDifferentialFrames++;
        return m_diffImage;

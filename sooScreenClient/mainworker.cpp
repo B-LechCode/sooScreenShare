@@ -21,13 +21,16 @@ mainWorker::~mainWorker()
     end();
 }
 
-void mainWorker::init(std::string decompBackend,std::string transportBackend,Idraw* ptrDraw)
+void mainWorker::init(std::string decompBackend,std::string postDecompBackend,std::string transportBackend,Idraw* ptrDraw)
 {
     if(!ptrDraw)
         return;
     m_ptrDraw = ptrDraw;
 
+
+
     setDecompressionBackend(decompBackend);
+    setPostDecompressionBackend(postDecompBackend);
     setTransportBackend(transportBackend);
 }
 
@@ -35,6 +38,8 @@ void mainWorker::end()
 {    
     if(m_decomp) delete m_decomp;
     m_decomp = nullptr;
+    if(m_postDecomp) delete m_postDecomp;
+    m_postDecomp = nullptr;
     if(m_trans) delete m_trans;
     m_trans = nullptr;
 }
@@ -47,6 +52,17 @@ void mainWorker::setDecompressionBackend(std::string decompBackend)
     m_decomp   = imageDecompressorFactory::getBackend(decompBackend);
 
     if(m_decomp)
+        m_initOk = true;
+}
+
+void mainWorker::setPostDecompressionBackend(std::string postDecompBackend)
+{
+    m_initOk = false;
+    if(m_postDecomp)
+        delete m_postDecomp;
+    m_postDecomp   = imagePostDecompressorFactory::getBackend(postDecompBackend);
+
+    if(m_postDecomp)
         m_initOk = true;
 }
 
@@ -64,6 +80,11 @@ void mainWorker::setTransportBackend(std::string transportBackend)
 
         m_initOk = true;
     }
+}
+
+IImagePostDecompressor *mainWorker::postDecomp() const
+{
+    return m_postDecomp;
 }
 
 IImageDecompressor *mainWorker::decomp() const
@@ -176,7 +197,7 @@ void mainWorker::transportDataAvailable(const char *dat, int64_t len)
         if(myHeader.imageDataType == imageType::keyFrame)
         {
             cv::Mat img = m_decomp->decompress(refBuff+myPos+HEADER_SIZE,myHeader,ok);
-
+            img = m_postDecomp->decompress(img,myHeader,ok);
             m_ptrDraw->display(img);
         }
         else
