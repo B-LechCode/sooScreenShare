@@ -29,7 +29,6 @@ namespace shot {
 #include <cctype>
 #include <algorithm>
 
-//screenShotX11Shm
 
 //From: https://stackoverflow.com/questions/24988164/c-fast-screenshots-in-linux-for-use-with-opencv
 //https://stackoverflow.com/a/39781697
