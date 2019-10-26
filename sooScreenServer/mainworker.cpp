@@ -28,12 +28,11 @@ mainWorker::~mainWorker()
     m_sendbuffer = nullptr;
 }
 
-void mainWorker::init(std::string screenShotBackend,std::string imageCompressorBackend, std::string transportServerBackend)
+void mainWorker::init(std::string screenShotBackend,std::string imagePreCompressorBackend,std::string imageCompressorBackend, std::string transportServerBackend)
 {
-    //TODO parameter change
-    m_screen = screenShotFactory::getBackend(screenShotBackend); //TODO set screen size!
-    //m_screen->initialize(screens[i].x,screens[i].y,screens[i].w,screens[i].h);
 
+    m_screen = screenShotFactory::getBackend(screenShotBackend);
+    m_preComp = imagePreCompressorFactory::getBackend(imagePreCompressorBackend);
     m_comp   = imageCompressorFactory::getBackend(imageCompressorBackend);
     m_trans  = transportServerFactory::getBackend(transportServerBackend);
     m_trans->setObserver(static_cast<ItransportServerObserver*>(this));
@@ -48,6 +47,11 @@ void mainWorker::run()
 
     //Get Screenshot
     cv::Mat img = m_screen->operator()();
+
+    cv::Mat cImg = m_preComp->compress(img,compressOk);
+
+    if(!compressOk)
+        return; //TODO user notification
 
     //Compress the image
     std::vector<uint8_t> compressedImageData =  m_comp->compress(img,compressOk);
@@ -94,6 +98,11 @@ IscreenShot *mainWorker::screen() const
 IImageCompressor *mainWorker::comp() const
 {
     return m_comp;
+}
+
+IImagePreCompressor *mainWorker::preComp() const
+{
+    return m_preComp;
 }
 
 ItransportServer *mainWorker::trans() const
