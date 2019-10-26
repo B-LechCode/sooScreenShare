@@ -20,7 +20,7 @@ private:
      * @brief The standard constructor
      *
      */
-    //dataHeaderHandling();
+    dataHeaderHandling();
 public:
     /**
      * @brief The standard data header structure
