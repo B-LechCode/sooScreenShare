@@ -1,29 +1,28 @@
-# Name des Projekts
+# Project name
 set(PROJECT_NAME screenClient)
 project( ${PROJECT_NAME} )
 
-# Altersbegrenzung fuer CMAKE: mindestens Version 2.8
-cmake_minimum_required(VERSION 3.6)
 
-# Build-Typ
+cmake_minimum_required(VERSION 3.7)
+
+# Build type
 set(CMAKE_BUILD_TYPE Debug CACHE TYPE STRING FORCE )
 
 
 
-# OpenCV suchen
+#OpenCV
 FIND_PACKAGE(OpenCV REQUIRED )
 
-#QT suchen
-#FIND_PACKAGE( Qt5 5.11 CONFIG REQUIRED  Core Network Widgets Gui )
+#QT
 find_package(Qt5 COMPONENTS  Core Network Widgets Gui OpenGL REQUIRED)
 
-#X11 suchen
+#X11
 FIND_PACKAGE(X11 REQUIRED)
 
-#OpenGL suchen
+#OpenGL
 find_package(OpenGL REQUIRED)
 
-
+#LZ4
 find_library (lz4_lib lz4)
 find_path (lz4_path /lz4.h)
 message(${lz4_lib})
@@ -32,7 +31,7 @@ message(${lz4_include_path})
 
 
 
-# Pfade für Include-Dateien
+# Include paths
 include_directories (
         ${QT_INCLUDES}
         ${OpenCV_INCLUDES}
@@ -41,10 +40,11 @@ include_directories (
         ${lz4_include_path}
 )
 
-# Fuege alle .cpp und alle .h Dateien aus dem aktuellen Ordner
-# in das Projekt ein.
+# Use all .cpp and .h files
 FILE ( GLOB SRC_FILES "*.cpp")
 FILE ( GLOB HEADER_FILES "*.h")
+
+#Add specific files
 LIST(APPEND HEADER_FILES "./../header.h")
 LIST(APPEND HEADER_FILES "./../parameter.h")
 LIST(APPEND HEADER_FILES "./../iparameter.h")
@@ -54,6 +54,7 @@ LIST(APPEND HEADER_FILES "./../iparameter.cpp")
 LIST(APPEND SRC_FILES "./../parameterserialization.cpp")
 LIST(APPEND SRC_FILES "./../guihelpers.cpp")
 
+#Add all .ui files
 FILE ( GLOB UI_FILES "*.ui")
 
 
@@ -71,16 +72,14 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
-# Definition der ausfuehrbaren Datei (executable) die der
-# Compiler erzeugen soll
+#Create the executable
 ADD_EXECUTABLE ( ${PROJECT_NAME}
         ${SRC_FILES}
         ${HEADER_FILES}
         ${UI_FILES}
 )
 
-# Definiere die Bibliotheken, die der C++-Linker
-# linken soll. Hier: OpenCV
+#Linker settings
 TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
         ${OpenCV_LIBS}
         ${X11_LIBRARIES}
