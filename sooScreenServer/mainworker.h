@@ -91,8 +91,9 @@ private:
      * @param width Width of the Image
      * @param height Height of the Image
      * @param cvType The opencv data type
+     * @param tp The precompression image type
      */
-    void insertHeaderInfo(int byteCount,int width,int height,int cvType);
+    void insertHeaderInfo(int byteCount,int width,int height,int cvType,imageType tp);
     /**
      * @brief Handles new messages from the transport server
      *

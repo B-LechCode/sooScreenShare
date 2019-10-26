@@ -20,6 +20,8 @@ mainWorker::~mainWorker()
 {
     if(m_screen) delete m_screen;
     m_screen = nullptr;
+    if(m_preComp) delete m_preComp;
+    m_preComp = nullptr;
     if(m_comp) delete m_comp;
     m_comp = nullptr;
     if(m_trans) delete m_trans;
@@ -29,8 +31,7 @@ mainWorker::~mainWorker()
 }
 
 void mainWorker::init(std::string screenShotBackend,std::string imagePreCompressorBackend,std::string imageCompressorBackend, std::string transportServerBackend)
-{
-
+{   
     m_screen = screenShotFactory::getBackend(screenShotBackend);
     m_preComp = imagePreCompressorFactory::getBackend(imagePreCompressorBackend);
     m_comp   = imageCompressorFactory::getBackend(imageCompressorBackend);
@@ -41,14 +42,14 @@ void mainWorker::init(std::string screenShotBackend,std::string imagePreCompress
 
 void mainWorker::run()
 {
-    if(!m_comp || !m_trans || !m_screen)
+    if(!m_comp || !m_preComp || !m_trans || !m_screen)
         return;
     bool compressOk;
 
     //Get Screenshot
     cv::Mat img = m_screen->operator()();
-
-    cv::Mat cImg = m_preComp->compress(img,compressOk);
+    imageType tp;
+    cv::Mat cImg = m_preComp->compress(img,tp,compressOk);
 
     if(!compressOk)
         return; //TODO user notification
@@ -69,7 +70,7 @@ void mainWorker::run()
     }
 
     //Add Header
-    insertHeaderInfo(static_cast<int32_t>(compressedImageData.size()),static_cast<int32_t>(img.cols),static_cast<int32_t>(img.rows),img.type());
+    insertHeaderInfo(static_cast<int32_t>(compressedImageData.size()),static_cast<int32_t>(img.cols),static_cast<int32_t>(img.rows),img.type(),tp);
 
     memcpy(m_sendbuffer+HEADER_SIZE,compressedImageData.data(),compressedImageData.size());
 
@@ -118,11 +119,12 @@ void mainWorker::createHeader()
 
 }
 
-void mainWorker::insertHeaderInfo(int byteCount, int width, int height, int cvType)
+void mainWorker::insertHeaderInfo(int byteCount, int width, int height, int cvType,imageType tp)
 {
     dataHeaderHandling::dHdr* hdr = reinterpret_cast<dataHeaderHandling::dHdr*>(m_sendbuffer);
     hdr->length = byteCount;
     hdr->width = width;
     hdr->height = height;
     hdr->cvType = cvType;
+    hdr->imageDataType = static_cast<int32_t>(tp);
 }

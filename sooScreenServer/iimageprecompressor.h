@@ -11,6 +11,8 @@
 #include "./../parameter.h"
 #include "./../iparameter.h"
 
+enum imageType{keyFrame,incrementalFrame};
+
 /**
  * @brief Generic interface for image precompression backends
  * This interface describes the interaction between the main worker and the precompression backend.
@@ -35,14 +37,14 @@ public:
      * @param ok The compression status (true if ok)
      * @return std::vector<uint8_t> The compressed data
      */
-    virtual cv::Mat compress(cv::Mat& img, bool& ok) = 0;
+    virtual cv::Mat compress(cv::Mat& img,imageType& type ,bool& ok) = 0;
     /**
      * @brief The method for image comression.
      *
      * @param img The raw image to compress
      * @return std::vector<uint8_t> The compressed data
      */
-    virtual cv::Mat compress(cv::Mat& img) = 0;
+    virtual cv::Mat compress(cv::Mat& img,imageType& type) = 0;
 };
 
 #endif // IIMAGEPRECOMPRESSOR_H

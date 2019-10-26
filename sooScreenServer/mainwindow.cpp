@@ -93,7 +93,7 @@ void MainWindow::treeviewInitialize()
 {
     ui->twSettings->clear();
     GuiHelpers::addSettingsCat(this,ui->twSettings,m_screenshotBackends,m_work.screen()->getParameters(),QString("Screenshot"),section::screenshot,static_cast<int>(m_selectedScreenshotBackend));
-    GuiHelpers::addSettingsCat(this,ui->twSettings,m_preCompressBackends,m_work.preComp()->getParameters(),QString("Precompression"),section::comp,static_cast<int>(m_selectedPreCompressBackend));
+    GuiHelpers::addSettingsCat(this,ui->twSettings,m_preCompressBackends,m_work.preComp()->getParameters(),QString("Precompression"),section::preComp,static_cast<int>(m_selectedPreCompressBackend));
     GuiHelpers::addSettingsCat(this,ui->twSettings,m_compressBackends,m_work.comp()->getParameters(),QString("Compression"),section::comp,static_cast<int>(m_selectedCompressBackend));
     GuiHelpers::addSettingsCat(this,ui->twSettings,m_transportBackends,m_work.trans()->getParameters(),QString("Transport layer"),section::transport,static_cast<int>(m_selectedTransportBackend));
     m_transistion = false;

@@ -7,8 +7,9 @@
 
 #include "iimageprecompressor.h"
 #include "imageprecompressornull.h"
-
+#include "imageprecompressordifferentialimage.h"
 #define nullPrec "null"
+#define diffPrec "differential"
 
 
 /**
@@ -35,6 +36,7 @@ public:
         if(!m_backends.size())
         {
             m_backends.push_back(nullPrec);
+            m_backends.push_back(diffPrec);
         }
         return  m_backends;
     }
@@ -49,7 +51,8 @@ public:
     {
         if(backendName == nullPrec)
             return new ImagePrecompressorNull();
-
+        if(backendName == diffPrec)
+            return new ImagePreCompressorDifferentialImage();
         return nullptr;
     }
 };
