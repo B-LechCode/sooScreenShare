@@ -17,11 +17,24 @@
 #endif
 
 
+/**
+ * @brief
+ *
+ */
 class screenShotFactory
 {
+    /**
+     * @brief
+     *
+     */
     screenShotFactory(){}
-    static std::vector<std::string> m_backends;
+    static std::vector<std::string> m_backends; /**< TODO: describe */
 public:
+    /**
+     * @brief
+     *
+     * @return const std::vector<std::string>
+     */
     static const std::vector<std::string>& getAvailableBackends()
     {
         if(!m_backends.size())
@@ -33,6 +46,12 @@ public:
         return  m_backends;
     }
 
+    /**
+     * @brief
+     *
+     * @param backendName
+     * @return IscreenShot
+     */
     static IscreenShot* getBackend(std::string backendName)
     {
 #if WITH_X11

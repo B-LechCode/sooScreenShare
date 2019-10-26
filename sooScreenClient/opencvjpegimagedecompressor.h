@@ -10,7 +10,7 @@
 
 namespace comp
 {
-    #define QUALITY "JPEG_QUALITY"
+
 }
 
 /**
