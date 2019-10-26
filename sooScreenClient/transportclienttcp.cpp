@@ -78,7 +78,7 @@ void transportClientTCP::end()
 
 
 }
-
+/// @todo conversion with std::stoi could fail, make this safe
 void transportClientTCP::initParameters()
 {
     //port

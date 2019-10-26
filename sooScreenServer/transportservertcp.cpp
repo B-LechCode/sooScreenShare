@@ -68,6 +68,7 @@ void transportServerTCP::end()
     m_srvr.close();
 }
 
+/// @todo conversion with std::stoi could fail, make this safe
 void transportServerTCP::initParameters()
 {
     //port
