@@ -46,7 +46,7 @@ private:
     bool m_FirstFrame;
     int m_numDifferentialFrames;
     int m_maxNumOfDifferentialFrames;
-    cv::Mat m_keyImage;
+    cv::Mat m_oldImage;
     cv::Mat m_diffImage;
 };
 

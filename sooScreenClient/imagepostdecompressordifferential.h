@@ -26,7 +26,7 @@ public:
         if(hdr.imageDataType == imageType::keyFrame)
         {
             m_keyImage =  data.clone();
-            m_diffImage = data;//.clone();
+            m_diffImage = data.clone();
             ok = true;
         }
         else if (data.size == m_diffImage.size && data.size == m_keyImage.size)
@@ -37,13 +37,13 @@ public:
 
             for (int i=0;i<data.rows*data.cols ;++i)
             {
-                (*ptrDiffImg) = (*ptrImg)+(*ptrKeyImg);
+                (*ptrDiffImg) = (*ptrImg)+(*ptrDiffImg);
 
                 ++ptrDiffImg;
                 ++ptrImg;
                 ++ptrKeyImg;
             }
-//            m_diffImage = m_keyImage+data;
+
             ok = true;
         }
 

@@ -41,6 +41,7 @@ void MainWindow::on_timerTimeout()
 
 MainWindow::~MainWindow()
 {
+    m_tmr.stop();
     writeData();
     delete ui;
 }
@@ -84,8 +85,6 @@ void MainWindow::readData()
     workerInitialize();
 
     treeviewInitialize();
-    m_work.run();
-
 
 }
 
@@ -138,8 +137,7 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
             writeData();
             m_work.end();
             m_selectedTransportBackend = static_cast<size_t>(cb->currentIndex());
-            workerInitialize();
-            m_work.run();
+            workerInitialize();            
         }
         break;
         case comp:
@@ -149,8 +147,7 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
             writeData();
             m_work.end();
             m_selectedCompressBackend = static_cast<size_t>(cb->currentIndex());
-            workerInitialize();
-            m_work.run();
+            workerInitialize();           
         }
         break;
         case preComp:
@@ -160,8 +157,7 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
             writeData();
             m_work.end();
             m_selectedPreCompressBackend = static_cast<size_t>(cb->currentIndex());
-            workerInitialize();
-            m_work.run();
+            workerInitialize();            
         }
         break;
         case screenshot:
@@ -171,8 +167,7 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
             writeData();
             m_work.end();
             m_selectedScreenshotBackend = static_cast<size_t>(cb->currentIndex());
-            workerInitialize();
-            m_work.run();
+            workerInitialize();            
         }
         break;
     }
