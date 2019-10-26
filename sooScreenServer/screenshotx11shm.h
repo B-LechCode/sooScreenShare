@@ -1,4 +1,4 @@
-//SooScreenServer by Simon Wezstein (B-LechCode), 2019
+//sooScreenShare by Simon Wezstein (B-LechCode), 2019
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
@@ -29,46 +29,76 @@ namespace shot {
 #include <cctype>
 #include <algorithm>
 
-//screenShotX11Shm
 
 //From: https://stackoverflow.com/questions/24988164/c-fast-screenshots-in-linux-for-use-with-opencv
 //https://stackoverflow.com/a/39781697
+/**
+ * @brief The X11 screenshot backend
+ *
+ */
 class screenShotX11Shm : public IscreenShot
 {
+    /**
+     * @brief The data struct for the mouse pointer drawing coordinates
+     *
+     */
     struct pointerStr{
-        int32_t xStart;
-        int32_t xStartOffset;
-        int32_t xEnd;
-        int32_t xEndOffset;
-        int32_t yStart;
-        int32_t yStartOffset;
-        int32_t yEnd;
-        int32_t yEndOffset;
+        int32_t xStart; /**< x start value for drawing in the destination image */
+        int32_t xStartOffset; /**< x start offset value in the mouse pointer image  */
+        int32_t xEnd; /**< x end value for drawing in the destination image */
+        int32_t xEndOffset; /**< x end offset value in the mouse pointer image  */
+        int32_t yStart; /**< y start value for drawing in the destination image */
+        int32_t yStartOffset; /**< y start offset value in the mouse pointer image  */
+        int32_t yEnd; /**< y end value for drawing in the destination image */
+        int32_t yEndOffset; /**< y end offset value in the mouse pointer image  */
     };
 
-    struct RGBA{
-        uint8_t b;
-        uint8_t g;
-        uint8_t r;
-        uint8_t a;
+    /**
+     * @brief BGRA struct for fast pixel access
+     *
+     */
+    struct BGRA{
+        uint8_t b; /**< The blue component */
+        uint8_t g; /**< The green component */
+        uint8_t r; /**< The red component */
+        uint8_t a; /**< The alpha channel */
     };
 
-    Display* m_display;
-    Window m_root;
-    XWindowAttributes m_windowAttributes;
-    Screen* m_screen;
-    XImage* m_ximg;
-    XShmSegmentInfo m_shminfo;
+    Display* m_display; /**< The X11 display */
+    Window m_root; /**< The X11 root window */
+    XWindowAttributes m_windowAttributes; /**< The X11 window attributes */
+    Screen* m_screen; /**< The X11 screen */
+    XImage* m_ximg; /**< The X11 image */
+    XShmSegmentInfo m_shminfo; /**< The X11 shared memory info */
 
 
 
-    bool m_imageGrabbed,m_init,grabbing;
+    bool m_imageGrabbed; /**< Image grabbed flag, is true if an image was grabbed after init */
+    bool m_init; /**< The initialized flat, is true if the init was successful */
 
+
+    /**
+     * @brief The changed event of the underlying parameter map
+     *
+     */
     virtual void parameterMapChangedEvent()
     {
         initialize();
     }
+    /**
+     * @brief The changed event of a key/value pair
+     *
+     * @param key The key of the changed parameter
+     */
+    virtual void parameterChangedEvent(const std::string& key)
+    {
+            initialize();
+    }
 
+    /**
+     * @brief Converts the parameters in the parameter map to the corresponding member variables
+     *
+     */
     void applyParameters()
     {
         std::string overrideStr = m_parameters[OVERRIDE_DISPLAY_SELECTION].value();
@@ -104,41 +134,41 @@ class screenShotX11Shm : public IscreenShot
 
     }
 
-    virtual void parameterChangedEvent(const std::string& key)
-    {
-        if(grabbing)
-            std::cout << "ERROR!" << std::endl;
-        else
-            initialize();
-    }
 
-    bool checkCoordinates(int32_t xR,int32_t yR)
-    {
-        bool xO = xR>=m_x && xR<(m_x+m_w);
-        bool yO = yR>=m_y && yR<(m_y+m_h);
-        return xO&&yO;
-    }
-
-    bool checkCoordinateRange(int& c,int& difference,int lim)
+    /**
+     * @brief Helper function to check for illegal coordinates
+     * This function checks against lower than zero and higher than the limit values
+     * @param c Reference of the value to check
+     * @param difference Reference of the difference to calculate
+     * @param lim The positive limit
+     */
+    void checkCoordinateRange(int& c,int& difference,int lim)
     {
         difference = 0;
         if(c>lim)
         {
             difference = c-lim;
             c = lim;
-            return true;
+            return;
         }
 
         if(c<0)
         {
             difference = -c;
             c = 0;
-            return true;
-        }
-
-        return false;
+            return;
+        }        
     }
 
+    /**
+     * @brief Calculates the draw coordinates for the mouse pointer
+     *
+     * @param xR Mouse pointer position x
+     * @param yR Mouse pointer position y
+     * @param wImg Width of the destination image
+     * @param hImg Height of the destination image
+     * @return pointerStr The coordinate structure
+     */
     pointerStr calculateCoordinates(int32_t xR,int32_t yR,int32_t wImg,int32_t hImg)
     {        
         int wX = m_cursImage.cols;
@@ -160,13 +190,17 @@ class screenShotX11Shm : public IscreenShot
 
         return  pointer;
     }
-    uint8_t* m_cursBuff = nullptr;
-    size_t   m_cursBuffSize = 0;
-    cv::Mat  m_cursImage;
-    int m_hotX;
-    int m_hotY;
-    std::string m_cursorName;
+    uint8_t* m_cursBuff = nullptr; /**< TODO: describe */
+    size_t   m_cursBuffSize = 0; /**< TODO: describe */
+    cv::Mat  m_cursImage; /**< TODO: describe */
+    int m_hotX; /**< TODO: describe */
+    int m_hotY; /**< TODO: describe */
+    std::string m_cursorName; /**< TODO: describe */
 
+    /**
+     * @brief Grabs the mouse pointer image
+     *
+     */
     void grabMousePtr()
     {
         XFixesCursorImage * asd = XFixesGetCursorImage (m_display);
@@ -207,14 +241,14 @@ class screenShotX11Shm : public IscreenShot
 
             m_cursImage = cv::Mat(asd->width,asd->height,CV_8UC4);
 
-            RGBA* ptrRgba = reinterpret_cast<RGBA*>(m_cursImage.ptr());
+            BGRA* ptrRgba = reinterpret_cast<BGRA*>(m_cursImage.ptr());
             auto ptrSrc = reinterpret_cast<uint8_t*>(asd->pixels);
 
             for(int y = 0 ; y < asd->height;++y )
             {
                 for(int x = 0 ; x < asd->width;++x )
                 {
-                    (*ptrRgba) = (*reinterpret_cast<RGBA*>(ptrSrc));
+                    (*ptrRgba) = (*reinterpret_cast<BGRA*>(ptrSrc));
                     ptrSrc+=a;
                     ptrRgba++;
 
@@ -223,6 +257,10 @@ class screenShotX11Shm : public IscreenShot
         }
     }
 
+    /**
+     * @brief Cleans up
+     *
+     */
     void destruct()
     {
         if(m_imageGrabbed)
@@ -239,6 +277,10 @@ class screenShotX11Shm : public IscreenShot
 
 
 public:
+    /**
+     * @brief The standard constructor
+     *
+     */
     screenShotX11Shm():IscreenShot(),m_imageGrabbed(false),m_init(false)
     {
         m_defaultParameters[OVERRIDE_DISPLAY_SELECTION] = parameter("Override display selection to freely define the grab ROI","bool","false");
@@ -250,9 +292,13 @@ public:
         setParameters(m_defaultParameters);      
     }
 
+    /**
+     * @brief The grab operator
+     * This operator grabs the screen with mouse pointer
+     * @return cv::Mat The grabbed image
+     */
     virtual cv::Mat operator() ()
-    {
-        grabbing = true;
+    {       
         if(!m_init)
             return cv::Mat();
 
@@ -271,11 +317,11 @@ public:
 
         if(coord.yEnd != coord.yStart && coord.xStart != coord.xEnd)
         {
-            RGBA* ptrCurs = reinterpret_cast<RGBA*>(m_cursImage.ptr())+coord.yStartOffset*m_cursImage.cols;
+            BGRA* ptrCurs = reinterpret_cast<BGRA*>(m_cursImage.ptr())+coord.yStartOffset*m_cursImage.cols;
 
             for(int y = coord.yStart ; y < coord.yEnd;++y )
             {
-                RGBA* ptrRgba = reinterpret_cast<RGBA*>(img.ptr(y))+coord.xStart;
+                BGRA* ptrRgba = reinterpret_cast<BGRA*>(img.ptr(y))+coord.xStart;
                 ptrCurs += coord.xStartOffset;
                 for(int x = coord.xStart ; x < coord.xEnd;++x )
                 {
@@ -290,13 +336,16 @@ public:
                 ptrCurs += coord.xEndOffset;
             }
         }
-        grabbing = false;
+
         return img;
     }
 
 
-
-    virtual void initialize(/*int32_t x,int32_t y, uint32_t w,uint32_t h*/)
+    /**
+     * @brief The initializer method
+     * Allocates memory and opens the display for image grabbing
+     */
+    virtual void initialize()
     {
         applyParameters();
         if(m_init)
@@ -324,11 +373,20 @@ public:
     }
 
 
+    /**
+     * @brief The destructor
+     *
+     */
     virtual ~screenShotX11Shm()
     {
        destruct();
     }
 
+    /**
+    * @brief The currently active screens
+    *
+    * @return std::vector<screenDef> The screens
+    */
     virtual std::vector<screenDef> getScreens()
     {
         std::vector<screenDef> ret;

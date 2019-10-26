@@ -1,4 +1,4 @@
-//SooScreenServer by Simon Wezstein (B-LechCode), 2019
+//sooScreenShare by Simon Wezstein (B-LechCode), 2019
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
@@ -41,6 +41,7 @@ void transportClientTCP::init()
         notifyMessage("Error connecting! Starting retry timer");
         m_reconnectTimer.start(3000);
     }
+    m_sock.setSocketOption(QAbstractSocket::LowDelayOption,1);
     connect(&m_sock,SIGNAL(disconnected()),this,SLOT(on_socketDisconnected()));
 }
 
@@ -49,9 +50,7 @@ int64_t transportClientTCP::send(const char *dat, int64_t len)
     int64_t retVal = -1;
     if(m_sock.isWritable())
     {
-        retVal =  m_sock.write(dat,len);
-        while(m_sock.bytesToWrite())
-            m_sock.flush();
+        retVal =  m_sock.write(dat,len);        
     }
 
     return retVal;
@@ -79,7 +78,7 @@ void transportClientTCP::end()
 
 
 }
-
+/// @todo conversion with std::stoi could fail, make this safe
 void transportClientTCP::initParameters()
 {
     //port
