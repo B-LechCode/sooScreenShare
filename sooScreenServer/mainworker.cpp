@@ -55,7 +55,7 @@ void mainWorker::run()
         return; //TODO user notification
 
     //Compress the image
-    std::vector<uint8_t> compressedImageData =  m_comp->compress(img,compressOk);
+    std::vector<uint8_t> compressedImageData =  m_comp->compress(cImg,compressOk);
 
     if(!compressOk)
         return; //TODO user notification

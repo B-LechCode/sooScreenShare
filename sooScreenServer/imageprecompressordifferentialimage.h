@@ -43,6 +43,7 @@ private:
      * @param key The key of the changed parameter
      */
     virtual void parameterChangedEvent(const std::string& key);
+    bool m_FirstFrame;
     int m_numDifferentialFrames;
     int m_maxNumOfDifferentialFrames;
     cv::Mat m_keyImage;

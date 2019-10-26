@@ -194,16 +194,11 @@ void mainWorker::transportDataAvailable(const char *dat, int64_t len)
             std::cout << " droppedFrames " <<droppedFrames << std::endl;
 #endif
         bool ok;
-        if(myHeader.imageDataType == imageType::keyFrame)
-        {
-            cv::Mat img = m_decomp->decompress(refBuff+myPos+HEADER_SIZE,myHeader,ok);
-            img = m_postDecomp->decompress(img,myHeader,ok);
-            m_ptrDraw->display(img);
-        }
-        else
-        {
-            std::cout << "Diff frame!!" << std::endl;
-        }
+
+        cv::Mat img = m_decomp->decompress(refBuff+myPos+HEADER_SIZE,myHeader,ok);
+        cv::Mat imgPost = m_postDecomp->decompress(img,myHeader,ok);
+        m_ptrDraw->display(imgPost);
+
         size_t processedFrameSize = myPos+HEADER_SIZE+static_cast<size_t>(myHeader.length);
         if(workingWithMemberBuffer)
         {
