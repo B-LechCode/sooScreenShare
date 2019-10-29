@@ -11,6 +11,9 @@ option(USE_SDL2 "Check this if you want to use the SDL backend" true)
 if ( UNIX )
 option(USE_X11 "Check this if you want to use the X11 backend" true)
 ENDIF ( UNIX )
+if ( WIN32 )
+option(USE_WINAPI "Check this if you want to use the WINAPI backend" true)
+ENDIF ( WIN32 )
 # Build-Typ
 set(CMAKE_BUILD_TYPE Debug CACHE TYPE STRING FORCE )
 
@@ -45,8 +48,12 @@ IF ( USE_X11 )
 
     find_library(X11_Xrandr_LIB Xrandr)
     find_library(X11_Xfixes_LIB Xfixes)
-    message(${X11_Xfixes_LIB})    
+    message(${X11_Xfixes_LIB})
 ENDIF ( USE_X11 )
+
+if ( USE_WINAPI )
+    add_compile_definitions(WITH_WINAPI)
+ENDIF ( USE_WINAPI )
 
 #LZ4
 find_library (lz4_lib lz4)
@@ -61,6 +68,7 @@ include_directories (
         ${OpenCV_INCLUDES}
         ${OpenCV_INCLUDE_DIRS}
         ${lz4_include_path}
+        ${lz4_path}
 )
 
 # Use all .cpp and .h files

@@ -6,7 +6,7 @@
 
 transportServerTCP::transportServerTCP()
 {
-    m_defaultParameters[PORT] = parameter("The TCP port to listen on","int16","12345");
+    m_defaultParameters[PORT] = parameter("The TCP port to listen on","int16","58000");
     m_defaultParameters[HOST_ADDRESS] = parameter("The address/network interface to listen on","string","any");
     connect(&m_srvr,SIGNAL(newConnection()),this,SLOT(on_newConnection()));
     setParameters(m_defaultParameters);

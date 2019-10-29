@@ -38,6 +38,7 @@ include_directories (
         ${OpenCV_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIRS}
         ${lz4_include_path}
+        ${lz4_path}
 )
 
 # Use all .cpp and .h files
