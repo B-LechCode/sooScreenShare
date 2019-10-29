@@ -13,10 +13,10 @@
 #include "screenshotx11shm.h"
 #include "screenshotwin.h"
 
-#if WITH_X11
+#ifdef WITH_X11
 #define x11 "X11_Shm_Grab"
 #endif
-#if WITH_WINAPI
+#ifdef WITH_WINAPI
 #define backend_win "Windows_Grab"
 #endif
 
@@ -44,10 +44,10 @@ public:
     {
         if(!m_backends.size())
         {
-#if WITH_X11
+#ifdef WITH_X11
             m_backends.push_back(x11);
 #endif
-#if WITH_WINAPI
+#ifdef WITH_WINAPI
 			m_backends.push_back(backend_win);
 #endif
         }
@@ -67,7 +67,7 @@ public:
         if(backendName == x11)
             return new screenShotX11Shm();
 #endif
-#if WITH_WINAPI
+#ifdef WITH_WINAPI
         if (backendName == backend_win)
              return new screenShotWin();
 #endif

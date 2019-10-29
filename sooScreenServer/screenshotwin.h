@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #ifndef SCREENSHOTWIN_H
 #define SCREENSHOTWIN_H
-#if WITH_WINAPI
+#ifdef WITH_WINAPI
 
 namespace shot {
 #define DISPLAY_NUMBER "Display Number"
