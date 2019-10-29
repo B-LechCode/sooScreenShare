@@ -121,8 +121,8 @@ TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
                 ${Qt5Core_LIBRARIES}
                 ${Qt5Gui_LIBRARIES}
                 ${lz4_lib}
-                # ${X11_Xrandr_LIB}
-                # ${X11_Xfixes_LIB}
+                ${X11_Xrandr_LIB}
+                ${X11_Xfixes_LIB}
 
 )
 
