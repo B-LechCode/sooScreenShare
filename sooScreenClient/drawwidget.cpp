@@ -5,7 +5,7 @@
 #include "drawwidget.h"
 
 drawWidget::drawWidget(QWindow *parent):
-    QOpenGLWindow(QOpenGLWindow::UpdateBehavior::PartialUpdateBlit,parent)
+    QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate,parent)
 {        
     resize(640,480);
     setSurfaceType(QWindow::OpenGLSurface);
