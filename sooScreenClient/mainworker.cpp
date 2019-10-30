@@ -197,7 +197,7 @@ void mainWorker::transportDataAvailable(const char *dat, int64_t len)
 
         cv::Mat img = m_decomp->decompress(refBuff+myPos+HEADER_SIZE,myHeader,ok);
         cv::Mat imgPost = m_postDecomp->decompress(img,myHeader,ok);
-        m_ptrDraw->display(imgPost);
+        m_ptrDraw->displayImage(imgPost);
 
         size_t processedFrameSize = myPos+HEADER_SIZE+static_cast<size_t>(myHeader.length);
         if(workingWithMemberBuffer)

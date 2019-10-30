@@ -56,7 +56,7 @@ public:
      *
      * @param img The image to draw
      */
-    virtual void display(const cv::Mat& img)=0;
+    virtual void displayImage(const cv::Mat& img)=0;
     /**
      * @brief Getter method for the current observer
      *
