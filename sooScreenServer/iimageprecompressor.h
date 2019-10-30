@@ -42,6 +42,11 @@ public:
      * @return std::vector<uint8_t> The compressed data
      */
     virtual cv::Mat compress(cv::Mat& img,imageType& type) = 0;
+
+    /**
+    * @brief Resets the image compressor
+    */
+    virtual void reset() = 0;
 };
 
 #endif // IIMAGEPRECOMPRESSOR_H

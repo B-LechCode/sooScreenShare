@@ -44,6 +44,7 @@ void mainWorker::run()
 {
     if(!m_comp || !m_preComp || !m_trans || !m_screen)
         return;
+    static size_t lastKeyframeSize = 0;
     bool compressOk;
 
     //Get Screenshot
@@ -59,8 +60,30 @@ void mainWorker::run()
 
     if(!compressOk)
         return; //TODO user notification
-    //std::cout << compressedImageData.size() << std::endl;
-    //check size
+
+    std::cout << tp << " ";
+    std::cout << "Data Size: " << compressedImageData.size() << std::endl;
+
+    if (tp == imageType::incrementalFrame)
+    {
+        if(compressedImageData.size() > lastKeyframeSize*1.2)
+        {
+            std::cout << "Resetting precompression! " << std::endl;
+            m_preComp->reset();
+            cImg = m_preComp->compress(img,tp,compressOk);
+            compressedImageData =  m_comp->compress(cImg,compressOk);
+            lastKeyframeSize = compressedImageData.size();
+            std::cout << tp << " ";
+            std::cout << "Data Size: " << compressedImageData.size() << std::endl;
+        }
+    }
+    else if (tp == imageType::keyFrame)
+    {
+        lastKeyframeSize = compressedImageData.size();
+    }
+
+
+    //check size for buffer
     if((compressedImageData.size()+HEADER_SIZE)>m_bufferSize)
     {
         delete[] m_sendbuffer;

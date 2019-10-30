@@ -47,6 +47,12 @@ public:
         bool ok;
         return compress(img,type,ok);
     }
+
+    virtual void reset()
+    {
+
+    }
+
 private:
     /**
      * @brief The changed event of the underlying parameter map

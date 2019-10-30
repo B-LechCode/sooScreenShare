@@ -23,7 +23,10 @@ cv::Mat ImagePreCompressorDifferentialImage::compress(cv::Mat &img, imageType &t
         uint32_t* ptrImg = reinterpret_cast<uint32_t*>(img.ptr(0));
         uint32_t* ptrOldImg = reinterpret_cast<uint32_t*>(m_oldImage.ptr(0));
 
-        for (int i=0;i<img.rows*img.cols ;++i)
+        uint32_t* ptrImgEnd = ptrImg+img.rows*img.cols;
+
+
+        while(ptrImg != ptrImgEnd)
         {
             (*ptrDiffImg) = (*ptrImg)-(*ptrOldImg);
             (*ptrOldImg) = (*ptrImg);
@@ -56,7 +59,7 @@ void ImagePreCompressorDifferentialImage::parameterMapChangedEvent()
 
 }
 
-void ImagePreCompressorDifferentialImage::parameterChangedEvent(const std::string &key)
+void ImagePreCompressorDifferentialImage::parameterChangedEvent(const std::string &)
 {
 
 }

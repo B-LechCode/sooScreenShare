@@ -30,6 +30,11 @@ public:
         bool ok;
         return compress(img,type,ok);
     }
+
+    virtual void reset()
+    {
+        m_numDifferentialFrames = m_maxNumOfDifferentialFrames;
+    }
 private:
     /**
      * @brief The changed event of the underlying parameter map
@@ -42,7 +47,7 @@ private:
      *
      * @param key The key of the changed parameter
      */
-    virtual void parameterChangedEvent(const std::string& key);
+    virtual void parameterChangedEvent(const std::string&);
     bool m_FirstFrame;
     int m_numDifferentialFrames;
     int m_maxNumOfDifferentialFrames;
