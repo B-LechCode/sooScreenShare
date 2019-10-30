@@ -12,6 +12,7 @@
 #include "factories.h"
 
 
+#include <QTime>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -20,18 +21,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     connect(&m_tmr,SIGNAL(timeout()),this,SLOT(on_timerTimeout()));
-    //m_tmr.setSingleShot(true);
+    m_tmr.setSingleShot(true);
 
     m_compressBackends = imageCompressorFactory::getAvailableBackends();
     m_screenshotBackends = screenShotFactory::getAvailableBackends();
     m_transportBackends = transportServerFactory::getAvailableBackends();
 
-    //m_work.init();
-    //screenShotSdl dsd;
-    //dsd.operator()();
-
     readData();
-    m_tmr.start(33);
+    m_tmr.start(m_timePreference);
 }
 
 
@@ -40,6 +37,13 @@ void MainWindow::on_timerTimeout()
     QElapsedTimer tmr;
     tmr.start();
     m_work.run();
+    int64_t eleapsed = m_timePreference-tmr.elapsed();
+    if(eleapsed<0)
+        eleapsed = 0;
+    std::cout << eleapsed << std::endl;
+    m_tmr.start(eleapsed);
+
+
 
 }
 
@@ -82,10 +86,7 @@ void MainWindow::readData()
 
     workerInitialize();
 
-    treeviewInitialize();
-    m_work.run();
-
-
+    treeviewInitialize();  
 }
 
 void MainWindow::treeviewInitialize()
@@ -133,8 +134,7 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
             writeData();
             m_work.end();
             m_selectedTransportBackend = static_cast<size_t>(cb->currentIndex());
-            workerInitialize();
-            m_work.run();
+            workerInitialize();            
         }
         break;
         case comp:
@@ -144,8 +144,7 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
             writeData();
             m_work.end();
             m_selectedCompressBackend = static_cast<size_t>(cb->currentIndex());
-            workerInitialize();
-            m_work.run();
+            workerInitialize();            
         }
         break;
         case screenshot:
@@ -155,8 +154,7 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
             writeData();
             m_work.end();
             m_selectedScreenshotBackend = static_cast<size_t>(cb->currentIndex());
-            workerInitialize();
-            m_work.run();
+            workerInitialize();           
         }
         break;
     }

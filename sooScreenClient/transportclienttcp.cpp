@@ -36,7 +36,7 @@ void transportClientTCP::init()
 
 
     m_sock.connectToHost(m_address,m_port);
-    if(!m_sock.waitForConnected()) //Retry
+    if(!m_sock.waitForConnected(100)) //Retry
     {
         notifyMessage("Error connecting! Starting retry timer");
         m_reconnectTimer.start(3000);
