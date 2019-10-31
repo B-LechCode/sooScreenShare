@@ -12,6 +12,7 @@
 #include "factories.h"
 
 
+#include <QTime>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -19,7 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(&m_tmr,SIGNAL(timeout()),this,SLOT(on_timerTimeout()));   
+    connect(&m_tmr,SIGNAL(timeout()),this,SLOT(on_timerTimeout()));
+    m_tmr.setSingleShot(true);
 
     m_preCompressBackends = imagePreCompressorFactory::getAvailableBackends();
     m_compressBackends = imageCompressorFactory::getAvailableBackends();
@@ -27,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_transportBackends = transportServerFactory::getAvailableBackends();
 
     readData();
-    m_tmr.start(33);
+    m_tmr.start(m_timePreference);
 }
 
 
@@ -36,6 +38,13 @@ void MainWindow::on_timerTimeout()
     QElapsedTimer tmr;
     tmr.start();
     m_work.run();
+    int64_t eleapsed = m_timePreference-tmr.elapsed();
+    if(eleapsed<0)
+        eleapsed = 0;
+    std::cout << eleapsed << std::endl;
+    m_tmr.start(eleapsed);
+
+
 
 }
 
@@ -84,8 +93,7 @@ void MainWindow::readData()
 
     workerInitialize();
 
-    treeviewInitialize();
-
+    treeviewInitialize();  
 }
 
 void MainWindow::treeviewInitialize()
@@ -167,7 +175,7 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
             writeData();
             m_work.end();
             m_selectedScreenshotBackend = static_cast<size_t>(cb->currentIndex());
-            workerInitialize();            
+            workerInitialize();           
         }
         break;
     }
