@@ -29,7 +29,7 @@ class MainWindow :  public QMainWindow
      * This is used to distinct the settings sections of the tree view
      */
     enum section{
-        transport,comp,screenshot
+        transport,preComp,comp,screenshot
     };
 
 public:
@@ -93,8 +93,10 @@ private:
     Ui::MainWindow *ui; /**< Pointer to the own UI */
     QTimer m_tmr; /**< The work timer */
     const std::string m_filePath = "parameters.json"; /**< File path to the config file */
-    const int64_t m_timePreference = 35; /**< The work timer period time */
+    const int64_t m_timePreference = 30; /**< The work timer period time */
     mainWorker m_work; /**< The main worker instance */
+    std::vector<std::string> m_preCompressBackends; /**< The available precompress backend names */
+    size_t m_selectedPreCompressBackend = 0; /**< The index of the current selected precompress backend */
     std::vector<std::string> m_compressBackends; /**< The available compress backend names */
     size_t m_selectedCompressBackend = 0; /**< The index of the current selected compress backend */
     std::vector<std::string> m_transportBackends; /**< The available transport backend names */

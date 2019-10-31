@@ -12,7 +12,6 @@
 #include "factories.h"
 
 
-#include <QTime>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -20,15 +19,15 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(&m_tmr,SIGNAL(timeout()),this,SLOT(on_timerTimeout()));
-    m_tmr.setSingleShot(true);
+    connect(&m_tmr,SIGNAL(timeout()),this,SLOT(on_timerTimeout()));   
 
+    m_preCompressBackends = imagePreCompressorFactory::getAvailableBackends();
     m_compressBackends = imageCompressorFactory::getAvailableBackends();
     m_screenshotBackends = screenShotFactory::getAvailableBackends();
     m_transportBackends = transportServerFactory::getAvailableBackends();
 
     readData();
-    m_tmr.start(m_timePreference);
+    m_tmr.start(33);
 }
 
 
@@ -37,32 +36,28 @@ void MainWindow::on_timerTimeout()
     QElapsedTimer tmr;
     tmr.start();
     m_work.run();
-    int64_t eleapsed = m_timePreference-tmr.elapsed();
-    if(eleapsed<0)
-        eleapsed = 0;
-    std::cout << eleapsed << std::endl;
-    m_tmr.start(eleapsed);
-
-
 
 }
 
 MainWindow::~MainWindow()
 {
+    m_tmr.stop();
     writeData();
     delete ui;
 }
 
 void MainWindow::workerInitialize()
-{
-    //TODO: Add parameters for screenshot!
-    m_work.init(m_screenshotBackends[m_selectedScreenshotBackend],m_compressBackends[m_selectedCompressBackend],m_transportBackends[m_selectedTransportBackend]);
+{    
+    m_work.init(m_screenshotBackends[m_selectedScreenshotBackend],m_preCompressBackends[m_selectedPreCompressBackend],m_compressBackends[m_selectedCompressBackend],m_transportBackends[m_selectedTransportBackend]);
 
     parameterMap screenShotBackendParameterMap = m_serialize.getParameterMap(m_screenshotBackends[m_selectedScreenshotBackend]);
     m_work.screen()->setParameters(screenShotBackendParameterMap);
 
     parameterMap transPortBackendParameterMap = m_serialize.getParameterMap(m_transportBackends[m_selectedTransportBackend]);
     m_work.trans()->setParameters(transPortBackendParameterMap);
+
+    parameterMap preCompBackendParameterMap = m_serialize.getParameterMap(m_preCompressBackends[m_selectedPreCompressBackend]);
+    m_work.preComp()->setParameters(preCompBackendParameterMap);
 
     parameterMap compBackendParameterMap = m_serialize.getParameterMap(m_compressBackends[m_selectedCompressBackend]);
     m_work.comp()->setParameters(compBackendParameterMap);
@@ -78,6 +73,9 @@ void MainWindow::readData()
     std::string selectedScreenshotBackend = m_serialize.getStringValue("Screenshot");
     m_selectedScreenshotBackend = GuiHelpers::findIndex(m_screenshotBackends,selectedScreenshotBackend);
 
+    std::string selectedPreCompressBackend = m_serialize.getStringValue("Precompression");
+    m_selectedPreCompressBackend = GuiHelpers::findIndex(m_preCompressBackends,selectedPreCompressBackend);
+
     std::string selectedCompressBackend = m_serialize.getStringValue("Compression");
     m_selectedCompressBackend = GuiHelpers::findIndex(m_compressBackends,selectedCompressBackend);
 
@@ -86,13 +84,15 @@ void MainWindow::readData()
 
     workerInitialize();
 
-    treeviewInitialize();  
+    treeviewInitialize();
+
 }
 
 void MainWindow::treeviewInitialize()
 {
     ui->twSettings->clear();
     GuiHelpers::addSettingsCat(this,ui->twSettings,m_screenshotBackends,m_work.screen()->getParameters(),QString("Screenshot"),section::screenshot,static_cast<int>(m_selectedScreenshotBackend));
+    GuiHelpers::addSettingsCat(this,ui->twSettings,m_preCompressBackends,m_work.preComp()->getParameters(),QString("Precompression"),section::preComp,static_cast<int>(m_selectedPreCompressBackend));
     GuiHelpers::addSettingsCat(this,ui->twSettings,m_compressBackends,m_work.comp()->getParameters(),QString("Compression"),section::comp,static_cast<int>(m_selectedCompressBackend));
     GuiHelpers::addSettingsCat(this,ui->twSettings,m_transportBackends,m_work.trans()->getParameters(),QString("Transport layer"),section::transport,static_cast<int>(m_selectedTransportBackend));
     m_transistion = false;
@@ -102,6 +102,9 @@ void MainWindow::treeviewInitialize()
 void MainWindow::writeData()
 {
     //TODO: pointers!
+
+    m_serialize.appendBackendSelection("Precompression",m_preCompressBackends[m_selectedPreCompressBackend]);
+    m_serialize.appendParameterMap(m_work.preComp()->getParameters(),m_preCompressBackends[m_selectedPreCompressBackend]);
 
     m_serialize.appendBackendSelection("Compression",m_compressBackends[m_selectedCompressBackend]);
     m_serialize.appendParameterMap(m_work.comp()->getParameters(),m_compressBackends[m_selectedCompressBackend]);
@@ -144,6 +147,16 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
             writeData();
             m_work.end();
             m_selectedCompressBackend = static_cast<size_t>(cb->currentIndex());
+            workerInitialize();           
+        }
+        break;
+        case preComp:
+        if(m_selectedPreCompressBackend != static_cast<size_t>(cb->currentIndex()))
+        {
+            m_transistion = true;
+            writeData();
+            m_work.end();
+            m_selectedPreCompressBackend = static_cast<size_t>(cb->currentIndex());
             workerInitialize();            
         }
         break;
@@ -154,7 +167,7 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
             writeData();
             m_work.end();
             m_selectedScreenshotBackend = static_cast<size_t>(cb->currentIndex());
-            workerInitialize();           
+            workerInitialize();            
         }
         break;
     }
@@ -185,6 +198,11 @@ void MainWindow::on_qLineEditEditingFinished()
         case comp:
         {            
             m_work.comp()->setParameterValue(key,value);
+        }
+        break;
+        case preComp:
+        {
+            m_work.preComp()->setParameterValue(key,value);
         }
         break;
         case screenshot:

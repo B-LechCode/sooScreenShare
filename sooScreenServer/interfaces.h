@@ -8,6 +8,7 @@
 #include "iimagecompressor.h"
 #include "itransportserver.h"
 #include "iscreenshot.h"
+#include "iimageprecompressor.h"
 #include "./../iparameter.h"
 
 #endif // INTERFACES_H

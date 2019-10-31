@@ -9,6 +9,9 @@
 #define HEADER_SIZE sizeof(dataHeaderHandling::dataHeader)
 #define HEADER_STRING "ScreenImage"
 
+
+enum imageType{keyFrame,incrementalFrame};
+
 /**
  * @brief Helper class for the handling of the data header
  *
@@ -20,7 +23,7 @@ private:
      * @brief The standard constructor
      *
      */
-    //dataHeaderHandling();
+    dataHeaderHandling();
 public:
     /**
      * @brief The standard data header structure
@@ -33,7 +36,8 @@ public:
        uint32_t  width;           /**< The image width */ //40
        uint32_t  height;          /**< The image height */ //44
        int32_t  cvType;          /**< The open cv type of the transmitted image */ //48
-       char reserved2[16];   /**< Some reserved bytes for future use */ //64
+       int32_t  imageDataType;   /**< The image data type (used to distinct between differential and full frame data) */ //52
+       char reserved2[12];   /**< Some reserved bytes for future use */ //64
     /**
      * @brief The standard data header structure
      *
