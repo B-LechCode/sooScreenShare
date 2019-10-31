@@ -31,18 +31,22 @@ public:
     /**
      * @brief The method for image comression.
      *
-     * @param img The raw image to compress
+     * @param ptrDest Destination data Pointer
+     * @param dataSize The size of the destination data field in bytes
+     * @param imgIn The raw image to compress
      * @param ok The compression status (true if ok)
-     * @return std::vector<uint8_t> The compressed data
+     * @return size_t Size of the Data
      */
-    virtual std::vector<uint8_t> compress(cv::Mat& img, bool& ok) = 0;
+    virtual size_t compress(uint8_t* ptrDest,size_t dataSize,cv::Mat& imgIn, bool& ok) = 0;
     /**
      * @brief The method for image comression.
      *
-     * @param img The raw image to compress
-     * @return std::vector<uint8_t> The compressed data
+     * @param ptrDest Destination data Pointer
+     * @param dataSize The size of the destination data field in bytes
+     * @param imgIn The raw image to compress
+     * @return size_t Size of the Data
      */
-    virtual std::vector<uint8_t> compress(cv::Mat& img) = 0;
+    virtual size_t compress(uint8_t* ptrDest,size_t dataSize,cv::Mat& imgIn) = 0;
 };
 
 #endif // IIMAGECOMPRESSOR_H

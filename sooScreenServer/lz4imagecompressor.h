@@ -27,6 +27,39 @@ public:
      *
      */
     virtual ~lz4ImageCompressor();
+
+    /**
+     * @brief The method for image comression.
+     *
+     * @param ptrDest Destination data Pointer
+     * @param dataSize The size of the destination data field in bytes
+     * @param imgIn The raw image to compress
+     * @param ok The compression status (true if ok)
+     * @return size_t Size of the Data
+     */
+    inline virtual size_t compress(uint8_t* ptrDest,size_t dataSize,cv::Mat& imgIn, bool& ok)
+    {
+        int src_size = imgIn.rows*imgIn.cols*imgIn.channels();
+        int compSize = LZ4_compress_default(reinterpret_cast<char*>(imgIn.ptr()),reinterpret_cast<char*>(ptrDest),src_size,static_cast<int>(dataSize));
+        ok = compSize>0;
+        return  static_cast<size_t>(compSize);
+
+    }
+
+    /**
+     * @brief The method for image comression.
+     *
+     * @param ptrDest Destination data Pointer
+     * @param dataSize The size of the destination data field in bytes
+     * @param imgIn The raw image to compress
+     * @return size_t Size of the Data
+     */
+    inline virtual size_t compress(uint8_t* ptrDest,size_t dataSize,cv::Mat& imgIn)
+    {
+       bool ok;
+       return compress(ptrDest,dataSize,imgIn, ok);
+    }
+
     /**
      * @brief The method for image comression.
      *
@@ -34,11 +67,11 @@ public:
      * @param ok The compression status (true if ok)
      * @return std::vector<uint8_t> The compressed data
      */
-    inline virtual std::vector<uint8_t> compress(cv::Mat& img, bool& ok)
-    {
-        ok = compressHelper(img);
-        return std::move(m_buffer);
-    }
+//    inline virtual std::vector<uint8_t> compress(cv::Mat& img, bool& ok)
+//    {
+//        ok = compressHelper(img);
+//        return std::move(m_buffer);
+//    }
 
     /**
      * @brief The method for image comression.
@@ -46,26 +79,12 @@ public:
      * @param img The raw image to compress
      * @return std::vector<uint8_t> The compressed data
      */
-    inline virtual std::vector<uint8_t> compress(cv::Mat& img)
-    {
-        compressHelper(img);
-        return std::move(m_buffer);
-    }
-private:
-    /**
-     * @brief Helper class for compression
-     *
-     * @param img Image to compress
-     * @return bool Compression status (True if ok)
-     */
-    inline bool compressHelper(cv::Mat& img)
-    {
-        int src_size = img.rows*img.cols*img.channels();
-        m_buffer = std::vector<uint8_t>(static_cast<size_t>(src_size));
-        int compSize = LZ4_compress_default(reinterpret_cast<char*>(img.ptr()),reinterpret_cast<char*>(m_buffer.data()),src_size,static_cast<int>(m_buffer.size()));
-        m_buffer.resize(static_cast<size_t>(compSize));
-        return  compSize>0;
-    }
+//    inline virtual std::vector<uint8_t> compress(cv::Mat& img)
+//    {
+//        compressHelper(img);
+//        return std::move(m_buffer);
+//    }
+private:    
     /**
      * @brief The changed event of the underlying parameter map
      *
@@ -77,7 +96,7 @@ private:
      * @param key The key of the changed parameter
      */
     virtual void parameterChangedEvent(const std::string& key);
-    std::vector<uint8_t> m_buffer; /**< Compressed Image Buffer */
+
 
 };
 
