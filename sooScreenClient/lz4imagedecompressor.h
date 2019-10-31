@@ -42,7 +42,11 @@ public:
      */
     inline virtual cv::Mat decompress(uint8_t* ptrDat,dataHeaderHandling::dataHeader hdr, bool& ok)
     {
-        cv::Mat img;
+        static cv::Mat img = cv::Mat (hdr.height,hdr.width,hdr.cvType);
+
+        if(img.rows != hdr.height || img.cols != hdr.width || img.type() != hdr.cvType)
+            img = cv::Mat (hdr.height,hdr.width,hdr.cvType);
+
         ok = decompressHelper(img,ptrDat,hdr);
         return img;
     }
@@ -55,9 +59,8 @@ public:
     */
     inline virtual cv::Mat decompress(uint8_t* ptrDat,dataHeaderHandling::dataHeader hdr)
     {
-        cv::Mat img;
-        decompressHelper(img,ptrDat,hdr);
-        return img;
+        bool ok;
+        return decompress(ptrDat,hdr,ok);
     }
 
 
@@ -72,7 +75,6 @@ private:
      */
     inline bool decompressHelper(cv::Mat& img,uint8_t* ptrDat,dataHeaderHandling::dataHeader hdr)
     {
-        img = cv::Mat (hdr.height,hdr.width,hdr.cvType);
         int dst_size = img.rows*img.cols*img.channels();
         int decSize = LZ4_decompress_safe(reinterpret_cast<char*>(ptrDat),reinterpret_cast<char*>(img.data),hdr.length,dst_size);
         return decSize==dst_size;

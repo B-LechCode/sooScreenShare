@@ -92,7 +92,7 @@ private:
      *
      */
     Ui::MainWindow *ui; /**< Pointer to the own UI */
-    drawWidget* m_draw; /**< Pointer to the draw widget */
+    drawWindow* m_draw; /**< Pointer to the draw widget */
     mainWorker m_work; /**< The main worker instance */
     const std::string filePath = "parameters.json"; /**< File path to the config file */
     std::vector<std::string> m_decompressBackends; /**< The available decompress backend names */

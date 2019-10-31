@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    m_draw = new drawWidget();
+    m_draw = new drawWindow();
     m_draw->setObserver(this);
     m_draw->show();
 

@@ -9,7 +9,7 @@
 
 transportClientTCP::transportClientTCP()
 {
-    m_defaultParameters[PORT] = parameter("The TCP port to connect on","int16","12345");
+    m_defaultParameters[PORT] = parameter("The TCP port to connect on","int16","58000");
     m_defaultParameters[HOST_ADDRESS] = parameter("The address interface to connect on","string","127.0.0.1");
     setParameters(m_defaultParameters);
 
