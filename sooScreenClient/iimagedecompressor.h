@@ -2,8 +2,8 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
-#ifndef IIMAGEDECOMPRESSOR_H
-#define IIMAGEDECOMPRESSOR_H
+#ifndef IIMAGECOMPRESSOR_H
+#define IIMAGECOMPRESSOR_H
 
 #include <opencv2/opencv.hpp>
 #include <vector>
@@ -50,4 +50,4 @@ public:
 
 };
 
-#endif // IIMAGEDECOMPRESSOR_H
+#endif // IIMAGECOMPRESSOR_H

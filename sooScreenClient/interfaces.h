@@ -6,7 +6,6 @@
 #define INTERFACES_H
 
 #include "iimagedecompressor.h"
-#include "iimagepostdecompressor.h"
 #include "itransportclient.h"
 #include "idraw.h"
 

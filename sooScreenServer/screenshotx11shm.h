@@ -262,7 +262,7 @@ class screenShotX11Shm : public IscreenShot
      *
      */
     void destruct()
-    {        
+    {
         if(m_imageGrabbed)
             XDestroyImage(m_ximg);
         if(m_cursBuff)

@@ -27,7 +27,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     m_decompressBackends = imageDecompressorFactory::getAvailableBackends();
-    m_postDecompressBackends = imagePostDecompressorFactory::getAvailableBackends();
     m_transportBackends  = transportClientFactory::getAvailableBackends();
 
     readData();
@@ -35,13 +34,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::workerInitialize()
 {
-    m_work.init(m_decompressBackends[m_selectedDecompressBackend],m_postDecompressBackends[m_selectedPostDecompressBackend],m_transportBackends[m_selectedTransportBackend],m_draw);
+    m_work.init(m_decompressBackends[m_selectedDecompressBackend],m_transportBackends[m_selectedTransportBackend],m_draw);
     parameterMap transPortBackendParameterMap = m_serialize.getParameterMap(m_transportBackends[m_selectedTransportBackend]);
     m_work.trans()->setParameters(transPortBackendParameterMap);
     parameterMap decompBackendParameterMap = m_serialize.getParameterMap(m_decompressBackends[m_selectedDecompressBackend]);
     m_work.decomp()->setParameters(decompBackendParameterMap);
-    parameterMap postDecompBackendParameterMap = m_serialize.getParameterMap(m_postDecompressBackends[m_selectedPostDecompressBackend]);
-    m_work.postDecomp()->setParameters(postDecompBackendParameterMap);
     treeviewInitialize();
 }
 
@@ -52,9 +49,6 @@ void MainWindow::readData()
     //get the selected backends
     std::string selectedDecompressBackend = m_serialize.getStringValue("Decompression");
     m_selectedDecompressBackend = GuiHelpers::findIndex(m_decompressBackends,selectedDecompressBackend);
-
-    std::string selectedPostDecompressBackend = m_serialize.getStringValue("Postdecompression");
-    m_selectedPostDecompressBackend = GuiHelpers::findIndex(m_postDecompressBackends,selectedPostDecompressBackend);
 
     std::string selectedTransportBackend = m_serialize.getStringValue("Transportlayer");
     m_selectedTransportBackend = GuiHelpers::findIndex(m_transportBackends,selectedTransportBackend);
@@ -68,7 +62,6 @@ void MainWindow::treeviewInitialize()
 {    
     ui->twSettings->clear();
     GuiHelpers::addSettingsCat(this,ui->twSettings,m_decompressBackends,m_work.decomp()->getParameters(),QString("Decompression"),section::decomp,static_cast<int>(m_selectedDecompressBackend));
-    GuiHelpers::addSettingsCat(this,ui->twSettings,m_postDecompressBackends,m_work.postDecomp()->getParameters(),QString("Postdecompression"),section::postDecomp,static_cast<int>(m_selectedPostDecompressBackend));
     GuiHelpers::addSettingsCat(this,ui->twSettings,m_transportBackends,m_work.trans()->getParameters(),QString("Transport layer"),section::transport,static_cast<int>(m_selectedTransportBackend));
     m_transistion = false;
     ui->twSettings->expandAll();
@@ -79,8 +72,6 @@ void MainWindow::writeData()
     //TODO: pointers!
     m_serialize.appendBackendSelection("Decompression",m_decompressBackends[m_selectedDecompressBackend]);
     m_serialize.appendParameterMap(m_work.decomp()->getParameters(),m_decompressBackends[m_selectedDecompressBackend]);
-    m_serialize.appendBackendSelection("Postdecompression",m_postDecompressBackends[m_selectedPostDecompressBackend]);
-    m_serialize.appendParameterMap(m_work.postDecomp()->getParameters(),m_postDecompressBackends[m_selectedPostDecompressBackend]);
     m_serialize.appendBackendSelection("Transportlayer",m_transportBackends[m_selectedTransportBackend]);
     m_serialize.appendParameterMap(m_work.trans()->getParameters(),m_transportBackends[m_selectedTransportBackend]);
     m_serialize.writeData(filePath);
@@ -136,16 +127,6 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
             workerInitialize();            
         }
         break;
-        case postDecomp:
-        if(m_selectedPostDecompressBackend != static_cast<size_t>(idx))
-        {
-            m_transistion = true;
-            writeData();
-            m_work.end();
-            m_selectedPostDecompressBackend = static_cast<size_t>(idx);
-            workerInitialize();
-        }
-        break;
     }
 
 }
@@ -176,9 +157,5 @@ void MainWindow::on_qLineEditEditingFinished()
             m_work.decomp()->setParameterValue(key,value);
         }
         break;
-         case postDecomp:
-        {
-            m_work.postDecomp()->setParameterValue(key,value);
-        }
     }
 }

@@ -7,5 +7,4 @@
 #include "imagecompressorfactory.h"
 #include "transportserverfactory.h"
 #include "screenshotfactory.h"
-#include "imageprecompressorfactory.h"
 #endif // FACTORIES_H

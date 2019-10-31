@@ -12,7 +12,7 @@
 #include "./../iparameter.h"
 
 /**
- * @brief Generic interface for image compression backends
+ * @brief Generic interaface for image compression backends
  * This interface describes the interaction between the main worker and the compression backend.
  */
 class IImageCompressor : public Iparameter

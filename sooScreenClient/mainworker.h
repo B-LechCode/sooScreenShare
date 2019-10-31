@@ -29,11 +29,10 @@ public:
      * @brief (Re)Initializes the worker
      *
      * @param decompBackend Identifier of the image decompression backend
-     * @param postDecompBackend  Identifier of the image post decompression backend
      * @param transportBackend Identifier of the transport client backend
      * @param ptrDraw Pointer to the draw widget
      */
-    void init(std::string decompBackend, std::string postDecompBackend, std::string transportBackend, Idraw* ptrDraw);
+    void init(std::string decompBackend, std::string transportBackend, Idraw* ptrDraw);
     /**
      * @brief The end.
      * Frees the ressources of the worker.
@@ -51,12 +50,6 @@ public:
      * @return ItransportClient The backend
      */
     ItransportClient *trans() const;
-    /**
-     * @brief Getter for the post decompression backend
-     *
-     * @return IImagePostDecompressor The backend
-     */
-    IImagePostDecompressor *postDecomp() const;
 
 private:
     /**
@@ -65,14 +58,6 @@ private:
      * @param decompBackend Identifier for the backend
      */
     void setDecompressionBackend(std::string decompBackend);
-
-    /**
-     * @brief Sets a new post decompression backend
-     *
-     * @param postDecompBackend Identifier for the backend
-     */
-    void setPostDecompressionBackend(std::string postDecompBackend);
-
     /**
      * @brief Sets a new transport client backend
      *
@@ -80,7 +65,6 @@ private:
      */
     void setTransportBackend(std::string transportBackend);
     IImageDecompressor* m_decomp = nullptr; /**< Pointer to the current image decompressor backend */
-    IImagePostDecompressor* m_postDecomp = nullptr; /**< Pointer to the current image post decompressor backend */
     ItransportClient* m_trans = nullptr; /**< Pointer to the current transport client backend */
     Idraw*      m_ptrDraw = nullptr; /**< Pointer to the draw widget */
     std::vector<uint8_t> m_receiveBuffer; /**< The receive buffer */
