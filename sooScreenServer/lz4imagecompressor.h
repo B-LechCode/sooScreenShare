@@ -9,6 +9,10 @@
 #include <utility>
 #include <lz4.h>
 
+namespace comp
+{
+    #define SPEEDUP "LZ4_SPEEDUP"
+}
 
 /**
  * @brief The LZ4 image compressor
@@ -40,7 +44,8 @@ public:
     inline virtual size_t compress(uint8_t* ptrDest,size_t dataSize,cv::Mat& imgIn, bool& ok)
     {
         int src_size = imgIn.rows*imgIn.cols*imgIn.channels();
-        int compSize = LZ4_compress_default(reinterpret_cast<char*>(imgIn.ptr()),reinterpret_cast<char*>(ptrDest),src_size,static_cast<int>(dataSize));
+        int compSize = LZ4_compress_fast(reinterpret_cast<char*>(imgIn.ptr()),reinterpret_cast<char*>(ptrDest),src_size,static_cast<int>(dataSize),m_speedup);
+
         ok = compSize>0;
         return  static_cast<size_t>(compSize);
 
@@ -59,31 +64,6 @@ public:
        bool ok;
        return compress(ptrDest,dataSize,imgIn, ok);
     }
-
-    /**
-     * @brief The method for image comression.
-     *
-     * @param img The raw image to compress
-     * @param ok The compression status (true if ok)
-     * @return std::vector<uint8_t> The compressed data
-     */
-//    inline virtual std::vector<uint8_t> compress(cv::Mat& img, bool& ok)
-//    {
-//        ok = compressHelper(img);
-//        return std::move(m_buffer);
-//    }
-
-    /**
-     * @brief The method for image comression.
-     *
-     * @param img The raw image to compress
-     * @return std::vector<uint8_t> The compressed data
-     */
-//    inline virtual std::vector<uint8_t> compress(cv::Mat& img)
-//    {
-//        compressHelper(img);
-//        return std::move(m_buffer);
-//    }
 private:    
     /**
      * @brief The changed event of the underlying parameter map
@@ -97,7 +77,7 @@ private:
      */
     virtual void parameterChangedEvent(const std::string& key);
 
-
+    int m_speedup;
 };
 
 #endif // LZ4IMAGECOMPRESSOR_H
