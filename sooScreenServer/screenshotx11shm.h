@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #ifndef SCREENSHOTX11SHM_H
 #define SCREENSHOTX11SHM_H
-#if WITH_X11
+#ifdef WITH_X11
 
 namespace shot {
 #define DISPLAY_NUMBER "Display Number"
