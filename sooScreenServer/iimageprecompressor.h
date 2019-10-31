@@ -2,32 +2,31 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
-#ifndef IIMAGECOMPRESSOR_H
-#define IIMAGECOMPRESSOR_H
+#ifndef IIMAGEPRECOMPRESSOR_H
+#define IIMAGEPRECOMPRESSOR_H
 
 #include <opencv2/opencv.hpp>
 #include <vector>
-
+#include "./../header.h"
 #include "./../parameter.h"
 #include "./../iparameter.h"
-
 /**
- * @brief Generic interface for image compression backends
- * This interface describes the interaction between the main worker and the compression backend.
+ * @brief Generic interface for image precompression backends
+ * This interface describes the interaction between the main worker and the precompression backend.
  */
-class IImageCompressor : public Iparameter
+class IImagePreCompressor : public Iparameter
 {
 public:
     /**
      * @brief The standard constructor
      *
      */
-    IImageCompressor();
+    IImagePreCompressor();
     /**
      * @brief The destructor
      *
      */
-    virtual ~IImageCompressor();
+    virtual ~IImagePreCompressor();
     /**
      * @brief The method for image comression.
      *
@@ -35,14 +34,19 @@ public:
      * @param ok The compression status (true if ok)
      * @return std::vector<uint8_t> The compressed data
      */
-    virtual std::vector<uint8_t> compress(cv::Mat& img, bool& ok) = 0;
+    virtual cv::Mat compress(cv::Mat& img,imageType& type ,bool& ok) = 0;
     /**
      * @brief The method for image comression.
      *
      * @param img The raw image to compress
      * @return std::vector<uint8_t> The compressed data
      */
-    virtual std::vector<uint8_t> compress(cv::Mat& img) = 0;
+    virtual cv::Mat compress(cv::Mat& img,imageType& type) = 0;
+
+    /**
+    * @brief Resets the image compressor
+    */
+    virtual void reset() = 0;
 };
 
-#endif // IIMAGECOMPRESSOR_H
+#endif // IIMAGEPRECOMPRESSOR_H

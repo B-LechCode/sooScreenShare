@@ -5,7 +5,9 @@
 #ifndef DRAWWIDGET_H
 #define DRAWWIDGET_H
 
-#include <QOpenGLWidget>
+//#include <QOpenGLWidget>
+//#include <QGLWidget>
+#include <QOpenGLWindow>
 
 #include <QOpenGLFunctions>
 
@@ -27,7 +29,7 @@
  * @brief The widget to draw the image with OpenGl support.
  *
  */
-class drawWidget:public QOpenGLWidget,public Idraw
+class drawWindow:public QOpenGLWindow,public Idraw
 {
     Q_OBJECT
     IdrawObserver* m_observer = nullptr; /**< The pointer to the current set observer */
@@ -45,20 +47,20 @@ public:
      * @param parent The parent widget
      * @param f The window flags
      */
-    drawWidget(QWidget *parent = nullptr,Qt::WindowFlags f=Qt::WindowFlags());
+    drawWindow(QWindow *parent = nullptr);
     /**
      * @brief The destructor
      *
      */
-    virtual ~drawWidget();
+    virtual ~drawWindow() override;
 
     /**
      * @brief Sets a new draw image and initiates drawing
      *
      * @param img The image to draw
      */
-    inline virtual void display(const cv::Mat& img)
-    {
+    inline virtual void displayImage(const cv::Mat& img) override
+    {        
        m_drawImage = img;
        update();
     }
@@ -70,14 +72,14 @@ public:
      *
      * @param event The key event
      */
-    void keyPressEvent(QKeyEvent* event);
+    void keyPressEvent(QKeyEvent* event) override;
 
     /**
      * @brief Getter method for the current observer
      *
      * @return IdrawObserver The current observer
      */
-    virtual IdrawObserver *observer() const
+    virtual IdrawObserver *observer() const override
     {
         return m_observer;
     }
@@ -86,7 +88,7 @@ public:
      *
      * @param observer The observer to be set
      */
-    virtual void setObserver(IdrawObserver *observer)
+    virtual void setObserver(IdrawObserver *observer) override
     {
         m_observer = observer;
     }
@@ -98,14 +100,19 @@ protected:
      * This event is used to close the main window after our own closing
      *
      * @param event The close event
-     */
-    virtual void closeEvent(QCloseEvent *event);
+     */    
+    virtual bool event(QEvent *event) override;
+
     /**
      * @brief The redefined paintGL method.
      *
      * Paints the draw image on the widget with OpenGl support.
      */
-    virtual void paintGL();
+    virtual void paintGL() override;
+
+
+
+
 };
 
 

@@ -4,18 +4,20 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "drawwidget.h"
 
-drawWidget::drawWidget(QWidget *parent ,Qt::WindowFlags f):
-    QOpenGLWidget(parent,f)
-{
-    setMinimumSize(640,480);
+drawWindow::drawWindow(QWindow *parent):
+    QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate,parent)
+{        
+    resize(640,480);
+    setSurfaceType(QWindow::OpenGLSurface);
+    glClearColor(0,0,0,00);
 }
 
-drawWidget::~drawWidget()
+drawWindow::~drawWindow()
 {
 
 }
 
-void drawWidget::keyPressEvent(QKeyEvent *event)
+void drawWindow::keyPressEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key::Key_Space)
     {
@@ -33,15 +35,31 @@ void drawWidget::keyPressEvent(QKeyEvent *event)
             m_max = true;
         }
     }
-    else
-        QWidget::keyPressEvent(event);
+    else        
+        QWindow::keyPressEvent(event);
+}
+
+bool drawWindow::event(QEvent *event)
+{
+
+    switch (event->type()) {
+        case QEvent::Close :
+        if(m_observer)
+            m_observer->drawWidgetClosing();
+        break;
+
+        //Nothing else matters!
+        default:
+            ;
+        break;
+        }
+    return QOpenGLWindow::event(event);
 }
 
 
-
-void drawWidget::paintGL()
+void drawWindow::paintGL()
 {
-    glClearColor(0,0,0,00);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -100,11 +118,4 @@ void drawWidget::paintGL()
     glEnd();
     glDisable(GL_TEXTURE_2D);
     glFlush();    
-}
-
-void drawWidget::closeEvent(QCloseEvent *event)
-{
-    if(m_observer)
-        m_observer->drawWidgetClosing();
-    event->accept();
 }
