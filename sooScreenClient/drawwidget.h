@@ -29,7 +29,7 @@
  * @brief The widget to draw the image with OpenGl support.
  *
  */
-class drawWidget:public QOpenGLWindow,public Idraw
+class drawWindow:public QOpenGLWindow,public Idraw
 {
     Q_OBJECT
     IdrawObserver* m_observer = nullptr; /**< The pointer to the current set observer */
@@ -47,19 +47,19 @@ public:
      * @param parent The parent widget
      * @param f The window flags
      */
-    drawWidget(QWindow *parent = nullptr);
+    drawWindow(QWindow *parent = nullptr);
     /**
      * @brief The destructor
      *
      */
-    virtual ~drawWidget();
+    virtual ~drawWindow() override;
 
     /**
      * @brief Sets a new draw image and initiates drawing
      *
      * @param img The image to draw
      */
-    inline virtual void displayImage(const cv::Mat& img)
+    inline virtual void displayImage(const cv::Mat& img) override
     {        
        m_drawImage = img;
        update();
@@ -79,7 +79,7 @@ public:
      *
      * @return IdrawObserver The current observer
      */
-    virtual IdrawObserver *observer() const
+    virtual IdrawObserver *observer() const override
     {
         return m_observer;
     }
@@ -88,7 +88,7 @@ public:
      *
      * @param observer The observer to be set
      */
-    virtual void setObserver(IdrawObserver *observer)
+    virtual void setObserver(IdrawObserver *observer) override
     {
         m_observer = observer;
     }

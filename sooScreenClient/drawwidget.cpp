@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #include "drawwidget.h"
 
-drawWidget::drawWidget(QWindow *parent):
+drawWindow::drawWindow(QWindow *parent):
     QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate,parent)
 {        
     resize(640,480);
@@ -12,12 +12,12 @@ drawWidget::drawWidget(QWindow *parent):
     glClearColor(0,0,0,00);
 }
 
-drawWidget::~drawWidget()
+drawWindow::~drawWindow()
 {
 
 }
 
-void drawWidget::keyPressEvent(QKeyEvent *event)
+void drawWindow::keyPressEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key::Key_Space)
     {
@@ -39,7 +39,7 @@ void drawWidget::keyPressEvent(QKeyEvent *event)
         QWindow::keyPressEvent(event);
 }
 
-bool drawWidget::event(QEvent *event)
+bool drawWindow::event(QEvent *event)
 {
 
     switch (event->type()) {
@@ -57,7 +57,7 @@ bool drawWidget::event(QEvent *event)
 }
 
 
-void drawWidget::paintGL()
+void drawWindow::paintGL()
 {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
