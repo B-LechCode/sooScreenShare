@@ -31,11 +31,10 @@ public:
      * @brief (Re)Initializes the worker
      *
      * @param screenShotBackend Identifier of the screenshot backend
-     * @param imagePreCompressorBackend Identifier of the image precompression backend
      * @param imageCompressorBackend Identifier of the image compression backend
-     * @param transportServerBackend Identifier of the transport server backend     
+     * @param transportServerBackend Identifier of the transport server backend
      */
-    void init(std::string screenShotBackend,std::string imagePreCompressorBackend,std::string imageCompressorBackend, std::string transportServerBackend);
+    void init(std::string screenShotBackend,std::string imageCompressorBackend, std::string transportServerBackend);
     /**
      * @brief Runs one work cycle
      * Grabs one image, compresses and sends the image.
@@ -59,12 +58,6 @@ public:
      */
     IImageCompressor *comp() const;
     /**
-     * @brief Getter for the image precompressor backend
-     *
-     * @return IImagePreCompressor The backend
-     */
-    IImagePreCompressor *preComp() const;
-    /**
      * @brief Getter for the transport server backend
      *
      * @return ItransportServer The backend
@@ -73,7 +66,6 @@ public:
 
 private:
     IscreenShot* m_screen = nullptr; /**< Pointer to the current screenshot backend */
-    IImagePreCompressor* m_preComp = nullptr; /**< Pointer to the current image precompressor backend */
     IImageCompressor* m_comp = nullptr; /**< Pointer to the current image compressor backend */
     ItransportServer* m_trans = nullptr; /**< Pointer to the current transport server backend */
     uint8_t*    m_sendbuffer = nullptr; /**< The send buffer */
@@ -91,9 +83,8 @@ private:
      * @param width Width of the Image
      * @param height Height of the Image
      * @param cvType The opencv data type
-     * @param tp The precompression image type
      */
-    void insertHeaderInfo(int byteCount,int width,int height,int cvType,imageType tp);
+    void insertHeaderInfo(int byteCount,int width,int height,int cvType);
     /**
      * @brief Handles new messages from the transport server
      *

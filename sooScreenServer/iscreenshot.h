@@ -36,7 +36,7 @@ struct screenDef{
 };
 
 /**
- * @brief Generic interface for screenshot backends
+ * @brief Generic interaface for screenshot backends
  * This interface describes the interaction between the main worker and the screenshot backend.
  */
 class IscreenShot : public Iparameter{

@@ -38,7 +38,7 @@ public:
 };
 
 /**
- * @brief Generic interface for transport server backends
+ * @brief Generic interaface for transport server backends
  * This interface describes the interaction between the main worker and the transport server backend.
  */
 class ItransportServer:public Iparameter

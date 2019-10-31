@@ -27,7 +27,7 @@ class MainWindow : public QMainWindow,private IdrawObserver
      * This is used to distinct the settings sections of the tree view
      */
     enum section{
-        transport,decomp,postDecomp
+        transport,decomp
     };
 
 public:
@@ -97,10 +97,6 @@ private:
     const std::string filePath = "parameters.json"; /**< File path to the config file */
     std::vector<std::string> m_decompressBackends; /**< The available decompress backend names */
     size_t m_selectedDecompressBackend = 0; /**< The index of the current selected decompress backend */
-
-    std::vector<std::string> m_postDecompressBackends; /**< The available decompress backend names */
-    size_t m_selectedPostDecompressBackend = 0; /**< The index of the current selected decompress backend */
-
     std::vector<std::string> m_transportBackends; /**< The available transport backend names */
     size_t m_selectedTransportBackend = 0; /**< The index of the current selected transport backend */
     parameterSerialization m_serialize; /**< Parameter serializer */
