@@ -17,12 +17,20 @@ lz4ImageCompressor::~lz4ImageCompressor()
 }
 
 void lz4ImageCompressor::parameterMapChangedEvent()
-{
-    m_speedup = std::stoi(m_parameters[SPEEDUP].value());
+{    
+    bool ok;
+    int sup = m_parameters[SPEEDUP].valueInt(ok);
+    if(ok)
+        m_speedup = sup;
 }
 
 void lz4ImageCompressor::parameterChangedEvent(const std::string &key)
 {
     if(key == SPEEDUP)
-        m_speedup = std::stoi(m_parameters[SPEEDUP].value());
+    {
+        bool ok;
+        int sup = m_parameters[SPEEDUP].valueInt(ok);
+        if(ok)
+            m_speedup = sup;
+    }
 }

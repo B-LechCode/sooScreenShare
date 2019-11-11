@@ -27,7 +27,7 @@ namespace shot {
 #include <X11/extensions/Xfixes.h>
 #include <iostream>
 #include <cctype>
-#include <algorithm>
+
 
 
 //From: https://stackoverflow.com/questions/24988164/c-fast-screenshots-in-linux-for-use-with-opencv
@@ -101,15 +101,17 @@ class screenShotX11Shm : public IscreenShot
      */
     void applyParameters()
     {
-        std::string overrideStr = m_parameters[OVERRIDE_DISPLAY_SELECTION].value();
-        std::transform(overrideStr.begin(),overrideStr.end(),overrideStr.begin(),[](int c) -> int { return std::tolower(c); });
-        bool override = overrideStr == "true";
+
+        bool override = m_parameters[OVERRIDE_DISPLAY_SELECTION].valueBool();
+        bool ok;
 
 
+        int parI;
 
         if(!override)
         {
-            int displayNumber = std::stoi(m_parameters[DISPLAY_NUMBER].value());
+            parI = m_parameters[DISPLAY_NUMBER].valueInt(ok);if(!ok) return;
+            int displayNumber = parI;
             auto displays = getScreens();
 
             if(displays.size()-1<displayNumber)
@@ -125,10 +127,14 @@ class screenShotX11Shm : public IscreenShot
         }
         else
         {
-            m_x = std::stoi(m_parameters[Grab_X].value());
-            m_y = std::stoi(m_parameters[Grab_Y].value());
-            m_h = static_cast<uint32_t>(std::stoi(m_parameters[Grab_H].value()));
-            m_w = static_cast<uint32_t>(std::stoi(m_parameters[Grab_W].value()));
+            parI = m_parameters[Grab_X].valueInt(ok);if(!ok) return;
+            m_x = parI;
+            parI = m_parameters[Grab_Y].valueInt(ok);if(!ok) return;
+            m_y = parI;
+            parI = m_parameters[Grab_H].valueInt(ok);if(!ok) return;
+            m_h = static_cast<uint32_t>(parI);
+            parI = m_parameters[Grab_W].valueInt(ok);if(!ok) return;
+            m_w = static_cast<uint32_t>(parI);
         }
 
 

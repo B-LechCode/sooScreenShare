@@ -15,7 +15,7 @@ if ( WIN32 )
 option(USE_WINAPI "Check this if you want to use the WINAPI backend" true)
 ENDIF ( WIN32 )
 # Build-Typ
-set(CMAKE_BUILD_TYPE Debug CACHE TYPE STRING FORCE )
+set(CMAKE_BUILD_TYPE Release CACHE TYPE STRING FORCE )
 
 #Build flags
 #if ( UNIX )

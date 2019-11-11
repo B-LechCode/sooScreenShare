@@ -7,7 +7,7 @@
 
 #include <map>
 #include <string>
-
+#include <algorithm>
 
 /**
  * @brief The parameter class
@@ -98,6 +98,39 @@ public:
      std::string value() const
      {
          return m_value;
+     }
+
+     /**
+      * @brief Getter method for the value as integer
+      * @param  ok The conversion status
+      * @return int The value
+      */
+     int valueInt(bool &ok)
+     {
+         int ret = -1;
+
+         try {
+             ret = std::stoi(value());
+             ok = true;
+         } catch (error_t ) {
+             ok = false;
+         }
+         return ret;
+     }
+
+
+     /**
+      * @brief Getter method for the value as bool
+
+      * @return bool The value
+      */
+     bool valueBool()
+     {
+         bool ret = false;
+         std::string overrideStr = value();
+         std::transform(overrideStr.begin(),overrideStr.end(),overrideStr.begin(),[](int c) -> int { return std::tolower(c); });
+         ret = overrideStr == "true";
+         return ret;
      }
 
      /**
