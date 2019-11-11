@@ -112,7 +112,7 @@ public:
          try {
              ret = std::stoi(value());
              ok = true;
-         } catch (error_t ) {
+         } catch (std::invalid_argument ) {
              ok = false;
          }
          return ret;
