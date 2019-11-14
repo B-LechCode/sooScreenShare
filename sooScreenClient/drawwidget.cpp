@@ -9,7 +9,7 @@ drawWindow::drawWindow(QWindow *parent):
 {        
     resize(640,480);
     setSurfaceType(QWindow::OpenGLSurface);
-    glClearColor(0,0,0,00);
+
 }
 
 drawWindow::~drawWindow()
@@ -83,33 +83,12 @@ void drawWindow::paintGL()
 
 
     glEnable(GL_TEXTURE_2D);
-    GLuint texture_id;
-
-    if(m_init)
-        glDeleteTextures(1,&m_oldid);
-
-    glGenTextures(1, &texture_id);
-    m_oldid = texture_id;
-    m_init = true;
-    glBindTexture(GL_TEXTURE_2D, texture_id);
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
     if(m_drawImage.type() == CV_8UC3)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_drawImage.cols , m_drawImage.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, m_drawImage.data);
     else if (m_drawImage.type() == CV_8UC4)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_drawImage.cols , m_drawImage.rows, 0, GL_BGRA, GL_UNSIGNED_BYTE, m_drawImage.data);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-
-
-    glBindTexture(GL_TEXTURE_2D, texture_id);
     glBegin(GL_QUADS);
         glTexCoord2f(0,1); glVertex3f(-1*xFac, -1*yFac, -1);
         glTexCoord2f(1,1); glVertex3f(1*xFac, -1*yFac, -1);
@@ -117,5 +96,36 @@ void drawWindow::paintGL()
         glTexCoord2f(0,0); glVertex3f(-1*xFac, 1*yFac, -1);
     glEnd();
     glDisable(GL_TEXTURE_2D);
-    glFlush();    
+    glFlush();
+}
+
+void drawWindow::initializeGL()
+{
+    QOpenGLWindow::initializeGL();
+    glClearColor(0,0,0,00);
+
+    glEnable(GL_TEXTURE_2D);
+
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+
+
+    if(m_init)
+        glDeleteTextures(1,&m_oldid);
+    glGenTextures(1, &m_textureId);
+    m_oldid = m_textureId;
+    m_init = true;
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+
+    glBindTexture(GL_TEXTURE_2D, m_textureId);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glDisable(GL_TEXTURE_2D);
+
+    std::cout << "initGL" << std::endl;
+
 }

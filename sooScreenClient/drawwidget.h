@@ -36,6 +36,7 @@ class drawWindow:public QOpenGLWindow,public Idraw
     cv::Mat m_drawImage; /**< The last set draw image */
     bool m_init = false; /**< Flag for the init state (Is true after the first paintGL run) */
     GLuint m_oldid=0; /**< Stores the pointer to the last drawn texture for deletion in next draw attempt */
+    GLuint m_textureId;
     bool m_max = false; /**< Flag indicating the maximized state */
     QCursor m_cursor; /**< The previously set cursor */
 
@@ -109,6 +110,8 @@ protected:
      * Paints the draw image on the widget with OpenGl support.
      */
     virtual void paintGL() override;
+
+    virtual void initializeGL() override;
 
 
 
