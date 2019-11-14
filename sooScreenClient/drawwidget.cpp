@@ -57,37 +57,53 @@ bool drawWindow::event(QEvent *event)
 }
 
 
-void drawWindow::paintGL()
+void drawWindow::calcAspects()
 {
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-    if(m_drawImage.empty())
-       return;
-
-    float aspWid = static_cast<float>(width())/static_cast<float>(height());
-    float aspImg = static_cast<float>(m_drawImage.cols)/static_cast<float>(m_drawImage.rows);
-
-    float xFac = 1;
-    float yFac = 1;
-
     if(aspWid>aspImg) //"compress" x
     {
          xFac = aspImg/aspWid;
+         yFac = 1;
     }
     else if(aspWid<aspImg)//"compress" y
     {
+         xFac = 1;
          yFac = aspWid/aspImg;
     }
+}
 
+void drawWindow::paintGL()
+{
+    if(m_drawImage.empty())
+       return;
+
+    int imgH = m_drawImage.rows;
+    int imgW = m_drawImage.cols;
+    int imgT = m_drawImage.type();
 
     glEnable(GL_TEXTURE_2D);
 
-    if(m_drawImage.type() == CV_8UC3)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_drawImage.cols , m_drawImage.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, m_drawImage.data);
-    else if (m_drawImage.type() == CV_8UC4)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_drawImage.cols , m_drawImage.rows, 0, GL_BGRA, GL_UNSIGNED_BYTE, m_drawImage.data);
+    if(m_lastImageHeight != imgH || m_lastImageWidth != imgW || m_lastImageType != imgT)
+    {
+        std::cout << "nImg" << std::endl;
+        m_lastImageHeight = imgH;
+        m_lastImageWidth  = imgW;
+        m_lastImageType   = imgT;
+
+        if (m_lastImageType == CV_8UC4)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_lastImageWidth , m_lastImageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, m_drawImage.data);
+        else if(m_lastImageType == CV_8UC3)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_lastImageWidth , m_lastImageHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, m_drawImage.data);
+
+        aspImg = static_cast<float>(imgW)/static_cast<float>(imgH);
+        calcAspects();
+    }
+    else
+    {
+        if(m_lastImageType == CV_8UC4)
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0 , 0, m_lastImageWidth,m_lastImageHeight, GL_BGRA, GL_UNSIGNED_BYTE, m_drawImage.data);
+        else if(m_lastImageType == CV_8UC3)
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0 , 0, m_lastImageWidth,m_lastImageHeight, GL_BGR, GL_UNSIGNED_BYTE, m_drawImage.data);
+    }
 
     glBegin(GL_QUADS);
         glTexCoord2f(0,1); glVertex3f(-1*xFac, -1*yFac, -1);
@@ -101,7 +117,9 @@ void drawWindow::paintGL()
 
 void drawWindow::initializeGL()
 {
+
     QOpenGLWindow::initializeGL();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0,0,0,00);
 
     glEnable(GL_TEXTURE_2D);
@@ -124,6 +142,16 @@ void drawWindow::initializeGL()
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glDisable(GL_TEXTURE_2D);    
+    glDisable(GL_TEXTURE_2D);       
+    std::cout << "init" << std::endl;
+}
 
+void drawWindow::resizeGL(int w, int h)
+{
+    QOpenGLWindow::resizeGL(w,h);
+    aspWid = static_cast<float>(width())/static_cast<float>(height());
+    calcAspects();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    std::cout << "resize" << std::endl;
 }

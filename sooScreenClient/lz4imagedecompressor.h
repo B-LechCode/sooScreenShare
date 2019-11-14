@@ -73,7 +73,7 @@ private:
      * @param hdr Header of the received data
      * @return bool Decompression status (True if ok)
      */
-    inline bool decompressHelper(cv::Mat& img,uint8_t* ptrDat,dataHeaderHandling::dataHeader hdr)
+    inline bool decompressHelper(cv::Mat& img,uint8_t* ptrDat,dataHeaderHandling::dataHeader& hdr)
     {
         int dst_size = img.rows*img.cols*img.channels();
         int decSize = LZ4_decompress_safe(reinterpret_cast<char*>(ptrDat),reinterpret_cast<char*>(img.data),hdr.length,dst_size);
