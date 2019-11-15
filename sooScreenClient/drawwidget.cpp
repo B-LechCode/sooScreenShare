@@ -81,6 +81,10 @@ void drawWindow::paintGL()
     int imgW = m_drawImage.cols;
     int imgT = m_drawImage.type();
 
+    aspImg = static_cast<float>(imgW)/static_cast<float>(imgH);
+    aspWid = static_cast<float>(width())/static_cast<float>(height());
+    calcAspects();
+
     glEnable(GL_TEXTURE_2D);
 
     if(m_lastImageHeight != imgH || m_lastImageWidth != imgW || m_lastImageType != imgT)
@@ -94,9 +98,6 @@ void drawWindow::paintGL()
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_lastImageWidth , m_lastImageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, m_drawImage.data);
         else if(m_lastImageType == CV_8UC3)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_lastImageWidth , m_lastImageHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, m_drawImage.data);
-
-        aspImg = static_cast<float>(imgW)/static_cast<float>(imgH);
-        calcAspects();
     }
     else
     {
@@ -150,8 +151,7 @@ void drawWindow::initializeGL()
 void drawWindow::resizeGL(int w, int h)
 {
     QOpenGLWindow::resizeGL(w,h);
-    aspWid = static_cast<float>(width())/static_cast<float>(height());
-    calcAspects();
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     std::cout << "resize" << std::endl;
