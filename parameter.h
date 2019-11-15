@@ -8,6 +8,7 @@
 #include <map>
 #include <string>
 #include <algorithm>
+#include <stdexcept>
 
 /**
  * @brief The parameter class
