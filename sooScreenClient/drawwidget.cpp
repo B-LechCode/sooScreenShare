@@ -9,7 +9,8 @@ drawWindow::drawWindow(QWindow *parent):
 {        
     resize(640,480);
     setSurfaceType(QWindow::OpenGLSurface);
-
+    destroy();
+    create();
 }
 
 drawWindow::~drawWindow()

@@ -74,7 +74,7 @@ public:
     inline virtual void displayImage(const cv::Mat& img) override
     {        
        m_drawImage = img;       
-       update();
+       requestUpdate();
     }
 
     /**
