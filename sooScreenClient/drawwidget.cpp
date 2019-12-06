@@ -9,8 +9,8 @@ drawWindow::drawWindow(QWindow *parent):
 {        
     resize(640,480);
     setSurfaceType(QWindow::OpenGLSurface);
-    destroy();
-    create();
+    //destroy();
+    //create();
 }
 
 drawWindow::~drawWindow()
@@ -81,9 +81,7 @@ void drawWindow::paintGL()
     int imgW = m_drawImage.cols;
     int imgT = m_drawImage.type();
 
-    aspImg = static_cast<float>(imgW)/static_cast<float>(imgH);
-    aspWid = static_cast<float>(width())/static_cast<float>(height());
-    calcAspects();
+
 
     glEnable(GL_TEXTURE_2D);
 
@@ -98,6 +96,9 @@ void drawWindow::paintGL()
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_lastImageWidth , m_lastImageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, m_drawImage.data);
         else if(m_lastImageType == CV_8UC3)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_lastImageWidth , m_lastImageHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, m_drawImage.data);
+        aspImg = static_cast<float>(imgW)/static_cast<float>(imgH);
+        aspWid = static_cast<float>(width())/static_cast<float>(height());
+        calcAspects();
     }
     else
     {
@@ -146,6 +147,10 @@ void drawWindow::initializeGL()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glDisable(GL_TEXTURE_2D);       
     std::cout << "init" << std::endl;
+
+
+    aspWid = static_cast<float>(width())/static_cast<float>(height());
+    calcAspects();
 }
 
 void drawWindow::resizeGL(int w, int h)
@@ -154,5 +159,7 @@ void drawWindow::resizeGL(int w, int h)
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    aspWid = static_cast<float>(width())/static_cast<float>(height());
+    calcAspects();
     std::cout << "resize" << std::endl;
 }
