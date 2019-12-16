@@ -218,9 +218,7 @@ class screenShotX11Shm : public IscreenShot
         auto a = sizeof(*asd->pixels);
         size_t mySize = asd->width*asd->height*a;
         std::string myName(asd->name);
-        bool compare = false;
-
-
+        bool compare = false;        
 
         //compare buffer
         if(mySize==m_cursBuffSize && m_cursBuff && !myName.compare(m_cursorName))
@@ -245,7 +243,7 @@ class screenShotX11Shm : public IscreenShot
             m_cursBuffSize = mySize;
             m_cursorName = myName;
 
-            m_cursImage = cv::Mat(asd->width,asd->height,CV_8UC4);
+            m_cursImage = cv::Mat(asd->height,asd->width,CV_8UC4);
 
             BGRA* ptrRgba = reinterpret_cast<BGRA*>(m_cursImage.ptr());
             auto ptrSrc = reinterpret_cast<uint8_t*>(asd->pixels);
@@ -259,8 +257,8 @@ class screenShotX11Shm : public IscreenShot
                     ptrRgba++;
 
                 }
-            }
-        }
+            }            
+        }        
     }
 
     /**
