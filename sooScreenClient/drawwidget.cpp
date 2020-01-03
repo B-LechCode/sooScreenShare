@@ -68,6 +68,11 @@ void drawWindow::calcAspects()
          xFac = 1;
          yFac = aspWid/aspImg;
     }
+    else
+    {
+         xFac = 1;
+         yFac = 1;
+    }
 }
 
 void drawWindow::paintGL()
