@@ -3,7 +3,7 @@ set(PROJECT_NAME screenServer)
 project( ${PROJECT_NAME} )
 
 
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.12)
 
 #options
 option(USE_SDL2 "Check this if you want to use the SDL backend" true)
