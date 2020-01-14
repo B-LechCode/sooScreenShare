@@ -12,7 +12,7 @@ The machine which has to display the shared screen runs the client application. 
 - Windows
 - Linux
 
-#### Disclamier: We are in an early development stage. Please use this code only if you know what you are doing!
+#### Disclaimer: We are in an early development stage. Please use this code only if you know what you are doing!
 
 ### If you want to contribute:
 We would appreciate your help, especially on the following topics: 
