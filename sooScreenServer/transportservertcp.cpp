@@ -8,6 +8,7 @@ transportServerTCP::transportServerTCP()
 {
     m_defaultParameters[PORT] = parameter("The TCP port to listen on","int16","58000");
     m_defaultParameters[HOST_ADDRESS] = parameter("The address/network interface to listen on","string","any");
+    m_defaultParameters[MAX_BUFFER_UTILIZATION] = parameter("Maximum Buffer utilization","int","99999999");
     connect(&m_srvr,SIGNAL(newConnection()),this,SLOT(on_newConnection()));
     setParameters(m_defaultParameters);
 
@@ -32,6 +33,11 @@ int64_t transportServerTCP::send(const char *dat, int64_t len)
     {       
         if(!m_ptrSock->isOpen())
             return retVal;
+        if (m_ptrSock->bytesToWrite() > m_maxBuffUtil)
+        {
+            notifyMessage("Send buffer too full!, not sent!");
+            return retVal;
+        }
         retVal =  m_ptrSock->write(dat,len);
     }
 
@@ -69,7 +75,11 @@ void transportServerTCP::end()
 void transportServerTCP::initParameters()
 {
     //port
-    m_port = static_cast<uint16_t>(std::stoi(m_parameters[PORT].value()));
+    bool ok;
+    int prt = m_parameters[PORT].valueInt(ok);
+    if(ok)
+        m_port = static_cast<uint16_t>(prt);
+
 
     //network interface
     QHostAddress addr;
@@ -84,6 +94,13 @@ void transportServerTCP::initParameters()
     {
         addr.setAddress(QString(par.c_str()));
     }
+
+    //Buff
+    int buffUtil = m_parameters[MAX_BUFFER_UTILIZATION].valueInt(ok);
+    if(ok)
+        m_maxBuffUtil = buffUtil;
+
+
 }
 
 void transportServerTCP::notifyMessage(const char* str)

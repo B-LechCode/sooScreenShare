@@ -3,7 +3,7 @@ set(PROJECT_NAME screenServer)
 project( ${PROJECT_NAME} )
 
 
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.12)
 
 #options
 option(USE_SDL2 "Check this if you want to use the SDL backend" true)
@@ -15,7 +15,7 @@ if ( WIN32 )
 option(USE_WINAPI "Check this if you want to use the WINAPI backend" true)
 ENDIF ( WIN32 )
 # Build-Typ
-set(CMAKE_BUILD_TYPE Debug CACHE TYPE STRING FORCE )
+set(CMAKE_BUILD_TYPE Release CACHE TYPE STRING FORCE )
 
 #Build flags
 #if ( UNIX )

@@ -56,50 +56,47 @@ void mainWorker::run()
         return; //TODO user notification
 
     //Compress the image
-    std::vector<uint8_t> compressedImageData =  m_comp->compress(cImg,compressOk);
+    size_t compressedSize = m_comp->compress(m_sendbuffer+HEADER_SIZE,m_bufferSize-HEADER_SIZE,cImg,compressOk);
 
     if(!compressOk)
         return; //TODO user notification
 
     std::cout << tp << " ";
-    std::cout << "Data Size: " << compressedImageData.size() << std::endl;
+    std::cout << "Data Size: " << compressedSize << std::endl;
 
     if (tp == imageType::incrementalFrame)
     {
-        if(compressedImageData.size() > lastKeyframeSize*1.2)
+        if(compressedSize > lastKeyframeSize*1.2)
         {
             std::cout << "Resetting precompression! " << std::endl;
             m_preComp->reset();
             cImg = m_preComp->compress(img,tp,compressOk);
-            compressedImageData =  m_comp->compress(cImg,compressOk);
-            lastKeyframeSize = compressedImageData.size();
+            compressedSize = m_comp->compress(m_sendbuffer+HEADER_SIZE,m_bufferSize-HEADER_SIZE,cImg,compressOk);
+            lastKeyframeSize = compressedSize;
             std::cout << tp << " ";
-            std::cout << "Data Size: " << compressedImageData.size() << std::endl;
+            std::cout << "Data Size: " << compressedSize << std::endl;
         }
     }
     else if (tp == imageType::keyFrame)
     {
-        lastKeyframeSize = compressedImageData.size();
+        lastKeyframeSize = compressedSize;
     }
 
 
     //check size for buffer
-    if((compressedImageData.size()+HEADER_SIZE)>m_bufferSize)
+    /*if((compressedImageData.size()+HEADER_SIZE)>m_bufferSize)
     {
         delete[] m_sendbuffer;
         m_bufferSize = compressedImageData.size()+HEADER_SIZE;
         m_sendbuffer = new uint8_t[m_bufferSize];
         createHeader();
-    }
+    }*/ //TODO: reimplement meeting requirements!
 
     //Add Header
-    insertHeaderInfo(static_cast<int32_t>(compressedImageData.size()),static_cast<int32_t>(img.cols),static_cast<int32_t>(img.rows),img.type(),tp);
-
-    memcpy(m_sendbuffer+HEADER_SIZE,compressedImageData.data(),compressedImageData.size());
-
+    insertHeaderInfo(static_cast<int32_t>(compressedSize),static_cast<int32_t>(img.cols),static_cast<int32_t>(img.rows),img.type(),tp);
 
     //send
-    m_trans->send(reinterpret_cast<char*>(m_sendbuffer),static_cast<int64_t>(compressedImageData.size()+HEADER_SIZE));
+    m_trans->send(reinterpret_cast<char*>(m_sendbuffer),static_cast<int64_t>(compressedSize+HEADER_SIZE));
 
     img.release();
 }
