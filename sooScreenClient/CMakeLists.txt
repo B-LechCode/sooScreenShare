@@ -20,6 +20,9 @@ find_package(Qt5 COMPONENTS  Core Network Widgets Gui OpenGL REQUIRED)
 FIND_PACKAGE(X11 REQUIRED)
 
 #OpenGL
+set(OPENGL_GL_PREFERENCE "LEGACY" CACHE STRING
+        "Set OpenGL prerference")
+set(OpenGL_GL_PREFERENCE ${OPENGL_GL_PREFERENCE})
 find_package(OpenGL REQUIRED)
 
 #LZ4
