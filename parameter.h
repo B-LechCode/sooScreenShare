@@ -9,6 +9,7 @@
 #include <string>
 #include <algorithm>
 #include <stdexcept>
+#include <cctype>
 
 /**
  * @brief The parameter class

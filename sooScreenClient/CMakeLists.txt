@@ -2,9 +2,10 @@
 set(PROJECT_NAME screenClient)
 project( ${PROJECT_NAME} )
 
+cmake_minimum_required(VERSION 3.7)
+
 set(CMAKE_CXX_STANDARD 11)
 
-cmake_minimum_required(VERSION 3.7)
 
 # Build type
 set(CMAKE_BUILD_TYPE Debug CACHE TYPE STRING FORCE )
@@ -31,6 +32,10 @@ IF ( USE_LZ4 )
     message(${lz4_lib})
     set(lz4_include_path /usr/local/include)
     message(${lz4_include_path})
+ELSE ( USE_LZ4 )
+	set(lz4_include_path "")
+	set(lz4_path "")
+	set(lz4_lib "")
 ENDIF ( USE_LZ4 )
 
 

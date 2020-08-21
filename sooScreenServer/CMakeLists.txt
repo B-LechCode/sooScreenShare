@@ -63,6 +63,10 @@ IF ( USE_LZ4 )
     find_path (lz4_path /lz4.h)
     message(${lz4_lib})
     set(lz4_include_path /usr/local/include)
+ELSE ( USE_LZ4 )
+	set(lz4_include_path "")
+	set(lz4_path "")
+	set(lz4_lib "")
 ENDIF ( USE_LZ4 )
 
 

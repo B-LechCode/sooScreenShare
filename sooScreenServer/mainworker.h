@@ -15,7 +15,7 @@
 class mainWorker:private ItransportServerObserver
 {    
     const uint32_t w=1920; /**< Default width for default buffer size */
-    const uint32_t h=1080; /**< Default height for default buffer size */
+    const uint32_t h=1200; /**< Default height for default buffer size */
 public:
     /**
      * @brief The default constructor
