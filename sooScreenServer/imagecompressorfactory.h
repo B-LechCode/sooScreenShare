@@ -7,8 +7,10 @@
 
 #include "opencvjpegimagecompressor.h"
 #include "lz4imagecompressor.h"
+#include "nullimagecompressor.h"
 #include "iimagecompressor.h"
 
+#define nullBack "passthru"
 #define cvJpeg "jpeg"
 #define lz4 "lz4"
 
@@ -35,6 +37,7 @@ public:
     {
         if(!m_backends.size())
         {
+            m_backends.push_back(nullBack);
             m_backends.push_back(cvJpeg);
             m_backends.push_back(lz4);
         }
@@ -53,6 +56,8 @@ public:
             return new opencvJpegImageCompressor();
         if(backendName == lz4)
             return new lz4ImageCompressor();
+        if(backendName == nullBack)
+            return new nullImageCompressor();
 
         return nullptr;
     }
