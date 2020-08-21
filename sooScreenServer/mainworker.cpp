@@ -49,6 +49,11 @@ void mainWorker::run()
 
     //Get Screenshot
     cv::Mat img = m_screen->operator()();
+
+	//Check for empty image!
+	if (img.empty())
+		return;
+
     imageType tp;
     cv::Mat cImg = m_preComp->compress(img,tp,compressOk);
 
