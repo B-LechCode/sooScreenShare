@@ -2,11 +2,12 @@
 set(PROJECT_NAME screenServer)
 project( ${PROJECT_NAME} )
 
+set(CMAKE_CXX_STANDARD 11)
 
 cmake_minimum_required(VERSION 3.12)
 
 #options
-option(USE_SDL2 "Check this if you want to use the SDL backend" true)
+option(USE_LZ4 "Check this if you want to use the LZ4 compression backend" true)
 
 if ( UNIX )
 option(USE_X11 "Check this if you want to use the X11 backend" true)
@@ -15,7 +16,7 @@ if ( WIN32 )
 option(USE_WINAPI "Check this if you want to use the WINAPI backend" true)
 ENDIF ( WIN32 )
 # Build-Typ
-set(CMAKE_BUILD_TYPE Release CACHE TYPE STRING FORCE )
+set(CMAKE_BUILD_TYPE Debug CACHE TYPE STRING FORCE )
 
 #Build flags
 #if ( UNIX )
@@ -36,10 +37,10 @@ FIND_PACKAGE(OpenCV REQUIRED )
 find_package(Qt5 COMPONENTS  Core Network Widgets Gui REQUIRED)
 
 #SDL
-IF (USE_SDL2)
-FIND_PACKAGE(SDL2 REQUIRED )
-add_compile_definitions(WITH_SDL)
-ENDIF(USE_SDL2)
+#IF (USE_SDL2)
+#FIND_PACKAGE(SDL2 REQUIRED )
+#add_compile_definitions(WITH_SDL)
+# ENDIF(USE_SDL2)
 
 #X11
 IF ( USE_X11 )
@@ -56,10 +57,14 @@ if ( USE_WINAPI )
 ENDIF ( USE_WINAPI )
 
 #LZ4
-find_library (lz4_lib lz4)
-find_path (lz4_path /lz4.h)
-message(${lz4_lib})
-set(lz4_include_path /usr/local/include)
+IF ( USE_LZ4 )
+    add_compile_definitions(WITH_LZ4)
+    find_library (lz4_lib lz4)
+    find_path (lz4_path /lz4.h)
+    message(${lz4_lib})
+    set(lz4_include_path /usr/local/include)
+ENDIF ( USE_LZ4 )
+
 
 # Include paths
 include_directories (

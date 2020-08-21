@@ -12,7 +12,10 @@
 
 #define nullBack "passthru"
 #define cvJpeg "jpeg"
-#define lz4 "lz4"
+
+#ifdef WITH_LZ4
+    #define lz4 "lz4"
+#endif
 
 /**
  * @brief The factory class for the image decompression backends.
@@ -39,7 +42,9 @@ public:
         {
             m_backends.push_back(nullBack);
             m_backends.push_back(cvJpeg);
+#ifdef WITH_LZ4
             m_backends.push_back(lz4);
+#endif
         }
         return  m_backends;
     }
@@ -55,8 +60,10 @@ public:
     {
         if(backendName == cvJpeg)
             return new opencvJpegImageDecompressor();
+#ifdef WITH_LZ4
         if(backendName == lz4)
             return new lz4ImageDecompressor();
+#endif
         if(backendName == nullBack)
             return new nullImageDecompressor();
         return nullptr;
