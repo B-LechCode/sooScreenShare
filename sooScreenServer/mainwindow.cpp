@@ -27,7 +27,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_transportBackends = transportServerFactory::getAvailableBackends();
 
     readData();
-    m_tmr.start(33);
+    m_tmr.setSingleShot(true);
+    m_tmr.start(m_timePreference);
 }
 
 
@@ -36,7 +37,12 @@ void MainWindow::on_timerTimeout()
     QElapsedTimer tmr;
     tmr.start();
     m_work.run();
-
+    int64_t eleapsed = tmr.elapsed();
+    int64_t newWaitTime = m_timePreference-eleapsed;
+    if(newWaitTime<0)
+        newWaitTime = 0;
+    std::cout << eleapsed << std::endl;
+    m_tmr.start(newWaitTime);
 }
 
 MainWindow::~MainWindow()

@@ -7,6 +7,7 @@
 
 lz4ImageCompressor::lz4ImageCompressor():IImageCompressor()
 {    
+    m_defaultParameters[SPEEDUP] = parameter("The LZ4 speedup 1 = default, increasing means: bigger data size, shorter compression time","int","1");
     setParameters(m_defaultParameters);
 }
 
@@ -16,11 +17,20 @@ lz4ImageCompressor::~lz4ImageCompressor()
 }
 
 void lz4ImageCompressor::parameterMapChangedEvent()
-{
-
+{    
+    bool ok;
+    int sup = m_parameters[SPEEDUP].valueInt(ok);
+    if(ok)
+        m_speedup = sup;
 }
 
 void lz4ImageCompressor::parameterChangedEvent(const std::string &key)
 {
-
+    if(key == SPEEDUP)
+    {
+        bool ok;
+        int sup = m_parameters[SPEEDUP].valueInt(ok);
+        if(ok)
+            m_speedup = sup;
+    }
 }

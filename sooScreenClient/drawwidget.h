@@ -36,8 +36,20 @@ class drawWindow:public QOpenGLWindow,public Idraw
     cv::Mat m_drawImage; /**< The last set draw image */
     bool m_init = false; /**< Flag for the init state (Is true after the first paintGL run) */
     GLuint m_oldid=0; /**< Stores the pointer to the last drawn texture for deletion in next draw attempt */
+    GLuint m_textureId;
     bool m_max = false; /**< Flag indicating the maximized state */
     QCursor m_cursor; /**< The previously set cursor */
+
+
+    int m_lastImageHeight = -1;
+    int m_lastImageWidth = -1;
+    int m_lastImageType = -1;
+
+    float aspWid;
+    float aspImg;
+    float xFac;
+    float yFac;
+
 
 public:
 
@@ -61,18 +73,9 @@ public:
      */
     inline virtual void displayImage(const cv::Mat& img) override
     {        
-       m_drawImage = img;
-       update();
+       m_drawImage = img;       
+       requestUpdate();
     }
-
-    /**
-     * @brief Reimplemented key press event
-     *
-     * The event is used to trigger entering/leaving the fullscreen mode by pressing the space bar.
-     *
-     * @param event The key event
-     */
-    void keyPressEvent(QKeyEvent* event) override;
 
     /**
      * @brief Getter method for the current observer
@@ -93,6 +96,8 @@ public:
         m_observer = observer;
     }
 
+
+
 protected:
     /**
      * @brief The close event for this Widget
@@ -111,7 +116,23 @@ protected:
     virtual void paintGL() override;
 
 
+    virtual void initializeGL() override;
 
+    virtual void resizeGL(int w, int h) override;
+
+private:
+
+    /**
+     * @brief Reimplemented key press event
+     *
+     * The event is used to trigger entering/leaving the fullscreen mode by pressing the space bar.
+     *
+     * @param event The key event
+     */
+    void keyPressEvent(QKeyEvent* event) override;
+
+
+    void calcAspects();
 
 };
 

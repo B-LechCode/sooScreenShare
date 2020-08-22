@@ -15,6 +15,7 @@
 namespace trans {
     #define PORT "port"
     #define HOST_ADDRESS "hostAddr"
+    #define MAX_BUFFER_UTILIZATION "maxBuffUtil"
 }
 
 /**
@@ -63,6 +64,7 @@ private:
     QTcpServer m_srvr; /**< The tcp sercer */
     QTcpSocket* m_ptrSock = nullptr; /**< Pointer to the connected socket */
     uint16_t   m_port; /**< The port to listen on */
+    int32_t   m_maxBuffUtil;
     QHostAddress m_interface; /**< The network interface address to listen on */
     /**
      * @brief Ends all actions: Closes the socket, Stops the tcp server

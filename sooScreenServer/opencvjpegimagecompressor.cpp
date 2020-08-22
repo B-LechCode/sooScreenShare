@@ -21,7 +21,10 @@ void opencvJpegImageCompressor::initParameters()
     //generate openCv parameters
     m_compressionParams.clear();
     m_compressionParams.push_back(cv::IMWRITE_JPEG_QUALITY);
-    m_compressionParams.push_back(std::stoi(m_parameters[QUALITY].value()));
+    bool ok;
+    int compQual = m_parameters[QUALITY].valueInt(ok);
+    if (ok)
+        m_compressionParams.push_back(compQual);
 }
 
 void opencvJpegImageCompressor::parameterMapChangedEvent()

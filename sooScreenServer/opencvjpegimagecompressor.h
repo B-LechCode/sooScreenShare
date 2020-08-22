@@ -33,39 +33,41 @@ public:
     /**
      * @brief The method for image comression.
      *
-     * @param img The raw image to compress
+     * @param ptrDest Destination data Pointer
+     * @param dataSize The size of the destination data field in bytes
+     * @param imgIn The raw image to compress
      * @param ok The compression status (true if ok)
-     * @return std::vector<uint8_t> The compressed data
-     */
-    inline virtual std::vector<uint8_t> compress(cv::Mat& img, bool& ok)
+     * @return size_t Size of the Data
+     */    
+    inline virtual size_t compress(uint8_t* ptrDest,size_t dataSize,cv::Mat& imgIn, bool& ok)
     {
-        ok = compressHelper(img);
-        return std::move(m_buffer);
+        cv::imencode(".jpg",imgIn,m_buffer,m_compressionParams);
+        if(dataSize>=m_buffer.size())
+        {
+            memcpy(ptrDest,m_buffer.data(),m_buffer.size());
+            ok = m_buffer.size() > 0;
+            return m_buffer.size();
+        }
+        //on error:
+        ok = false;
+        return 0;
     }
 
     /**
      * @brief The method for image comression.
      *
-     * @param img The raw image to compress
-     * @return std::vector<uint8_t> The compressed data
+     * @param ptrDest Destination data Pointer
+     * @param dataSize The size of the destination data field in bytes
+     * @param imgIn The raw image to compress
+     * @return size_t Size of the Data
      */
-    inline virtual std::vector<uint8_t> compress(cv::Mat& img)
+    inline virtual size_t compress(uint8_t* ptrDest,size_t dataSize,cv::Mat& imgIn)
     {
-        compressHelper(img);
-        return std::move(m_buffer);
+       bool ok;
+       return compress(ptrDest,dataSize,imgIn, ok);
     }
 
-private:
-    /**
-     * @brief Helper class for compression
-     *
-     * @param img Image to compress
-     * @return bool Compression status (True if ok)
-     */
-    inline bool compressHelper(cv::Mat& img)
-    {
-        return  cv::imencode(".jpg",img,m_buffer,m_compressionParams);
-    }
+private:    
     /**
      * @brief Translates the parameter values to the opencv usable format
      *
