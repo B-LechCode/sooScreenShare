@@ -209,21 +209,21 @@ class screenShotX11Shm : public IscreenShot
      */
     void grabMousePtr()
     {
-        XFixesCursorImage * asd = XFixesGetCursorImage (m_display);
+        XFixesCursorImage * ptrCursImg = XFixesGetCursorImage (m_display);
 
-        if(!asd->pixels)
+        if(!ptrCursImg || !ptrCursImg->pixels)
             return;
 
 
-        auto a = sizeof(*asd->pixels);
-        size_t mySize = asd->width*asd->height*a;
-        std::string myName(asd->name);
+        auto a = sizeof(*ptrCursImg->pixels);
+        size_t mySize = ptrCursImg->width*ptrCursImg->height*a;
+        std::string myName(ptrCursImg->name);
         bool compare = false;        
 
         //compare buffer
         if(mySize==m_cursBuffSize && m_cursBuff && !myName.compare(m_cursorName))
         {
-            compare = !memcmp(asd->pixels,m_cursBuff,mySize);
+            compare = !memcmp(ptrCursImg->pixels,m_cursBuff,mySize);
         }
 
         if(!compare)
@@ -236,21 +236,21 @@ class screenShotX11Shm : public IscreenShot
             if(!m_cursBuff)
                 return;
 
-            m_hotX = asd->xhot;
-            m_hotY = asd->yhot;
+            m_hotX = ptrCursImg->xhot;
+            m_hotY = ptrCursImg->yhot;
 
-            memcpy(m_cursBuff,asd->pixels,mySize);
+            memcpy(m_cursBuff,ptrCursImg->pixels,mySize);
             m_cursBuffSize = mySize;
             m_cursorName = myName;
 
-            m_cursImage = cv::Mat(asd->height,asd->width,CV_8UC4);
+            m_cursImage = cv::Mat(ptrCursImg->height,ptrCursImg->width,CV_8UC4);
 
             BGRA* ptrRgba = reinterpret_cast<BGRA*>(m_cursImage.ptr());
-            auto ptrSrc = reinterpret_cast<uint8_t*>(asd->pixels);
+            auto ptrSrc = reinterpret_cast<uint8_t*>(ptrCursImg->pixels);
 
-            for(int y = 0 ; y < asd->height;++y )
+            for(int y = 0 ; y < ptrCursImg->height;++y )
             {
-                for(int x = 0 ; x < asd->width;++x )
+                for(int x = 0 ; x < ptrCursImg->width;++x )
                 {
                     (*ptrRgba) = (*reinterpret_cast<BGRA*>(ptrSrc));
                     ptrSrc+=a;
