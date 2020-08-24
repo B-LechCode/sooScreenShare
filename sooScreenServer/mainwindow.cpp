@@ -103,6 +103,8 @@ void MainWindow::treeviewInitialize()
     GuiHelpers::addSettingsCat(this,ui->twSettings,m_transportBackends,m_work.trans()->getParameters(),QString("Transport layer"),section::transport,static_cast<int>(m_selectedTransportBackend));
     m_transistion = false;
     ui->twSettings->expandAll();
+    ui->twSettings->setColumnWidth(0, this->width()/2.5f);
+    ui->twSettings->setColumnWidth(1, this->width()/12);
 }
 
 void MainWindow::writeData()
