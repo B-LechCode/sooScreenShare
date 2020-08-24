@@ -292,7 +292,7 @@ public:
         m_defaultParameters[Grab_X] = parameter("The X coordinate of the grab ROI","int32","0");
         m_defaultParameters[Grab_Y] = parameter("The Y coordinate of the grab ROI","int32","0");
         m_defaultParameters[Grab_W] = parameter("The width of the grab ROI","uint32","640");
-        m_defaultParameters[Grab_H] = parameter("The width of the grab ROI","uint32","480");
+        m_defaultParameters[Grab_H] = parameter("The height of the grab ROI","uint32","480");
         setParameters(m_defaultParameters);      
     }
 
