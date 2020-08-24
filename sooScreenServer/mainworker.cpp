@@ -55,6 +55,7 @@ void mainWorker::run()
     imageType tp;
     cv::Mat cImg = m_preComp->compress(img,tp,compressOk);
 
+    //check if buffer is too small for the screenshot and increase buffer size if necessary
     if(size_t data_size = cImg.elemSize()*cImg.total() + HEADER_SIZE > m_bufferSize){
         m_bufferSize = data_size;
         delete[] m_sendbuffer;
