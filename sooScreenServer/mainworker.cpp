@@ -10,9 +10,8 @@
 
 
 mainWorker::mainWorker():
-    m_bufferSize(w*h*4+HEADER_SIZE)
+    m_bufferSize(0), m_sendbuffer(nullptr)
 {
-     m_sendbuffer = new uint8_t[m_bufferSize];
      std::cout <<  sizeof( dataHeaderHandling::dataHeader) << std::endl;
 }
 
@@ -37,6 +36,10 @@ void mainWorker::init(std::string screenShotBackend,std::string imagePreCompress
     m_comp   = imageCompressorFactory::getBackend(imageCompressorBackend);
     m_trans  = transportServerFactory::getBackend(transportServerBackend);
     m_trans->setObserver(static_cast<ItransportServerObserver*>(this));
+
+    cv::Mat data_size_screenshot = (*m_screen)();
+    m_bufferSize = data_size_screenshot.elemSize()*data_size_screenshot.total() + HEADER_SIZE;
+    m_sendbuffer = new uint8_t[m_bufferSize];
     createHeader();
 }
 
@@ -51,6 +54,13 @@ void mainWorker::run()
     cv::Mat img = m_screen->operator()();
     imageType tp;
     cv::Mat cImg = m_preComp->compress(img,tp,compressOk);
+
+    if(size_t data_size = cImg.elemSize()*cImg.total() + HEADER_SIZE > m_bufferSize){
+        m_bufferSize = data_size;
+        delete[] m_sendbuffer;
+        m_sendbuffer = new uint8_t[m_bufferSize];
+        createHeader();
+    }
 
     if(!compressOk)
         return; //TODO user notification
