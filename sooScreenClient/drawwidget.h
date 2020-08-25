@@ -77,7 +77,6 @@ public:
        m_drawImage = img;       
        requestUpdate();
     }
-
     /**
      * @brief Getter method for the current observer
      *
