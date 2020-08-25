@@ -21,27 +21,25 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    m_draw = new drawWindow();
-    m_draw->setObserver(this);
-    m_draw->show();
-
-
     m_decompressBackends = imageDecompressorFactory::getAvailableBackends();
     m_postDecompressBackends = imagePostDecompressorFactory::getAvailableBackends();
     m_transportBackends  = transportClientFactory::getAvailableBackends();
+    m_consumerBackends  = imageConsumerFactory::getAvailableBackends();
 
     readData();
 }
 
 void MainWindow::workerInitialize()
 {
-    m_work.init(m_decompressBackends[m_selectedDecompressBackend],m_postDecompressBackends[m_selectedPostDecompressBackend],m_transportBackends[m_selectedTransportBackend],m_draw);
+    m_work.init(m_decompressBackends[m_selectedDecompressBackend],m_postDecompressBackends[m_selectedPostDecompressBackend],m_transportBackends[m_selectedTransportBackend], m_consumerBackends[m_selectedConsumerBackend]);
     parameterMap transPortBackendParameterMap = m_serialize.getParameterMap(m_transportBackends[m_selectedTransportBackend]);
     m_work.trans()->setParameters(transPortBackendParameterMap);
     parameterMap decompBackendParameterMap = m_serialize.getParameterMap(m_decompressBackends[m_selectedDecompressBackend]);
     m_work.decomp()->setParameters(decompBackendParameterMap);
     parameterMap postDecompBackendParameterMap = m_serialize.getParameterMap(m_postDecompressBackends[m_selectedPostDecompressBackend]);
     m_work.postDecomp()->setParameters(postDecompBackendParameterMap);
+
+    m_work.imageConsumer()->setObserver(this);
     treeviewInitialize();
 }
 
@@ -178,7 +176,7 @@ void MainWindow::on_qLineEditEditingFinished()
             m_work.decomp()->setParameterValue(key,value);
         }
         break;
-         case postDecomp:
+        case postDecomp:
         {
             m_work.postDecomp()->setParameterValue(key,value);
         }

@@ -7,5 +7,6 @@
 #include "imagedecompressorfactory.h"
 #include "imagepostdecompressorfactory.h"
 #include "transportclientfactory.h"
+#include "imageconsumerfactory.h"
 
 #endif // FACTORIES_H
