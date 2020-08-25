@@ -9,6 +9,7 @@
 #include <string>
 #include <algorithm>
 #include <stdexcept>
+#include <cctype>
 
 /**
  * @brief The parameter class
@@ -111,13 +112,33 @@ public:
          int ret = -1;
 
          try {
-             ret = std::stoi(value());
+             ret = std::stoi(value());			 
              ok = true;
          } catch (std::invalid_argument ) {
              ok = false;
          }
          return ret;
      }
+
+
+	 /**
+	  * @brief Getter method for the value as unsigned integer
+	  * @param  ok The conversion status
+	  * @return unsigned long The value
+	  */
+	 unsigned long valueUInt(bool &ok)
+	 {
+		 unsigned long ret = 0;
+
+		 try {
+			 ret = std::stoul(value());
+			 ok = true;
+		 }
+		 catch (std::invalid_argument) {
+			 ok = false;
+		 }
+		 return ret;
+	 }
 
 
      /**

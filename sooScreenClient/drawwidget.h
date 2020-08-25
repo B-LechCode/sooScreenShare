@@ -40,6 +40,7 @@ class drawWindow:public QOpenGLWindow,public Idraw
     bool m_max = false; /**< Flag indicating the maximized state */
     QCursor m_cursor; /**< The previously set cursor */
 
+	bool m_doubleClear = false; /**< Flag controlling buffer clearing in the next draw (Double Buffering) */
 
     int m_lastImageHeight = -1;
     int m_lastImageWidth = -1;
@@ -76,7 +77,6 @@ public:
        m_drawImage = img;       
        requestUpdate();
     }
-
     /**
      * @brief Getter method for the current observer
      *
@@ -123,6 +123,24 @@ protected:
 private:
 
     /**
+     * @brief The changed event of the underlying parameter map
+     *
+     */
+    virtual void parameterMapChangedEvent() override
+    {
+
+    }
+    /**
+     * @brief The changed event of a key/value pair
+     *
+     * @param key The key of the changed parameter
+     */
+    virtual void parameterChangedEvent(const std::string& key) override
+    {
+
+    }
+
+    /**
      * @brief Reimplemented key press event
      *
      * The event is used to trigger entering/leaving the fullscreen mode by pressing the space bar.
@@ -133,7 +151,6 @@ private:
 
 
     void calcAspects();
-
 };
 
 

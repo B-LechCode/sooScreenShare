@@ -21,17 +21,18 @@ mainWorker::~mainWorker()
     end();
 }
 
-void mainWorker::init(std::string decompBackend,std::string postDecompBackend,std::string transportBackend,Idraw* ptrDraw)
+void mainWorker::init(std::string decompBackend,std::string postDecompBackend,std::string transportBackend,/*Idraw* ptrDraw*/ std::string imageConsumerBackend)
 {
-    if(!ptrDraw)
-        return;
-    m_ptrDraw = ptrDraw;
+//    if(!ptrDraw)
+//        return;
+//    m_ptrDraw = ptrDraw;
 
 
 
     setDecompressionBackend(decompBackend);
     setPostDecompressionBackend(postDecompBackend);
     setTransportBackend(transportBackend);
+    setImageConsumerBackend(imageConsumerBackend);
 }
 
 void mainWorker::end()
@@ -82,9 +83,22 @@ void mainWorker::setTransportBackend(std::string transportBackend)
     }
 }
 
+void mainWorker::setImageConsumerBackend(std::string consumerBackend)
+{
+    m_initOk = false;
+    if(m_ptrDraw)
+        delete m_ptrDraw;
+    m_ptrDraw    = imageConsumerFactory::getBackend(consumerBackend);
+}
+
 IImagePostDecompressor *mainWorker::postDecomp() const
 {
     return m_postDecomp;
+}
+
+Idraw *mainWorker::imageConsumer() const
+{
+    return m_ptrDraw;
 }
 
 IImageDecompressor *mainWorker::decomp() const

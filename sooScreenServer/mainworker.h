@@ -13,7 +13,7 @@
  * This class handles the interaction between the worker backends as main controll class
  */
 class mainWorker:private ItransportServerObserver
-{    
+{  
 public:
     /**
      * @brief The default constructor

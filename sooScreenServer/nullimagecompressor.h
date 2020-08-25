@@ -2,36 +2,33 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
-#ifndef LZ4IMAGECOMPRESSOR_H
-#define LZ4IMAGECOMPRESSOR_H
-#ifdef WITH_LZ4
+#ifndef NULLIMAGECOMPRESSOR_H
+#define NULLIMAGECOMPRESSOR_H
 #include "iimagecompressor.h"
-
 #include <utility>
-#include <lz4.h>
 
 namespace comp
 {
-    #define SPEEDUP "LZ4_SPEEDUP"
+
 }
 
 /**
- * @brief The LZ4 image compressor
+ * @brief The null image compressor
  *
  */
-class lz4ImageCompressor : public IImageCompressor
+class nullImageCompressor : public IImageCompressor
 {
 public:
     /**
      * @brief The standard constructor
      *
      */
-    lz4ImageCompressor();
+    nullImageCompressor();
     /**
      * @brief The destructor
      *
      */
-    virtual ~lz4ImageCompressor();
+    virtual ~nullImageCompressor();
 
     /**
      * @brief The method for image comression.
@@ -41,15 +38,20 @@ public:
      * @param imgIn The raw image to compress
      * @param ok The compression status (true if ok)
      * @return size_t Size of the Data
-     */
+     */    
     inline virtual size_t compress(uint8_t* ptrDest,size_t dataSize,cv::Mat& imgIn, bool& ok)
     {
-        int src_size = imgIn.rows*imgIn.cols*imgIn.channels();
-        int compSize = LZ4_compress_fast(reinterpret_cast<char*>(imgIn.ptr()),reinterpret_cast<char*>(ptrDest),src_size,static_cast<int>(dataSize),m_speedup);
+        size_t matSize = imgIn.total() * imgIn.elemSize();
+        if(matSize<=dataSize)
+        {
+            memcpy(ptrDest,imgIn.ptr(),matSize);
+            ok = true;
+            return matSize;
+        }
 
-        ok = compSize>0;
-        return  static_cast<size_t>(compSize);
+        ok = false;
 
+        return 0;
     }
 
     /**
@@ -65,7 +67,13 @@ public:
        bool ok;
        return compress(ptrDest,dataSize,imgIn, ok);
     }
+
 private:    
+    /**
+     * @brief Translates the parameter values to the opencv usable format
+     *
+     */
+    void initParameters();
     /**
      * @brief The changed event of the underlying parameter map
      *
@@ -78,7 +86,6 @@ private:
      */
     virtual void parameterChangedEvent(const std::string& key);
 
-    int m_speedup;
 };
-#endif // WITH_LZ4
-#endif // LZ4IMAGECOMPRESSOR_H
+
+#endif // NULLIMAGECOMPRESSOR_H

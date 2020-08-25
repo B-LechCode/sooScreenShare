@@ -27,7 +27,7 @@ class MainWindow : public QMainWindow,private IdrawObserver
      * This is used to distinct the settings sections of the tree view
      */
     enum section{
-        transport,decomp,postDecomp
+        transport,decomp,postDecomp, consumer
     };
 
 public:
@@ -91,8 +91,7 @@ private:
      * @brief The destructor
      *
      */
-    Ui::MainWindow *ui; /**< Pointer to the own UI */
-    drawWindow* m_draw; /**< Pointer to the draw widget */
+    Ui::MainWindow *ui; /**< Pointer to the own UI */    
     mainWorker m_work; /**< The main worker instance */
     const std::string filePath = "parameters.json"; /**< File path to the config file */
     std::vector<std::string> m_decompressBackends; /**< The available decompress backend names */
@@ -103,6 +102,10 @@ private:
 
     std::vector<std::string> m_transportBackends; /**< The available transport backend names */
     size_t m_selectedTransportBackend = 0; /**< The index of the current selected transport backend */
+
+    std::vector<std::string> m_consumerBackends; /**< The available decompress backend names */
+    size_t m_selectedConsumerBackend = 0; /**< The index of the current selected decompress backend */
+
     parameterSerialization m_serialize; /**< Parameter serializer */
     bool m_transistion = false; /**< This flag is used to supress ghost signals from destructed Qt-Gui widgets */
 

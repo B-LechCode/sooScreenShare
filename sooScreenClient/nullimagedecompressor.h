@@ -2,8 +2,8 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
-#ifndef OPENCVJPEGIMAGEDECOMPRESSOR_H
-#define OPENCVJPEGIMAGEDECOMPRESSOR_H
+#ifndef NULLIMAGEDECOMPRESSOR_H
+#define NULLIMAGEDECOMPRESSOR_H
 #include "iimagedecompressor.h"
 
 #include <utility>
@@ -17,19 +17,19 @@ namespace comp
  * @brief The jpeg image decompressor
  *
  */
-class opencvJpegImageDecompressor : public IImageDecompressor
+class nullImageDecompressor : public IImageDecompressor
 {
 public:
     /**
      * @brief The standard constructor
      *
      */
-    opencvJpegImageDecompressor();
+    nullImageDecompressor();
     /**
      * @brief The destructor
      *
      */
-    virtual ~opencvJpegImageDecompressor();
+    virtual ~nullImageDecompressor();
 
 
     /**
@@ -72,8 +72,9 @@ private:
      */
     inline bool decompressHelper(cv::Mat& img,uint8_t* ptrDat,dataHeaderHandling::dataHeader hdr)
     {
-        auto t = cv::Mat (1, hdr.length, CV_8UC1,ptrDat);
-        img = cv::imdecode(t,-1);
+        //if(hdr.length >= (hdr.width*hdr.height*))
+        img = cv::Mat(cv::Size(hdr.width, hdr.height),hdr.cvType,ptrDat);
+
         return !img.empty();
     }
     /**
@@ -89,4 +90,4 @@ private:
     virtual void parameterChangedEvent(const std::string& key);
 };
 
-#endif // OPENCVJPEGIMAGEDECOMPRESSOR_H
+#endif // NULLIMAGEDECOMPRESSOR_H

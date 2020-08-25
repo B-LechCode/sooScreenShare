@@ -1,33 +1,26 @@
-//sooScreenShare by Simon Wezstein (B-LechCode), 2019
+//sooScreenShare by Simon Wezstein (B-LechCode), 2020
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
-#ifndef IMAGECOMPRESSORFACTORY_H
-#define IMAGECOMPRESSORFACTORY_H
+#ifndef IMAGECONSUMERFACTORY_H
+#define IMAGECONSUMERFACTORY_H
 
-#include "opencvjpegimagedecompressor.h"
-#include "lz4imagedecompressor.h"
-#include "nullimagedecompressor.h"
-#include "iimagedecompressor.h"
+#include "drawwidget.h"
+#include "idraw.h"
 
-#define nullBack "passthru"
-#define cvJpeg "jpeg"
-
-#ifdef WITH_LZ4
-    #define lz4 "lz4"
-#endif
+#define openGLDraw "OpenGL Image Draw"
 
 /**
  * @brief The factory class for the image decompression backends.
  *
  */
-class imageDecompressorFactory
+class imageConsumerFactory
 {
     /**
     * @brief The standard constructor
     *
     */
-    imageDecompressorFactory(){}
+    imageConsumerFactory(){}
     static std::vector<std::string> m_backends; /**< The vector of registred backends */
 public:
     /**
@@ -40,11 +33,7 @@ public:
     {
         if(!m_backends.size())
         {
-            m_backends.push_back(nullBack);
-            m_backends.push_back(cvJpeg);
-#ifdef WITH_LZ4
-            m_backends.push_back(lz4);
-#endif
+            m_backends.push_back(openGLDraw);
         }
         return  m_backends;
     }
@@ -54,20 +43,14 @@ public:
      * This function will return a new object of the specified type.
      * If a wrong backend name was specified nullptr is returned.
      * @param backendName The desired backend type specifier
-     * @return IImageDecompressor The pointer to the created backend. Nullptr if invalid type specified
+     * @return Idraw The pointer to the created backend. Nullptr if invalid type specified
      */
-    static IImageDecompressor* getBackend(std::string backendName)
+    static Idraw* getBackend(std::string backendName)
     {
-        if(backendName == cvJpeg)
-            return new opencvJpegImageDecompressor();
-#ifdef WITH_LZ4
-        if(backendName == lz4)
-            return new lz4ImageDecompressor();
-#endif
-        if(backendName == nullBack)
-            return new nullImageDecompressor();
+        if(backendName == openGLDraw)
+            return new drawWindow();
         return nullptr;
     }
 };
 
-#endif // IMAGECOMPRESSORFACTORY_H
+#endif // IMAGECONSUMERFACTORY_H
