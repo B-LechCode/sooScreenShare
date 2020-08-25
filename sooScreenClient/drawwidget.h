@@ -40,6 +40,7 @@ class drawWindow:public QOpenGLWindow,public Idraw
     bool m_max = false; /**< Flag indicating the maximized state */
     QCursor m_cursor; /**< The previously set cursor */
 
+	bool m_doubleClear = false; /**< Flag controlling buffer clearing in the next draw (Double Buffering) */
 
     int m_lastImageHeight = -1;
     int m_lastImageWidth = -1;
@@ -133,7 +134,6 @@ private:
 
 
     void calcAspects();
-
 };
 
 
