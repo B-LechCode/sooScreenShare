@@ -123,6 +123,24 @@ protected:
 private:
 
     /**
+     * @brief The changed event of the underlying parameter map
+     *
+     */
+    virtual void parameterMapChangedEvent() override
+    {
+
+    }
+    /**
+     * @brief The changed event of a key/value pair
+     *
+     * @param key The key of the changed parameter
+     */
+    virtual void parameterChangedEvent(const std::string& key) override
+    {
+
+    }
+
+    /**
      * @brief Reimplemented key press event
      *
      * The event is used to trigger entering/leaving the fullscreen mode by pressing the space bar.
