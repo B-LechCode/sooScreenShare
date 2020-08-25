@@ -39,6 +39,8 @@ void MainWindow::workerInitialize()
     parameterMap postDecompBackendParameterMap = m_serialize.getParameterMap(m_postDecompressBackends[m_selectedPostDecompressBackend]);
     m_work.postDecomp()->setParameters(postDecompBackendParameterMap);
 
+    parameterMap imageConsumerParameterMap = m_serialize.getParameterMap(m_consumerBackends[m_selectedConsumerBackend]);
+    m_work.imageConsumer()->setParameters(imageConsumerParameterMap);
     m_work.imageConsumer()->setObserver(this);
     treeviewInitialize();
 }
@@ -57,6 +59,9 @@ void MainWindow::readData()
     std::string selectedTransportBackend = m_serialize.getStringValue("Transportlayer");
     m_selectedTransportBackend = GuiHelpers::findIndex(m_transportBackends,selectedTransportBackend);
 
+    std::string selectedConsumerBackend = m_serialize.getStringValue("Consumer");
+    m_selectedConsumerBackend = GuiHelpers::findIndex(m_consumerBackends,selectedConsumerBackend);
+
     workerInitialize();
 
     treeviewInitialize();
@@ -68,6 +73,7 @@ void MainWindow::treeviewInitialize()
     GuiHelpers::addSettingsCat(this,ui->twSettings,m_decompressBackends,m_work.decomp()->getParameters(),QString("Decompression"),section::decomp,static_cast<int>(m_selectedDecompressBackend));
     GuiHelpers::addSettingsCat(this,ui->twSettings,m_postDecompressBackends,m_work.postDecomp()->getParameters(),QString("Postdecompression"),section::postDecomp,static_cast<int>(m_selectedPostDecompressBackend));
     GuiHelpers::addSettingsCat(this,ui->twSettings,m_transportBackends,m_work.trans()->getParameters(),QString("Transport layer"),section::transport,static_cast<int>(m_selectedTransportBackend));
+    GuiHelpers::addSettingsCat(this,ui->twSettings,m_consumerBackends,m_work.imageConsumer()->getParameters(),QString("Consumer"),section::consumer,static_cast<int>(m_selectedConsumerBackend));
     m_transistion = false;
     ui->twSettings->expandAll();
     ui->twSettings->setColumnWidth(0, this->width()/2.5f);
@@ -82,7 +88,9 @@ void MainWindow::writeData()
     m_serialize.appendBackendSelection("Postdecompression",m_postDecompressBackends[m_selectedPostDecompressBackend]);
     m_serialize.appendParameterMap(m_work.postDecomp()->getParameters(),m_postDecompressBackends[m_selectedPostDecompressBackend]);
     m_serialize.appendBackendSelection("Transportlayer",m_transportBackends[m_selectedTransportBackend]);
-    m_serialize.appendParameterMap(m_work.trans()->getParameters(),m_transportBackends[m_selectedTransportBackend]);
+    m_serialize.appendParameterMap(m_work.trans()->getParameters(),m_transportBackends[m_selectedTransportBackend]);    
+    m_serialize.appendBackendSelection("Consumer",m_consumerBackends[m_selectedConsumerBackend]);
+    m_serialize.appendParameterMap(m_work.imageConsumer()->getParameters(),m_consumerBackends[m_selectedConsumerBackend]);
     m_serialize.writeData(filePath);
 }
 
@@ -146,6 +154,16 @@ void MainWindow::on_qComboBoxCurrentIndexChanged(int idx)
             workerInitialize();
         }
         break;
+        case consumer:
+        if(m_selectedConsumerBackend != static_cast<size_t>(idx))
+        {
+            m_transistion = true;
+            writeData();
+            m_work.end();
+            m_selectedConsumerBackend = static_cast<size_t>(idx);
+            workerInitialize();
+        }
+        break;
     }
 
 }
@@ -179,6 +197,11 @@ void MainWindow::on_qLineEditEditingFinished()
         case postDecomp:
         {
             m_work.postDecomp()->setParameterValue(key,value);
+        }
+        break;
+        case consumer:
+        {
+            m_work.imageConsumer()->setParameterValue(key,value);
         }
     }
 }

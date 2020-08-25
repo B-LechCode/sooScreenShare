@@ -27,7 +27,7 @@ class MainWindow : public QMainWindow,private IdrawObserver
      * This is used to distinct the settings sections of the tree view
      */
     enum section{
-        transport,decomp,postDecomp
+        transport,decomp,postDecomp, consumer
     };
 
 public:

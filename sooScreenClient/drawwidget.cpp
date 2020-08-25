@@ -6,7 +6,8 @@
 
 drawWindow::drawWindow(QWindow *parent):
     QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate,parent)
-{        
+{
+    setParameters(m_defaultParameters);
     resize(640,480);
     setSurfaceType(QWindow::OpenGLSurface);
     QOpenGLWindow::show();
