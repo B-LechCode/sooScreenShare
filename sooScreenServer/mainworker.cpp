@@ -30,17 +30,12 @@ mainWorker::~mainWorker()
 }
 
 void mainWorker::init(std::string screenShotBackend,std::string imagePreCompressorBackend,std::string imageCompressorBackend, std::string transportServerBackend)
-{   
+{
     m_screen = screenShotFactory::getBackend(screenShotBackend);
     m_preComp = imagePreCompressorFactory::getBackend(imagePreCompressorBackend);
     m_comp   = imageCompressorFactory::getBackend(imageCompressorBackend);
     m_trans  = transportServerFactory::getBackend(transportServerBackend);
     m_trans->setObserver(static_cast<ItransportServerObserver*>(this));
-
-    cv::Mat data_size_screenshot = (*m_screen)();
-    m_bufferSize = data_size_screenshot.elemSize()*data_size_screenshot.total() + HEADER_SIZE;
-    m_sendbuffer = new uint8_t[m_bufferSize];
-    createHeader();
 }
 
 void mainWorker::run()
@@ -56,7 +51,8 @@ void mainWorker::run()
     cv::Mat cImg = m_preComp->compress(img,tp,compressOk);
 
     //check if buffer is too small for the screenshot and increase buffer size if necessary
-    if(size_t data_size = cImg.elemSize()*cImg.total() + HEADER_SIZE > m_bufferSize){
+    size_t data_size = cImg.elemSize()*cImg.total() + HEADER_SIZE;
+    if(data_size > m_bufferSize) {
         m_bufferSize = data_size;
         delete[] m_sendbuffer;
         m_sendbuffer = new uint8_t[m_bufferSize];
