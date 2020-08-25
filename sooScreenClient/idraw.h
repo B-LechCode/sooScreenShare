@@ -7,8 +7,7 @@
 
 #include "opencv2/opencv.hpp"
 
-#include "./../parameter.h"
-#include "./../iparameter.h"
+
 
 /**
  * @brief The observer interface for the draw widget
@@ -39,7 +38,7 @@ public:
  * @brief Generic interaface for draw backends
  * This interface describes the interaction between the main worker and the draw backend.
  */
-class Idraw  : public Iparameter
+class Idraw
 {
 public:
     /**

@@ -6,11 +6,9 @@
 
 drawWindow::drawWindow(QWindow *parent):
     QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate,parent)
-{
-    setParameters(m_defaultParameters);
+{        
     resize(640,480);
     setSurfaceType(QWindow::OpenGLSurface);
-    QOpenGLWindow::show();
 }
 
 drawWindow::~drawWindow()
@@ -85,21 +83,12 @@ void drawWindow::paintGL()
     int imgH = m_drawImage.rows;
     int imgW = m_drawImage.cols;
     int imgT = m_drawImage.type();    
-	
+
     glEnable(GL_TEXTURE_2D);
 
-	bool dimChange = m_lastImageHeight != imgH || m_lastImageWidth != imgW || m_lastImageType != imgT;
-
-	//Clearing when the dimension changes and for the next draw
-	if (m_doubleClear || dimChange)
-	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		
-		m_doubleClear = false;
-	}
-	
-    if(dimChange)
+    if(m_lastImageHeight != imgH || m_lastImageWidth != imgW || m_lastImageType != imgT)
     {
-		m_doubleClear = true;		
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_lastImageHeight = imgH;
         m_lastImageWidth  = imgW;
         m_lastImageType   = imgT;
@@ -144,12 +133,12 @@ void drawWindow::initializeGL()
 
     if(m_init)
         glDeleteTextures(1,&m_oldid);
-
     glGenTextures(1, &m_textureId);
     m_oldid = m_textureId;
     m_init = true;
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
 
     glBindTexture(GL_TEXTURE_2D, m_textureId);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -169,7 +158,6 @@ void drawWindow::resizeGL(int w, int h)
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glFlush();
-	m_doubleClear = true;
     aspWid = static_cast<float>(width())/static_cast<float>(height());
     calcAspects();    
 }

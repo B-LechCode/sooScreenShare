@@ -2,8 +2,8 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
-#ifndef OPENCVJPEGIMAGEDECOMPRESSOR_H
-#define OPENCVJPEGIMAGEDECOMPRESSOR_H
+#ifndef OPENCVJPEGIMAGECOMPRESSOR_H
+#define OPENCVJPEGIMAGECOMPRESSOR_H
 #include "iimagedecompressor.h"
 
 #include <utility>
@@ -89,4 +89,4 @@ private:
     virtual void parameterChangedEvent(const std::string& key);
 };
 
-#endif // OPENCVJPEGIMAGEDECOMPRESSOR_H
+#endif // OPENCVJPEGIMAGECOMPRESSOR_H

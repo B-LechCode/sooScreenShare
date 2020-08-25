@@ -2,15 +2,13 @@
 set(PROJECT_NAME screenClient)
 project( ${PROJECT_NAME} )
 
+
 cmake_minimum_required(VERSION 3.7)
-
-set(CMAKE_CXX_STANDARD 11)
-
 
 # Build type
 set(CMAKE_BUILD_TYPE Debug CACHE TYPE STRING FORCE )
 
-option(USE_LZ4 "Check this if you want to use the LZ4 compression backend" true)
+
 
 #OpenCV
 FIND_PACKAGE(OpenCV REQUIRED )
@@ -28,18 +26,12 @@ set(OpenGL_GL_PREFERENCE ${OPENGL_GL_PREFERENCE})
 find_package(OpenGL REQUIRED)
 
 #LZ4
-IF ( USE_LZ4 )
-    add_compile_definitions(WITH_LZ4)
-    find_library (lz4_lib lz4)
-    find_path (lz4_path /lz4.h)
-    message(${lz4_lib})
-    set(lz4_include_path /usr/local/include)
-    message(${lz4_include_path})
-ELSE ( USE_LZ4 )
-	set(lz4_include_path "")
-	set(lz4_path "")
-	set(lz4_lib "")
-ENDIF ( USE_LZ4 )
+find_library (lz4_lib lz4)
+find_path (lz4_path /lz4.h)
+message(${lz4_lib})
+set(lz4_include_path /usr/local/include)
+message(${lz4_include_path})
+
 
 
 # Include paths

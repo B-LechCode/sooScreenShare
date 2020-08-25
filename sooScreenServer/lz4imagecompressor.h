@@ -4,7 +4,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 #ifndef LZ4IMAGECOMPRESSOR_H
 #define LZ4IMAGECOMPRESSOR_H
-#ifdef WITH_LZ4
 #include "iimagecompressor.h"
 
 #include <utility>
@@ -80,5 +79,5 @@ private:
 
     int m_speedup;
 };
-#endif // WITH_LZ4
+
 #endif // LZ4IMAGECOMPRESSOR_H
