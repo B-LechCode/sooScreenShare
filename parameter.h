@@ -141,6 +141,26 @@ public:
 	 }
 
 
+	 /**
+	 * @brief Getter method for the value as float
+	 * @param  ok The conversion status
+	 * @return float The value
+	 */
+	 float valueFloat(bool &ok)
+	 {
+		 float ret = 0;
+
+		 try {
+			 ret = std::stof(value());
+			 ok = true;
+		 }
+		 catch (std::invalid_argument) {
+			 ok = false;
+		 }
+		 return ret;
+	 }
+
+
      /**
       * @brief Getter method for the value as bool
 
