@@ -137,8 +137,12 @@ TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
                 ${lz4_lib}
                 ${X11_Xrandr_LIB}
                 ${X11_Xfixes_LIB}
-				d3d11.lib
 
 )
+
+IF ( WITH_WINAPI_DXGI )
+TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
+    d3d11.lib)
+ENDIF ( WITH_WINAPI_DXGI )
 
 

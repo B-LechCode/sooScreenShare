@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <cctype>
+#include <vector>
 
 /**
  * @brief The parameter class
@@ -196,6 +197,8 @@ public:
 		 ret.push_back(s.substr(start, end));		 
 		
 		 return ret;
+     }
+
      /**
       * @brief Setter method for the value
       *

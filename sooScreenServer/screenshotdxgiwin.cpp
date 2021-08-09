@@ -1,5 +1,5 @@
 #include "screenshotdxgiwin.h"
-
+#ifdef WITH_WINAPI_DXGI
 #include <winnt.h>
 
 //DUPL_RETURN screenShotDxgiWin::GetFrame(_Out_ FRAME_DATA* Data, _Out_ bool* Timeout, _Out_ IDXGIResource** DesktopResourceI)
@@ -305,3 +305,4 @@ DUPL_RETURN screenShotDxgiWin::InitializeDx(_Out_ DX_RESOURCES* Data)
 
 	return DUPL_RETURN_SUCCESS;
 }
+#endif //WITH_WINAPI_DXGI
