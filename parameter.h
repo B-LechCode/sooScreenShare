@@ -175,6 +175,27 @@ public:
          return ret;
      }
 
+ /**
+	 * @brief Getter method for the value as string list
+
+	 * @return bool The value
+	 */
+	 std::vector<std::string> valueStringList()
+	 {		 
+		 std::vector<std::string> ret;
+		 std::string s = value();
+		 std::string delim = "##";
+		 auto start = 0U;
+		 auto end = s.find(delim);
+		 while (end != std::string::npos)
+		 {			 
+			 ret.push_back(s.substr(start, end - start));
+			 start = end + delim.length();
+			 end = s.find(delim, start);
+		 }
+		 ret.push_back(s.substr(start, end));		 
+		
+		 return ret;
      /**
       * @brief Setter method for the value
       *
