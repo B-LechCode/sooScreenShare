@@ -105,9 +105,9 @@ void drawWindow::paintGL()
         m_lastImageType   = imgT;
 
         if (m_lastImageType == CV_8UC4)
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_lastImageWidth , m_lastImageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, m_drawImage.data);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, m_lastImageWidth , m_lastImageHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, m_drawImage.data);
         else if(m_lastImageType == CV_8UC3)
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_lastImageWidth , m_lastImageHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, m_drawImage.data);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_BGR, m_lastImageWidth , m_lastImageHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, m_drawImage.data);
         aspImg = static_cast<float>(imgW)/static_cast<float>(imgH);
         aspWid = static_cast<float>(width())/static_cast<float>(height());
         calcAspects();

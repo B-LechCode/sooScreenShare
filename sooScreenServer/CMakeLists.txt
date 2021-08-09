@@ -14,6 +14,8 @@ option(USE_X11 "Check this if you want to use the X11 backend" true)
 ENDIF ( UNIX )
 if ( WIN32 )
 option(USE_WINAPI "Check this if you want to use the WINAPI backend" true)
+option(WITH_WINAPI_DXGI "Check this if you want to use the WINAPI DXGI backend" true)
+
 ENDIF ( WIN32 )
 # Build-Typ
 set(CMAKE_BUILD_TYPE Debug CACHE TYPE STRING FORCE )
@@ -56,6 +58,9 @@ if ( USE_WINAPI )
     add_compile_definitions(WITH_WINAPI)
 ENDIF ( USE_WINAPI )
 
+if ( WITH_WINAPI_DXGI )
+    add_compile_definitions(WITH_WINAPI_DXGI)
+ENDIF ( WITH_WINAPI_DXGI )
 #LZ4
 IF ( USE_LZ4 )
     add_compile_definitions(WITH_LZ4)
@@ -132,6 +137,7 @@ TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
                 ${lz4_lib}
                 ${X11_Xrandr_LIB}
                 ${X11_Xfixes_LIB}
+				d3d11.lib
 
 )
 

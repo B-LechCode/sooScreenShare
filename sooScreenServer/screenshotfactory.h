@@ -12,6 +12,7 @@
 
 #include "screenshotx11shm.h"
 #include "screenshotwin.h"
+#include "screenshotdxgiwin.h"
 
 #ifdef WITH_X11
 #define x11 "X11_Shm_Grab"
@@ -19,7 +20,9 @@
 #ifdef WITH_WINAPI
 #define backend_win "Windows_Grab"
 #endif
-
+#ifdef WITH_WINAPI_DXGI
+#define backend_win_dexgi "Windows_Grab_DXGI"
+#endif
 
 /**
  * @brief  The factory class for the screenshot backends.
@@ -50,6 +53,9 @@ public:
 #ifdef WITH_WINAPI
 			m_backends.push_back(backend_win);
 #endif
+#ifdef WITH_WINAPI_DXGI
+			m_backends.push_back(backend_win_dexgi);
+#endif
         }
         return  m_backends;
     }
@@ -63,6 +69,7 @@ public:
   */
     static IscreenShot* getBackend(std::string backendName)
     {
+		//auto lol = new screenShotDxgiWin();
 #if WITH_X11
         if(backendName == x11)
             return new screenShotX11Shm();
@@ -70,6 +77,10 @@ public:
 #ifdef WITH_WINAPI
         if (backendName == backend_win)
              return new screenShotWin();
+#endif
+#ifdef WITH_WINAPI_DXGI
+		if (backendName == backend_win_dexgi)
+			return new screenShotDxgiWin();
 #endif
 
         return nullptr;
